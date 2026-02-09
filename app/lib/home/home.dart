@@ -19,9 +19,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _refreshList() {
-    setState(() {
-      _medicinesFuture = DatabaseHelper.instance.readAllMedicines();
-    });
+    _medicinesFuture = DatabaseHelper.instance.readAllMedicines();
   }
 
   void _deleteMedicine(int id, Offset position) async {
@@ -44,7 +42,9 @@ class _HomePageState extends State<HomePage> {
 
     if (result == 'delete') {
       await DatabaseHelper.instance.delete(id);
-      _refreshList();
+      setState(() {
+         _refreshList();
+      });
     }
   }
 
@@ -53,11 +53,24 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder<List<Medicine>>(
       future: _medicinesFuture,
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                "Error loading data: ${snapshot.error}",
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final medicines = snapshot.data!;
+        final medicines = snapshot.data ?? [];
 
         if (medicines.isEmpty) {
           return const Center(child: Text("No reminders added yet."));
