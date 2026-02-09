@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/home/home.dart';
 import 'package:app/analytics/analytics.dart';
-import 'package:app/history/history.dart';
 import 'package:app/profile/profile.dart';
 
 class Dose extends StatefulWidget {
@@ -17,7 +16,6 @@ class _DoseState extends State<Dose> {
   final List<Widget> _pages = const [
     HomePage(),
     AnalyticsPage(),
-    HistoryPage(),
     ProfilePage(),
   ];
 
@@ -47,11 +45,6 @@ class _DoseState extends State<Dose> {
             icon: Icon(Icons.analytics_outlined),
             selectedIcon: Icon(Icons.analytics),
             label: 'Analytics',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.history_outlined),
-            selectedIcon: Icon(Icons.history),
-            label: 'History',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
