@@ -1,13 +1,18 @@
-## File Structure
+## Project Structure
 
 ```text
 lib/
 ├── analytics/
-│   └── analytics.dart
+│   ├── analytics.dart
 │   └── history.dart
+├── db/
+│   └── db_helper.dart
 ├── home/
+│   ├── add_menu.dart
 │   └── home.dart
+├── models/
+│   └── medicine.dart
 ├── profile/
 │   └── profile.dart
-├── dose.dart   (main content handling)
-└── main.dart   (main app)
+├── dose.dart
+└── main.dart
