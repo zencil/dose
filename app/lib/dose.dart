@@ -14,10 +14,12 @@ class Dose extends StatefulWidget {
 class _DoseState extends State<Dose> {
   int _selectedIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  
+  Key _homeKey = UniqueKey();
 
   List<Widget> _pages() => [
-    const HomePage(),
-    const AnalyticsPage(), 
+    HomePage(key: _homeKey),
+    const AnalyticsPage(),
     const ProfilePage(),
   ];
 
@@ -29,16 +31,19 @@ class _DoseState extends State<Dose> {
         title: const Text("Dose", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32)),
         centerTitle: false,
         toolbarHeight: 80,
+        actions: const [], 
       ),
       endDrawer: Drawer(
-        width: MediaQuery.of(context).size.width, 
+        width: MediaQuery.of(context).size.width,
         child: AddMedicineMenu(
           onSave: () {
-            setState(() {});
+            setState(() {
+              _homeKey = UniqueKey();
+            });
           },
         ),
       ),
-      floatingActionButton: _selectedIndex == 0 
+      floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
               onPressed: () {
                 _scaffoldKey.currentState?.openEndDrawer();
