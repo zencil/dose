@@ -4,7 +4,6 @@
 lib/
 ├── analytics/
 │   └── analytics.dart
-├── history/
 │   └── history.dart
 ├── home/
 │   └── home.dart
