@@ -3,6 +3,7 @@ import 'package:app/models/medicine.dart';
 import 'package:app/db/db_helper.dart';
 
 class HomePage extends StatefulWidget {
+  // Removed 'const' to allow Key changes for rebuilding
   const HomePage({super.key});
 
   @override

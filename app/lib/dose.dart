@@ -31,7 +31,11 @@ class _DoseState extends State<Dose> {
         title: const Text("Dose", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32)),
         centerTitle: false,
         toolbarHeight: 80,
-        actions: const [], 
+        
+        automaticallyImplyLeading: false, 
+        actions: const [
+          SizedBox.shrink(), 
+        ], 
       ),
       endDrawer: Drawer(
         width: MediaQuery.of(context).size.width,
