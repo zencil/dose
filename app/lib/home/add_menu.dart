@@ -22,7 +22,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
 
   TimeOfDay _selectedTime = TimeOfDay.now();
   int _cycle = 1;
-  int _priority = 1; 
+  int _priority = 1;
 
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
@@ -70,6 +70,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
+        automaticallyImplyLeading: false, 
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -93,24 +94,47 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
               ),
               const SizedBox(height: 16),
 
-              ListTile(
-                title: Text("Time: ${_selectedTime.format(context)}"),
-                trailing: const Icon(Icons.access_time),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4), side: BorderSide(color: Colors.grey)),
-                onTap: () => _selectTime(context),
-              ),
-              const SizedBox(height: 16),
-
-              DropdownButtonFormField<int>(
-                value: _cycle,
-                decoration: const InputDecoration(labelText: "Cycle (Daily times)", border: OutlineInputBorder()),
-                items: List.generate(5, (index) => index + 1).map((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text(value.toString()),
-                  );
-                }).toList(),
-                onChanged: (val) => setState(() => _cycle = val!),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _selectTime(context),
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          labelText: "Time",
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(_selectedTime.format(context)),
+                            const Icon(Icons.access_time, size: 20),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: DropdownButtonFormField<int>(
+                      value: _cycle,
+                      decoration: const InputDecoration(
+                        labelText: "Cycle", 
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                      ),
+                      items: List.generate(5, (index) => index + 1).map((int value) {
+                        return DropdownMenuItem<int>(
+                          value: value,
+                          child: Text("$value /day"),
+                        );
+                      }).toList(),
+                      onChanged: (val) => setState(() => _cycle = val!),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
 
