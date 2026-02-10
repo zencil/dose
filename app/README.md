@@ -8,7 +8,7 @@ lib/
 ├── db/
 │   └── databaseHelper.dart
 ├── home/
-│   ├── addMedicineMenu.dart
+│   ├── addMenu.dart
 │   └── home.dart
 ├── models/
 │   └── medicine.dart
