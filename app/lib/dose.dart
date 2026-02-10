@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:app/home/home.dart';
 import 'package:app/analytics/analytics.dart';
 import 'package:app/profile/profile.dart';
-import 'package:app/home/addMedicineMenu.dart';
+import 'package:app/home/addMenu.dart';
+
 class Dose extends StatefulWidget {
   const Dose({super.key});
 

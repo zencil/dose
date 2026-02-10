@@ -62,8 +62,10 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: const Text("Add Reminder"),
         leading: IconButton(
@@ -81,7 +83,10 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: "Medicine Name", border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: "Medicine Name", 
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) => value!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
@@ -89,10 +94,15 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
               TextFormField(
                 controller: _dosageController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: "Dosage", suffixText: "mg", border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: "Dosage", 
+                  suffixText: "mg", 
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) => value!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
+
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -108,8 +118,11 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(_selectedTime.format(context)),
-                            const Icon(Icons.access_time, size: 20),
+                            Text(
+                              _selectedTime.format(context),
+                              style: TextStyle(color: colorScheme.onSurface),
+                            ),
+                            Icon(Icons.access_time, size: 20, color: colorScheme.onSurfaceVariant),
                           ],
                         ),
                       ),
@@ -118,7 +131,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: DropdownButtonFormField<int>(
-                      initialValue: _cycle,
+                      value: _cycle,
                       decoration: const InputDecoration(
                         labelText: "Cycle", 
                         border: OutlineInputBorder(),
@@ -139,26 +152,38 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
 
               TextFormField(
                 controller: _conditionController,
-                decoration: const InputDecoration(labelText: "Condition", border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: "Condition", 
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 16),
 
               TextFormField(
                 controller: _doctorController,
-                decoration: const InputDecoration(labelText: "Prescribed By", border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: "Prescribed By", 
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 16),
 
               TextFormField(
                 controller: _stockController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: "Current Stock", border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: "Current Stock", 
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 16),
 
               DropdownButtonFormField<int>(
-                initialValue: _priority,
-                decoration: const InputDecoration(labelText: "Priority", border: OutlineInputBorder()),
+                value: _priority, 
+                decoration: const InputDecoration(
+                  labelText: "Priority", 
+                  border: OutlineInputBorder(),
+                ),
                 items: const [
                   DropdownMenuItem(value: 2, child: Text("High")),
                   DropdownMenuItem(value: 1, child: Text("Medium")),

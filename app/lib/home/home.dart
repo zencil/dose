@@ -23,17 +23,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _deleteMedicine(int id, Offset position) async {
+    final colorScheme = Theme.of(context).colorScheme;
+
     final result = await showMenu(
       context: context,
       position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx, position.dy),
       items: [
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'delete',
           child: Row(
             children: [
-              Icon(Icons.delete, color: Colors.red),
-              SizedBox(width: 8),
-              Text('Delete', style: TextStyle(color: Colors.red)),
+              Icon(Icons.delete, color: colorScheme.error),
+              const SizedBox(width: 8),
+              Text('Delete', style: TextStyle(color: colorScheme.error)),
             ],
           ),
         ),
@@ -50,6 +52,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return FutureBuilder<List<Medicine>>(
       future: _medicinesFuture,
       builder: (context, snapshot) {
@@ -60,7 +64,7 @@ class _HomePageState extends State<HomePage> {
               child: Text(
                 "Error loading data: ${snapshot.error}",
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: colorScheme.error),
               ),
             ),
           );
@@ -73,7 +77,12 @@ class _HomePageState extends State<HomePage> {
         final medicines = snapshot.data ?? [];
 
         if (medicines.isEmpty) {
-          return const Center(child: Text("No reminders added yet."));
+          return Center(
+            child: Text(
+              "No reminders added yet.",
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
+            ),
+          );
         }
 
         return ListView.builder(
@@ -89,34 +98,36 @@ class _HomePageState extends State<HomePage> {
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                  side: BorderSide(color: colorScheme.outlineVariant),
                 ),
-                color: Colors.white,
+                color: colorScheme.surfaceContainer, 
                 margin: const EdgeInsets.only(bottom: 12),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     children: [
+                      // Icon
                       Container(
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
-                          color: Colors.indigo.shade50,
+                          color: colorScheme.tertiaryContainer,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.medication, color: Colors.indigo),
+                        child: Icon(Icons.medication, color: colorScheme.onTertiaryContainer),
                       ),
                       const SizedBox(width: 16),
+                      // Med name
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               med.name,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: colorScheme.onSurface,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -124,29 +135,31 @@ class _HomePageState extends State<HomePage> {
                               med.dosage,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.grey.shade600,
+                                color: colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
                         ),
                       ),
+                      // Time
                       Text(
                         med.time,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(width: 16),
+                      // Checkbox
                       Container(
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 110, 126, 214),
+                          color: colorScheme.primaryContainer,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(Icons.check, color: Colors.indigo),
+                        child: Icon(Icons.check, color: colorScheme.onPrimaryContainer),
                       ),
                     ],
                   ),
