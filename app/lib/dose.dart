@@ -47,12 +47,15 @@ class _DoseState extends State<Dose> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(
-          _getAppBarTitle(_selectedIndex),
-          style: TextStyle(
-            fontWeight: FontWeight.bold, 
-            fontSize: 40, 
-            color: Theme.of(context).colorScheme.primary, 
+        title: Padding(
+          padding: const EdgeInsets.only(top: 70.0), 
+          child: Text(
+            _getAppBarTitle(_selectedIndex),
+            style: TextStyle(
+              fontWeight: FontWeight.bold, 
+              fontSize: 35, 
+              color: Theme.of(context).colorScheme.primary, 
+            ),
           ),
         ),
         centerTitle: false,
