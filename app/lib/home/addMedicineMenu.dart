@@ -118,7 +118,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: DropdownButtonFormField<int>(
-                      value: _cycle,
+                      initialValue: _cycle,
                       decoration: const InputDecoration(
                         labelText: "Cycle", 
                         border: OutlineInputBorder(),
@@ -157,7 +157,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
               const SizedBox(height: 16),
 
               DropdownButtonFormField<int>(
-                value: _priority,
+                initialValue: _priority,
                 decoration: const InputDecoration(labelText: "Priority", border: OutlineInputBorder()),
                 items: const [
                   DropdownMenuItem(value: 2, child: Text("High")),

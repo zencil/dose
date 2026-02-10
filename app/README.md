@@ -6,9 +6,9 @@ lib/
 │   ├── analytics.dart
 │   └── history.dart
 ├── db/
-│   └── db_helper.dart
+│   └── databaseHelper.dart
 ├── home/
-│   ├── add_menu.dart
+│   ├── addMedicineMenu.dart
 │   └── home.dart
 ├── models/
 │   └── medicine.dart
