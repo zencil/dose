@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/models/medicine.dart';
-import 'package:app/db/db_helper.dart';
+import 'package:app/db/databaseHelper.dart';
 
 class AddMedicineMenu extends StatefulWidget {
   final VoidCallback onSave;

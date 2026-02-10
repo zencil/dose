@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:app/home/home.dart';
 import 'package:app/analytics/analytics.dart';
 import 'package:app/profile/profile.dart';
-import 'package:app/home/add_menu.dart';
-
+import 'package:app/home/addMedicineMenu.dart';
 class Dose extends StatefulWidget {
   const Dose({super.key});
 
@@ -23,14 +22,41 @@ class _DoseState extends State<Dose> {
     const ProfilePage(),
   ];
 
+  String _getAppBarTitle(int index) {
+    switch (index) {
+      case 0:
+        return "Dose";
+      case 1:
+        return "Analytics";
+      case 2: 
+        final hour = DateTime.now().hour;
+        if (hour < 12) {
+          return "Good Morning";
+        } else if (hour < 17) {
+          return "Good Afternoon";
+        } else {
+          return "Good Evening";
+        }
+      default:
+        return "Dose";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text("Dose", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32)),
+        title: Text(
+          _getAppBarTitle(_selectedIndex),
+          style: TextStyle(
+            fontWeight: FontWeight.bold, 
+            fontSize: 40, 
+            color: Theme.of(context).colorScheme.primary, 
+          ),
+        ),
         centerTitle: false,
-        toolbarHeight: 80,
+        toolbarHeight: 110, 
         
         automaticallyImplyLeading: false, 
         actions: const [
