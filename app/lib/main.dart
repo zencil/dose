@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dynamic_color/dynamic_color.dart'; // 1. Import the package
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:app/dose.dart';
 
 void main() {
