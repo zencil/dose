@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:app/models/medicine.dart';
+import 'package:app/models/cabinet.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -25,38 +25,37 @@ class DatabaseHelper {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
     const integerType = 'INTEGER NOT NULL';
+    const timeType = 'TIME NOT NULL';
 
     await db.execute('''
-CREATE TABLE medicines ( 
+CREATE TABLE cabinet ( 
   id $idType, 
   name $textType,
-  dosage $textType,
-  time $textType,
-  cycle $integerType,
-  condition $textType,
-  doctor $textType,
-  stock $integerType,
+  dosage $integerType,
+  time $timeType,
+  currstock $integerType,
+  initstock $integerType,
   priority $integerType
   )
 ''');
   }
 
-  Future<int> create(Medicine medicine) async {
+  Future<int> create(Cabinet cabinet) async {
     final db = await instance.database;
-    return await db.insert('medicines', medicine.toMap());
+    return await db.insert('cabinet', cabinet.toMap());
   }
 
-  Future<List<Medicine>> readAllMedicines() async {
+  Future<List<Cabinet>> readAllMedicines() async {
     final db = await instance.database;
     const orderBy = 'time ASC';
-    final result = await db.query('medicines', orderBy: orderBy);
-    return result.map((json) => Medicine.fromMap(json)).toList();
+    final result = await db.query('cabinet', orderBy: orderBy);
+    return result.map((json) => Cabinet.fromMap(json)).toList();
   }
 
   Future<int> delete(int id) async {
     final db = await instance.database;
     return await db.delete(
-      'medicines',
+      'cabinet',
       where: 'id = ?',
       whereArgs: [id],
     );

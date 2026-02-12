@@ -1,23 +1,19 @@
-class Medicine {
+class Cabinet {
   final int? id;
   final String name;
   final String dosage;
   final String time;
-  final int cycle;
-  final String condition;
-  final String doctor;
-  final int stock;
+  final int initstock;
+  final int currstock;
   final int priority;
 
-  Medicine({
+  Cabinet({
     this.id,
     required this.name,
     required this.dosage,
     required this.time,
-    required this.cycle,
-    required this.condition,
-    required this.doctor,
-    required this.stock,
+    required this.initstock,
+    required this.currstock,
     required this.priority,
   });
 
@@ -27,24 +23,20 @@ class Medicine {
       'name': name,
       'dosage': dosage,
       'time': time,
-      'cycle': cycle,
-      'condition': condition,
-      'doctor': doctor,
-      'stock': stock,
+      'initstock': initstock,
+      'currstock': currstock,
       'priority': priority,
     };
   }
-
-  static Medicine fromMap(Map<String, dynamic> map) {
-    return Medicine(
+//should dosage be on home screen?
+  static Cabinet fromMap(Map<String, dynamic> map) {
+    return Cabinet(
       id: map['id'],
       name: map['name'],
       dosage: map['dosage'],
       time: map['time'],
-      cycle: map['cycle'],
-      condition: map['condition'],
-      doctor: map['doctor'],
-      stock: map['stock'],
+      initstock: map['initstock'],
+      currstock: map['currstock'],
       priority: map['priority'],
     );
   }
