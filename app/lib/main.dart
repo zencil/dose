@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:app/dose.dart';
+import 'package:app/services/notification_service.dart'; 
 
-void main() {
+void main() async {
+  // Ensure widgets are bound before async calls
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Notifications
+  await NotificationHelper().init();
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  static final _defaultLightColorScheme = ColorScheme.fromSeed(
+    seedColor: Colors.deepPurple, 
+    brightness: Brightness.light,
+  );
+
+  static final _defaultDarkColorScheme = ColorScheme.fromSeed(
+    seedColor: Colors.deepPurple, 
+    brightness: Brightness.dark,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -16,15 +33,14 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            colorScheme: lightDynamic,
+            colorScheme: lightDynamic ?? _defaultLightColorScheme,
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
-            colorScheme: darkDynamic,
+            colorScheme: darkDynamic ?? _defaultDarkColorScheme,
             useMaterial3: true,
           ),
           themeMode: ThemeMode.system, 
-          
           home: const Dose(),
         );
       },

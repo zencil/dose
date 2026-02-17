@@ -38,7 +38,6 @@ dependencies:
   path: ^1.9.1
   dynamic_color: ^1.8.1
   flutter_local_notifications: ^20.0.0
-  android_alarm_manager_plus: ^5.0.0
   timezone: ^0.10.1
 
 dev_dependencies:
