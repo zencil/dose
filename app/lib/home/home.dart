@@ -1,6 +1,6 @@
+import 'package:app/models/cabinet.dart';
 import 'package:flutter/material.dart';
-import 'package:app/models/medicine.dart';
-import 'package:app/db/databaseHelper.dart';
+import 'package:app/db/cabinetdb.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<List<Medicine>> _medicinesFuture;
+  late Future<List<Cabinet>> _medicinesFuture;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return FutureBuilder<List<Medicine>>(
+    return FutureBuilder<List<Cabinet>>(
       future: _medicinesFuture,
       builder: (context, snapshot) {
         if (snapshot.hasError) {

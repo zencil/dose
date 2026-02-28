@@ -1,6 +1,6 @@
+import 'package:app/models/cabinet.dart';
 import 'package:flutter/material.dart';
-import 'package:app/models/medicine.dart';
-import 'package:app/db/databaseHelper.dart';
+import 'package:app/db/cabinetdb.dart';
 
 class AddMedicineMenu extends StatefulWidget {
   final VoidCallback onSave;
@@ -40,14 +40,12 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
     if (_formKey.currentState!.validate()) {
       final String timeString = "${_selectedTime.hour}:${_selectedTime.minute.toString().padLeft(2, '0')}";
       
-      final medicine = Medicine(
+      final medicine = Cabinet(
         name: _nameController.text,
         dosage: "${_dosageController.text} mg",
         time: timeString,
-        cycle: _cycle,
-        condition: _conditionController.text,
-        doctor: _doctorController.text,
-        stock: int.tryParse(_stockController.text) ?? 0,
+        currstock: int.tryParse(_stockController.text) ?? 0,
+        initstock: int.tryParse(_stockController.text) ?? 0,
         priority: _priority,
       );
 
