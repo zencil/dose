@@ -6,12 +6,14 @@ lib/
 │   ├── analytics.dart
 │   └── history.dart
 ├── db/
-│   └── databaseHelper.dart
+│   ├── cabinetdb.dart
+│   └── profiledb.dart
 ├── home/
 │   ├── addMenu.dart
 │   └── home.dart
 ├── models/
-│   └── medicine.dart
+│   ├── cabinet.dart
+│   └── profile.dart
 ├── profile/
 │   └── profile.dart
 ├── dose.dart
