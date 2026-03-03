@@ -8,6 +8,30 @@ class DatabaseHelper {
 
   DatabaseHelper._init();
 
+  Future<int> update(Cabinet cabinet) async {
+    final db = await instance.database;
+    return db.update(
+      'cabinet',
+      cabinet.toMap(),
+      where: 'id = ?',
+      whereArgs: [cabinet.id],
+    );
+  }
+
+  Future<Cabinet?> readMedicine(int id) async {
+    final db = await instance.database;
+    final maps = await db.query(
+      'cabinet',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (maps.isNotEmpty) {
+      return Cabinet.fromMap(maps.first);
+    }
+    return null;
+  }
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDB('dose.db');

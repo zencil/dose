@@ -45,6 +45,7 @@ class _HomePageState extends State<HomePage> {
 
     if (result == 'delete') {
       await DatabaseHelper.instance.delete(id);
+      await NotificationHelper().cancelNotification(id);
       setState(() {
          _refreshList();
       });
@@ -61,7 +62,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(16.0),
           child: ElevatedButton(
             onPressed: () async {
-              await NotificationHelper().scheduleMedicineNotification(999, 'Test Medicine', '23:00');
+              await NotificationHelper().scheduleMedicineNotification(999, 'Test Medicine', '23:18');
             },
             child: const Text('Test'),
           ),

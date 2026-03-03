@@ -2,6 +2,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:app/db/cabinetdb.dart';
+import 'package:app/models/cabinet.dart';
 
 class NotificationHelper {
   static final NotificationHelper _instance = NotificationHelper._internal();
@@ -20,8 +22,26 @@ class NotificationHelper {
     
     await plugin.initialize(
       settings: settings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        print("Action triggered: ${response.actionId} for payload: ${response.payload}");
+      onDidReceiveNotificationResponse: (NotificationResponse response) async {
+        if (response.payload != null && response.payload!.startsWith('med_')) {
+          final int id = int.parse(response.payload!.split('_')[1]);
+          
+          if (response.actionId == 'action_done') {
+            final med = await DatabaseHelper.instance.readMedicine(id);
+            if (med != null && med.currstock > 0) {
+              final updatedMed = Cabinet(
+                id: med.id,
+                name: med.name,
+                dosage: med.dosage,
+                time: med.time,
+                initstock: med.initstock,
+                currstock: med.currstock - 1,
+                priority: med.priority,
+              );
+              await DatabaseHelper.instance.update(updatedMed);
+            }
+          }
+        }
       },
     );
 
@@ -65,5 +85,9 @@ class NotificationHelper {
       matchDateTimeComponents: DateTimeComponents.time, 
       payload: 'med_$id',
     );
+  }
+
+  Future<void> cancelNotification(int id) async {
+  await plugin.cancel(id: id); 
   }
 }

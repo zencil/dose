@@ -50,10 +50,8 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         priority: _priority,
       );
 
-      // 1. Save to DB and get the generated ID
       int newId = await DatabaseHelper.instance.create(medicine);
       
-      // 2. Schedule the notification using the real ID and Data
       await NotificationHelper().scheduleMedicineNotification(
         newId, 
         medicine.name, 

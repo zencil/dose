@@ -9,12 +9,15 @@ lib/
 │   ├── cabinetdb.dart
 │   └── profiledb.dart
 ├── home/
-│   ├── addMenu.dart
+│   ├── add_menu.dart
 │   └── home.dart
 ├── models/
 │   ├── cabinet.dart
 │   └── profile.dart
 ├── profile/
 │   └── profile.dart
+├── models/
+│   ├── alarm_service.dart
+│   └── notification_service.dart
 ├── dose.dart
 └── main.dart
