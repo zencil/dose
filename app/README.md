@@ -16,7 +16,7 @@ lib/
 │   └── profile.dart
 ├── profile/
 │   └── profile.dart
-├── models/
+├── services/
 │   ├── alarm_service.dart
 │   └── notification_service.dart
 ├── dose.dart
