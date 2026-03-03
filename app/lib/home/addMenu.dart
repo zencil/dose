@@ -1,5 +1,5 @@
-import 'package:app/models/cabinet.dart';
 import 'package:flutter/material.dart';
+import 'package:app/models/cabinet.dart';
 import 'package:app/db/cabinetdb.dart';
 
 class AddMedicineMenu extends StatefulWidget {
@@ -49,7 +49,8 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         priority: _priority,
       );
 
-      await DatabaseHelper.instance.create(medicine);
+      int newId = await DatabaseHelper.instance.create(medicine);
+      
       widget.onSave();
       
       if (mounted) {

@@ -4,13 +4,9 @@ import 'package:app/dose.dart';
 import 'package:app/services/notification_service.dart'; 
 
 void main() async {
-  // Ensure widgets are bound before async calls
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Notifications
   await NotificationHelper().init();
-
-  runApp(const MyApp());
+  runApp(const MyApp()); 
 }
 
 class MyApp extends StatelessWidget {
