@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () async {
               await NotificationHelper().showTestNotification();
             },
-            child: const Text('Trigger Test Notification'),
+            child: const Text('Test'),
           ),
         ),
         Expanded(
