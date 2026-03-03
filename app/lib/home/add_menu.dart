@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app/models/cabinet.dart';
 import 'package:app/db/cabinetdb.dart';
+import 'package:app/services/notification_service.dart';
 
 class AddMedicineMenu extends StatefulWidget {
   final VoidCallback onSave;
@@ -49,8 +50,16 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         priority: _priority,
       );
 
+      // 1. Save to DB and get the generated ID
       int newId = await DatabaseHelper.instance.create(medicine);
       
+      // 2. Schedule the notification using the real ID and Data
+      await NotificationHelper().scheduleMedicineNotification(
+        newId, 
+        medicine.name, 
+        timeString
+      );
+
       widget.onSave();
       
       if (mounted) {

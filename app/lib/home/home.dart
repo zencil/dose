@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(16.0),
           child: ElevatedButton(
             onPressed: () async {
-              await NotificationHelper().showTestNotification();
+              await NotificationHelper().scheduleMedicineNotification(999, 'Test Medicine', '23:00');
             },
             child: const Text('Test'),
           ),
