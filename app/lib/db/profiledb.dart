@@ -37,23 +37,15 @@ CREATE TABLE profile (
 ''');
   }
 
-  Future<int> create(profile profile) async {
+  Future<int> createprof(profile profile) async {
     final db = await instance.database;
     return await db.insert('profile', profile.toMap());
   }
 
-  Future<List<profile>> readAllMedicines() async {
+  Future<List<profile>> readprofile() async {
     final db = await instance.database;
     final result = await db.query('profile');
     return result.map((json) => profile.fromMap(json)).toList();
   }
 
-  Future<int> delete(int id) async {
-    final db = await instance.database;
-    return await db.delete(
-      'profile',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
 }

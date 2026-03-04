@@ -49,7 +49,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         priority: _priority,
       );
 
-      await DatabaseHelper.instance.create(medicine);
+      await DatabaseHelper.instance.createmed(medicine);
       widget.onSave();
       
       if (mounted) {
