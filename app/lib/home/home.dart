@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
     );
 
     if (result == 'delete') {
-      await DatabaseHelper.instance.delete(id);
+      await DatabaseHelper.instance.deletemed(id);
       setState(() {
          _refreshList();
       });
