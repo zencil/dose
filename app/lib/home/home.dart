@@ -60,15 +60,6 @@ class _HomePageState extends State<HomePage> {
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ElevatedButton(
-            onPressed: () async {
-              await AlarmService().triggerTestAlarm();
-            },
-            child: const Text('Test'),
-          ),
-        ),
         Expanded(
           child: FutureBuilder<List<Cabinet>>(
             future: _medicinesFuture,
