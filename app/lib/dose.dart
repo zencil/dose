@@ -3,6 +3,9 @@ import 'package:app/home/home.dart';
 import 'package:app/analytics/analytics.dart';
 import 'package:app/profile/profile.dart';
 import 'package:app/home/add_menu.dart';
+import 'dart:async';
+import 'package:alarm/alarm.dart';
+import 'package:app/services/alarm_ring.dart';
 
 class Dose extends StatefulWidget {
   const Dose({super.key});
@@ -41,6 +44,27 @@ class _DoseState extends State<Dose> {
       default:
         return "Dose";
     }
+  }
+
+  StreamSubscription<AlarmSettings>? ringSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    ringSubscription = Alarm.ringStream.stream.listen((alarmSettings) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AlarmRingScreen(alarmSettings: alarmSettings),
+        ),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    ringSubscription?.cancel();
+    super.dispose();
   }
 
   @override

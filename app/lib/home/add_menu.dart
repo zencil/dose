@@ -52,7 +52,8 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
       );
 
       int newId = await DatabaseHelper.instance.create(medicine);
-      
+
+      await AlarmService().scheduleMedicineAlarm(newId, medicine);
       await NotificationHelper().scheduleMedicineNotification(
         newId, 
         medicine.name, 
@@ -64,6 +65,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
       if (mounted) {
         Navigator.pop(context);
       }
+      
     }
   }
 

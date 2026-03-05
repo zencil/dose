@@ -2,6 +2,7 @@ import 'package:app/models/cabinet.dart';
 import 'package:flutter/material.dart';
 import 'package:app/db/cabinetdb.dart';
 import 'package:app/services/notification_service.dart';
+import 'package:app/services/alarm_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -46,6 +47,7 @@ class _HomePageState extends State<HomePage> {
     if (result == 'delete') {
       await DatabaseHelper.instance.delete(id);
       await NotificationHelper().cancelNotification(id);
+      await AlarmService().cancelAlarm(id);
       setState(() {
          _refreshList();
       });
@@ -62,7 +64,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(16.0),
           child: ElevatedButton(
             onPressed: () async {
-              await NotificationHelper().scheduleMedicineNotification(999, 'Test Medicine', '23:18');
+              await AlarmService().triggerTestAlarm();
             },
             child: const Text('Test'),
           ),
