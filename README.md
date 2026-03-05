@@ -4,4 +4,4 @@ Built with our hands and not AI.
 Made with love!
 
 
-By Orbitron HD
+By orbitronhd-dev
