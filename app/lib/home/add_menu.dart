@@ -1,6 +1,8 @@
-import 'package:app/models/cabinet.dart';
 import 'package:flutter/material.dart';
+import 'package:app/models/cabinet.dart';
 import 'package:app/db/cabinetdb.dart';
+import 'package:app/services/notification_service.dart';
+import 'package:app/services/alarm_service.dart';
 
 class AddMedicineMenu extends StatefulWidget {
   final VoidCallback onSave;
@@ -49,12 +51,21 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         priority: _priority,
       );
 
-      await DatabaseHelper.instance.create(medicine);
+      int newId = await DatabaseHelper.instance.create(medicine);
+
+      await AlarmService().scheduleMedicineAlarm(newId, medicine);
+      await NotificationHelper().scheduleMedicineNotification(
+        newId, 
+        medicine.name, 
+        timeString
+      );
+
       widget.onSave();
       
       if (mounted) {
         Navigator.pop(context);
       }
+      
     }
   }
 
@@ -129,7 +140,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: DropdownButtonFormField<int>(
-                      value: _cycle,
+                      initialValue: _cycle,
                       decoration: const InputDecoration(
                         labelText: "Cycle", 
                         border: OutlineInputBorder(),
@@ -177,7 +188,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
               const SizedBox(height: 16),
 
               DropdownButtonFormField<int>(
-                value: _priority, 
+                initialValue: _priority, 
                 decoration: const InputDecoration(
                   labelText: "Priority", 
                   border: OutlineInputBorder(),
