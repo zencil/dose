@@ -38,7 +38,7 @@ class NotificationHelper {
                 currstock: med.currstock - 1,
                 priority: med.priority,
               );
-              await DatabaseHelper.instance.update(updatedMed);
+              await DatabaseHelper.instance.updateMedicine(updatedMed);
             }
           }
         }

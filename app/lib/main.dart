@@ -33,10 +33,16 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             colorScheme: lightDynamic ?? _defaultLightColorScheme,
             useMaterial3: true,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
           ),
           darkTheme: ThemeData(
             colorScheme: darkDynamic ?? _defaultDarkColorScheme,
             useMaterial3: true,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
           ),
           themeMode: ThemeMode.system, 
           home: const Dose(),

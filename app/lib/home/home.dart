@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
     );
 
     if (result == 'delete') {
-      await DatabaseHelper.instance.delete(id);
+      await DatabaseHelper.instance.deleteMedicine(id);
       await NotificationHelper().cancelNotification(id);
       await AlarmService().cancelAlarm(id);
       setState(() {
