@@ -1,8 +1,9 @@
-import 'package:app/models/cabinet.dart';
+import 'package:app/models/cabinet_model.dart';
 import 'package:flutter/material.dart';
 import 'package:app/db/cabinetdb.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
+import 'package:app/profile/cabinet/cabinet.dart';
 import 'package:app/profile/about.dart';
 
 class HomePage extends StatefulWidget {
@@ -46,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     );
 
     if (result == 'delete') {
-      await DatabaseHelper.instance.delete(id);
+      await DatabaseHelper.instance.deleteMedicine(id);
       await NotificationHelper().cancelNotification(id);
       await AlarmService().cancelAlarm(id);
       setState(() {
@@ -60,16 +61,42 @@ class _HomePageState extends State<HomePage> {
     final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AboutPage(),
-              ),
-            );
-          },
-          child: const Text('Test'),
+        Row(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CabinetPage(),
+                  ),
+                );
+              },
+              child: const Text('Cabinet'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AboutPage(),
+                  ),
+                );
+              },
+              child: const Text('About'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CabinetPage(),
+                  ),
+                );
+              },
+              child: const Text('Settings'),
+            ),
+          ],
         ),
         Expanded(
           child: FutureBuilder<List<Cabinet>>(

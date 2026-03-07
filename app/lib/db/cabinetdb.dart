@@ -1,36 +1,12 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:app/models/cabinet.dart';
+import 'package:app/models/cabinet_model.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
 
   DatabaseHelper._init();
-
-  Future<int> update(Cabinet cabinet) async {
-    final db = await instance.database;
-    return db.update(
-      'cabinet',
-      cabinet.toMap(),
-      where: 'id = ?',
-      whereArgs: [cabinet.id],
-    );
-  }
-
-  Future<Cabinet?> readMedicine(int id) async {
-    final db = await instance.database;
-    final maps = await db.query(
-      'cabinet',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-
-    if (maps.isNotEmpty) {
-      return Cabinet.fromMap(maps.first);
-    }
-    return null;
-  }
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -69,6 +45,20 @@ CREATE TABLE cabinet (
     return await db.insert('cabinet', cabinet.toMap());
   }
 
+  Future<Cabinet?> readMedicine(int id) async {
+    final db = await instance.database;
+    final maps = await db.query(
+      'cabinet',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (maps.isNotEmpty) {
+      return Cabinet.fromMap(maps.first);
+    }
+    return null;
+  }
+
   Future<List<Cabinet>> readAllMedicines() async {
     final db = await instance.database;
     const orderBy = 'time ASC';
@@ -76,7 +66,17 @@ CREATE TABLE cabinet (
     return result.map((json) => Cabinet.fromMap(json)).toList();
   }
 
-  Future<int> delete(int id) async {
+  Future<int> updateMedicine(Cabinet medicine) async {
+    final db = await instance.database;
+    return await db.update(
+      'cabinet',
+      medicine.toMap(),
+      where: 'id = ?',
+      whereArgs: [medicine.id],
+    );
+  }
+
+  Future<int> deleteMedicine(int id) async {
     final db = await instance.database;
     return await db.delete(
       'cabinet',

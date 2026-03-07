@@ -1,5 +1,5 @@
 import 'package:alarm/alarm.dart';
-import 'package:app/models/cabinet.dart';
+import 'package:app/models/cabinet_model.dart';
 
 class AlarmService {
   static final AlarmService _instance = AlarmService._internal();

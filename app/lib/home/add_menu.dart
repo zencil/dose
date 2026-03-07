@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:app/models/cabinet.dart';
+import 'package:app/models/cabinet_model.dart';
 import 'package:app/db/cabinetdb.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
 
 class AddMedicineMenu extends StatefulWidget {
   final VoidCallback onSave;
+  final Cabinet? medicineToEdit;
 
-  const AddMedicineMenu({super.key, required this.onSave});
+  const AddMedicineMenu({super.key, required this.onSave, this.medicineToEdit});
 
   @override
   State<AddMedicineMenu> createState() => _AddMedicineMenuState();
@@ -26,6 +27,33 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
   int _cycle = 1;
   int _priority = 1;
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.medicineToEdit != null) {
+      final med = widget.medicineToEdit!;
+      _nameController.text = med.name;
+      _dosageController.text = med.dosage.replaceAll(' mg', '');
+      _stockController.text = med.currstock.toString();
+      _priority = med.priority;
+      
+      final parts = med.time.split(':');
+      if (parts.length == 2) {
+        _selectedTime = TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _dosageController.dispose();
+    _conditionController.dispose();
+    _doctorController.dispose();
+    _stockController.dispose();
+    super.dispose();
+  }
+
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -43,19 +71,28 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
       final String timeString = "${_selectedTime.hour}:${_selectedTime.minute.toString().padLeft(2, '0')}";
       
       final medicine = Cabinet(
+        id: widget.medicineToEdit?.id,
         name: _nameController.text,
         dosage: "${_dosageController.text} mg",
         time: timeString,
         currstock: int.tryParse(_stockController.text) ?? 0,
-        initstock: int.tryParse(_stockController.text) ?? 0,
+        initstock: widget.medicineToEdit != null 
+            ? widget.medicineToEdit!.initstock 
+            : (int.tryParse(_stockController.text) ?? 0),
         priority: _priority,
       );
 
-      int newId = await DatabaseHelper.instance.create(medicine);
+      int savedId;
+      if (widget.medicineToEdit == null) {
+        savedId = await DatabaseHelper.instance.create(medicine);
+      } else {
+        await DatabaseHelper.instance.updateMedicine(medicine);
+        savedId = medicine.id!;
+      }
 
-      await AlarmService().scheduleMedicineAlarm(newId, medicine);
+      await AlarmService().scheduleMedicineAlarm(savedId, medicine);
       await NotificationHelper().scheduleMedicineNotification(
-        newId, 
+        savedId, 
         medicine.name, 
         timeString
       );
@@ -65,7 +102,6 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
       if (mounted) {
         Navigator.pop(context);
       }
-      
     }
   }
 
@@ -76,7 +112,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: const Text("Add Reminder"),
+        title: Text(widget.medicineToEdit == null ? "Add Reminder" : "Edit Reminder"),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
@@ -207,7 +243,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text("Save Reminder"),
+                child: Text(widget.medicineToEdit == null ? "Save Reminder" : "Update Reminder"),
               ),
               const SizedBox(height: 40),
             ],

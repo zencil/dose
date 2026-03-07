@@ -3,7 +3,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:app/db/cabinetdb.dart';
-import 'package:app/models/cabinet.dart';
+import 'package:app/models/cabinet_model.dart';
 
 class NotificationHelper {
   static final NotificationHelper _instance = NotificationHelper._internal();
@@ -38,7 +38,7 @@ class NotificationHelper {
                 currstock: med.currstock - 1,
                 priority: med.priority,
               );
-              await DatabaseHelper.instance.update(updatedMed);
+              await DatabaseHelper.instance.updateMedicine(updatedMed);
             }
           }
         }
