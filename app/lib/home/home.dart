@@ -4,6 +4,7 @@ import 'package:app/db/cabinetdb.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
 import 'package:app/profile/cabinet/cabinet.dart';
+import 'package:app/profile/about.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -60,16 +61,31 @@ class _HomePageState extends State<HomePage> {
     final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CabinetPage(),
-              ),
-            );
-          },
-          child: const Text('Test'),
+        Row(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CabinetPage(),
+                  ),
+                );
+              },
+              child: const Text('Cabinet'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AboutPage(),
+                  ),
+                );
+              },
+              child: const Text('About'),
+            ),
+          ],
         ),
         Expanded(
           child: FutureBuilder<List<Cabinet>>(
