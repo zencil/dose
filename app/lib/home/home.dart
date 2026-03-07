@@ -85,6 +85,17 @@ class _HomePageState extends State<HomePage> {
               },
               child: const Text('About'),
             ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CabinetPage(),
+                  ),
+                );
+              },
+              child: const Text('Settings'),
+            ),
           ],
         ),
         Expanded(
