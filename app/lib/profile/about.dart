@@ -15,26 +15,54 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About'),
+        toolbarHeight: 110, 
+        leading: Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: BackButton(
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+        ),
+        titleSpacing: -37,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 70.0), 
+          child: Text(
+            'About',
+            style: TextStyle(
+              fontWeight: FontWeight.bold, 
+              fontSize: 35, 
+              color: Theme.of(context).colorScheme.primary, 
+            ),
+          ),
+        ),
+        centerTitle: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Dose',
-              style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+            Center(
+              child: Column(
+                children: [
+                  Text(
+                    'Dose',
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                   ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Version 1.0.0',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  const SizedBox(height: 8),
+                  Text(
+                    'Version 1.0.0',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
+                ],
+              ),
             ),
             const SizedBox(height: 32),
             Text(
@@ -45,7 +73,7 @@ class AboutPage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'orbitronhd',
+              'Aadi\nJason\nJonathan\nNithin',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     height: 1.5,
                   ),
