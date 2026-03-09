@@ -25,7 +25,7 @@ void main() async {
   await AlarmService().init();
 
   // Initialize background worker for widget updates
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+  Workmanager().initialize(callbackDispatcher);
   Workmanager().registerPeriodicTask(
     '1',
     'widgetUpdateTask',

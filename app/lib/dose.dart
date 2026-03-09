@@ -46,12 +46,15 @@ class _DoseState extends State<Dose> {
     }
   }
 
-  StreamSubscription<AlarmSettings>? ringSubscription;
+  StreamSubscription? ringSubscription;
 
   @override
   void initState() {
     super.initState();
-    ringSubscription = Alarm.ringStream.stream.listen((alarmSettings) {
+    ringSubscription = Alarm.ringing
+        .where((alarmSet) => alarmSet.alarms.isNotEmpty)
+        .listen((alarmSet) {
+      final alarmSettings = alarmSet.alarms.first;
       Navigator.push(
         context,
         MaterialPageRoute(
