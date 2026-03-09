@@ -3,6 +3,7 @@ import 'package:app/models/cabinet_model.dart';
 import 'package:app/db/cabinet_db.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
+import 'package:app/services/widget_service.dart';
 
 class AddMedicineMenu extends StatefulWidget {
   final VoidCallback onSave;
@@ -100,6 +101,9 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         medicine.name,
         timeString,
       );
+
+      // Trigger widget update
+      await WidgetService.updateWidgetState();
 
       widget.onSave();
 

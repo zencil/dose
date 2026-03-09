@@ -7,6 +7,7 @@ import 'package:app/services/alarm_service.dart';
 import 'package:app/profile/cabinet/cabinet_page.dart';
 import 'package:app/home/history_page.dart';
 import 'package:app/profile/about_page.dart';
+import 'package:app/services/widget_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -57,6 +58,7 @@ class _HomePageState extends State<HomePage> {
       await DatabaseHelper.instance.deleteMedicine(id);
       await NotificationHelper().cancelNotification(id);
       await AlarmService().cancelAlarm(id);
+      await WidgetService.updateWidgetState();
       setState(() {
         _refreshList();
       });
