@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
-import 'package:app/db/cabinetdb.dart';
+import 'package:app/db/cabinet_db.dart';
 import 'package:app/models/cabinet_model.dart';
 import 'package:app/models/intake_model.dart';
 import 'package:app/db/intake_log.dart' as log_db;

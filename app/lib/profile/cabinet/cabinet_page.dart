@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/models/cabinet_model.dart';
-import 'package:app/db/cabinetdb.dart';
+import 'package:app/db/cabinet_db.dart';
 import 'package:app/home/add_menu.dart';
 
 class CabinetPage extends StatefulWidget {
@@ -23,7 +23,9 @@ class _CabinetPageState extends State<CabinetPage> {
 
   void _refreshMedicines() {
     setState(() {
-      _medicinesFuture = DatabaseHelper.instance.readAllMedicines().then((medicines) {
+      _medicinesFuture = DatabaseHelper.instance.readAllMedicines().then((
+        medicines,
+      ) {
         medicines.sort((a, b) {
           int priorityComparison = b.priority.compareTo(a.priority);
           if (priorityComparison != 0) {
@@ -53,7 +55,10 @@ class _CabinetPageState extends State<CabinetPage> {
                 _deleteMedicine(medicine.id!);
                 Navigator.of(context).pop();
               },
-              child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              child: Text(
+                'Delete',
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
             ),
           ],
         );
@@ -83,32 +88,28 @@ class _CabinetPageState extends State<CabinetPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        toolbarHeight: 110, 
+        toolbarHeight: 110,
         leading: Align(
           alignment: Alignment.topCenter,
           child: Padding(
             padding: const EdgeInsets.only(top: 8.0),
-            child: BackButton(
-              onPressed: () => Navigator.pop(context),
-            ),
+            child: BackButton(onPressed: () => Navigator.pop(context)),
           ),
         ),
         titleSpacing: -37,
         title: Padding(
-          padding: const EdgeInsets.only(top: 70.0), 
+          padding: const EdgeInsets.only(top: 70.0),
           child: Text(
             'Cabinet',
             style: TextStyle(
-              fontWeight: FontWeight.bold, 
-              fontSize: 35, 
-              color: Theme.of(context).colorScheme.primary, 
+              fontWeight: FontWeight.bold,
+              fontSize: 35,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
         centerTitle: false,
-        actions: const [
-          SizedBox.shrink(),
-        ],
+        actions: const [SizedBox.shrink()],
       ),
       endDrawer: Drawer(
         width: MediaQuery.of(context).size.width,
@@ -119,7 +120,7 @@ class _CabinetPageState extends State<CabinetPage> {
               _editingMedicine = null;
             });
             _refreshMedicines();
-            Navigator.pop(context); 
+            Navigator.pop(context);
           },
         ),
       ),
@@ -160,9 +161,14 @@ class _CabinetPageState extends State<CabinetPage> {
                 ),
                 margin: const EdgeInsets.only(bottom: 12.0),
                 child: Theme(
-                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                  data: Theme.of(
+                    context,
+                  ).copyWith(dividerColor: Colors.transparent),
                   child: ExpansionTile(
-                    tilePadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    tilePadding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
                     leading: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -170,7 +176,10 @@ class _CabinetPageState extends State<CabinetPage> {
                           width: 16,
                           height: 16,
                           decoration: BoxDecoration(
-                            color: _getPriorityColor(medicine.priority, context),
+                            color: _getPriorityColor(
+                              medicine.priority,
+                              context,
+                            ),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -178,11 +187,18 @@ class _CabinetPageState extends State<CabinetPage> {
                     ),
                     title: Text(
                       medicine.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                      ),
                     ),
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+                        padding: const EdgeInsets.only(
+                          left: 16.0,
+                          right: 16.0,
+                          bottom: 16.0,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -217,7 +233,8 @@ class _CabinetPageState extends State<CabinetPage> {
                                 ),
                                 const SizedBox(width: 8),
                                 IconButton(
-                                  onPressed: () => _showDeleteConfirmation(medicine),
+                                  onPressed: () =>
+                                      _showDeleteConfirmation(medicine),
                                   icon: const Icon(Icons.delete),
                                   tooltip: 'Delete',
                                   color: Theme.of(context).colorScheme.error,

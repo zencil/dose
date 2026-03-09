@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:app/models/intake.dart';
+import 'package:app/models/intake_model.dart';
 import 'package:app/db/intake_log.dart' as log_db;
 
 class HistoryPage extends StatefulWidget {
@@ -27,9 +27,7 @@ class _HistoryPageState extends State<HistoryPage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Activity Log'),
-      ),
+      appBar: AppBar(title: const Text('Activity Log')),
       body: FutureBuilder<List<Intake>>(
         future: _logsFuture,
         builder: (context, snapshot) {
@@ -127,11 +125,11 @@ class _HistoryPageState extends State<HistoryPage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                           log.date,
-                           style: TextStyle(
-                            fontSize: 12,
-                            color: colorScheme.onSurfaceVariant,
-                           ),
+                            log.date,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ],
                       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/models/cabinet_model.dart';
-import 'package:app/db/cabinetdb.dart';
+import 'package:app/db/cabinet_db.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
 

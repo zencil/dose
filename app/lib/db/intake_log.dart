@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:app/models/intake.dart';
+import 'package:app/models/intake_model.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -39,8 +39,7 @@ CREATE TABLE intake_log (
   FOREIGN KEY (name) REFERENCES cabinet (name),
   FOREIGN KEY (ttime) REFERENCES cabinet (time),
   FOREIGN KEY (currstock) REFERENCES cabinet (currstock)
-  )'''
- );
+  )''');
   }
 
   Future<int> createlog(Intake intake) async {
@@ -54,5 +53,4 @@ CREATE TABLE intake_log (
     final result = await db.query('intake_log', orderBy: orderBy);
     return result.map((json) => Intake.fromMap(json)).toList();
   }
-
 }
