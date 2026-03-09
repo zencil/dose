@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:app/services/theme_service.dart';
+import 'package:app/services/backup_service.dart';
 import 'package:app/profile/about_page.dart';
 import 'package:app/profile/help_support.dart';
 
@@ -52,6 +54,26 @@ class _SettingsPageState extends State<SettingsPage> {
                 onTap: () {
                   // TODO: Implement notification settings
                 },
+              ),
+              const Divider(height: 32),
+              _buildSectionTitle('Backup'),
+              _buildListTile(
+                icon: Icons.upload_file,
+                title: 'Export Data',
+                subtitle: 'Save a backup to Downloads',
+                onTap: () => _handleExport(context),
+              ),
+              _buildListTile(
+                icon: Icons.download,
+                title: 'Import Data',
+                subtitle: 'Restore from a backup file',
+                onTap: () => _handleImport(context),
+              ),
+              _buildListTile(
+                icon: Icons.cloud_outlined,
+                title: 'Google Drive',
+                subtitle: 'Coming soon',
+                onTap: () {},
               ),
               const Divider(height: 32),
               _buildSectionTitle('Support'),
@@ -195,5 +217,91 @@ class _SettingsPageState extends State<SettingsPage> {
         );
       },
     );
+  }
+
+  Future<void> _handleExport(BuildContext context) async {
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Exporting data...')),
+      );
+
+      final path = await BackupService.instance.exportData();
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Backup saved to:\n$path'),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Export failed: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleImport(BuildContext context) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+
+      if (result == null || result.files.single.path == null) return;
+
+      if (context.mounted) {
+        // Confirm before overwriting
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Restore Backup'),
+            content: const Text(
+              'This will replace all current data with the backup. '
+              'Are you sure?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Restore'),
+              ),
+            ],
+          ),
+        );
+
+        if (confirmed != true) return;
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Restoring data...')),
+          );
+        }
+
+        await BackupService.instance.importData(result.files.single.path!);
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Data restored successfully!')),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Import failed: $e')),
+        );
+      }
+    }
   }
 }
