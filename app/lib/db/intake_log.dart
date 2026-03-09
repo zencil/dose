@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:app/models/profile_model.dart';
+import 'package:app/models/intake.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -24,28 +24,35 @@ class DatabaseHelper {
   Future _createDB(Database db, int version) async {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
+    const integerType = 'INTEGER NOT NULL';
+    const timeType = 'TIME NOT NULL';
 
     await db.execute('''
-CREATE TABLE profile ( 
-  id $idType, 
+CREATE TABLE intake_log ( 
+  cabinetid $idType, 
   name $textType,
-  donor $textType,
-  dob $textType,
-  bloodtype $textType,
-  sex $textType
-  )
-''');
+  ttime $timeType,
+  time $timeType,
+  date $textType
+  stock $integerType,
+  FOREIGN KEY (cabinetId) REFERENCES cabinet (id),
+  FOREIGN KEY (name) REFERENCES cabinet (name),
+  FOREIGN KEY (ttime) REFERENCES cabinet (time),
+  FOREIGN KEY (stock) REFERENCES cabinet (currstock),
+  )'''
+ );
   }
 
-  Future<int> createprof(profile profile) async {
+  Future<int> createlog(Intake intake) async {
     final db = await instance.database;
-    return await db.insert('profile', profile.toMap());
+    return await db.insert('intake_log', intake.toMap());
   }
 
-  Future<List<profile>> readprofile() async {
+  Future<List<Intake>> readintakelog() async {
     final db = await instance.database;
-    final result = await db.query('profile');
-    return result.map((json) => profile.fromMap(json)).toList();
+    const orderBy = 'time ASC';
+    final result = await db.query('intake_log', orderBy: orderBy);
+    return result.map((json) => Intake.fromMap(json)).toList();
   }
 
 }
