@@ -3,9 +3,11 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:app/dose.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
+import 'package:app/services/theme_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ThemeService().init();
   await NotificationHelper().init();
   await AlarmService().init();
   runApp(const MyApp()); 
@@ -28,24 +30,29 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            colorScheme: lightDynamic ?? _defaultLightColorScheme,
-            useMaterial3: true,
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            splashFactory: NoSplash.splashFactory,
-          ),
-          darkTheme: ThemeData(
-            colorScheme: darkDynamic ?? _defaultDarkColorScheme,
-            useMaterial3: true,
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            splashFactory: NoSplash.splashFactory,
-          ),
-          themeMode: ThemeMode.system, 
-          home: const Dose(),
+        return ValueListenableBuilder<ThemeMode>(
+          valueListenable: ThemeService().themeNotifier,
+          builder: (context, themeMode, _) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                colorScheme: lightDynamic ?? _defaultLightColorScheme,
+                useMaterial3: true,
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
+              ),
+              darkTheme: ThemeData(
+                colorScheme: darkDynamic ?? _defaultDarkColorScheme,
+                useMaterial3: true,
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
+              ),
+              themeMode: themeMode, 
+              home: const Dose(),
+            );
+          },
         );
       },
     );

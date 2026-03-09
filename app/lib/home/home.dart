@@ -1,4 +1,5 @@
 import 'package:app/models/cabinet_model.dart';
+import 'package:app/profile/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:app/db/cabinetdb.dart';
 import 'package:app/services/notification_service.dart';
@@ -90,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const CabinetPage(),
+                    builder: (context) => const SettingsPage(),
                   ),
                 );
               },
