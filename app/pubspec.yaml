@@ -41,6 +41,7 @@ dependencies:
   alarm: ^5.2.1
   url_launcher: ^6.3.2
   shared_preferences: ^2.5.4
+  fl_chart: ^0.70.2
 
 dev_dependencies:
   flutter_test:

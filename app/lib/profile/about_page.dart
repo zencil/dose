@@ -5,7 +5,7 @@ class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
   Future<void> _launchGitHub() async {
-    final Uri url = Uri.parse('https://github.com/orbitronhd-dev/dose'); 
+    final Uri url = Uri.parse('https://github.com/orbitronhd-dev/dose');
     if (!await launchUrl(url)) {
       debugPrint('Could not launch $url');
     }
@@ -15,25 +15,23 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 110, 
+        toolbarHeight: 130,
         leading: Align(
           alignment: Alignment.topCenter,
           child: Padding(
             padding: const EdgeInsets.only(top: 8.0),
-            child: BackButton(
-              onPressed: () => Navigator.pop(context),
-            ),
+            child: BackButton(onPressed: () => Navigator.pop(context)),
           ),
         ),
         titleSpacing: -37,
         title: Padding(
-          padding: const EdgeInsets.only(top: 70.0), 
+          padding: const EdgeInsets.only(top: 70.0),
           child: Text(
             'About',
             style: TextStyle(
-              fontWeight: FontWeight.bold, 
-              fontSize: 35, 
-              color: Theme.of(context).colorScheme.primary, 
+              fontWeight: FontWeight.bold,
+              fontSize: 35,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -50,16 +48,16 @@ class AboutPage extends StatelessWidget {
                   Text(
                     'Dose',
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Version 1.0.0',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -67,16 +65,16 @@ class AboutPage extends StatelessWidget {
             const SizedBox(height: 32),
             Text(
               'Contributors',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
             Text(
               'Aadi\nJason\nJonathan\nNithin',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    height: 1.5,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(height: 1.5),
             ),
             const Spacer(),
             SizedBox(

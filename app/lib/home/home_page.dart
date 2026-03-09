@@ -1,11 +1,12 @@
 import 'package:app/models/cabinet_model.dart';
-import 'package:app/profile/settings/settings.dart';
+import 'package:app/profile/settings/settings_page.dart';
 import 'package:flutter/material.dart';
-import 'package:app/db/cabinetdb.dart';
+import 'package:app/db/cabinet_db.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
-import 'package:app/profile/cabinet/cabinet.dart';
-import 'package:app/profile/about.dart';
+import 'package:app/profile/cabinet/cabinet_page.dart';
+import 'package:app/home/history_page.dart';
+import 'package:app/profile/about_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -77,6 +78,15 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               child: const Text('Cabinet'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HistoryPage()),
+                );
+              },
+              child: const Text('History'),
             ),
             ElevatedButton(
               onPressed: () {

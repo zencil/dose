@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/models/cabinet_model.dart';
-import 'package:app/db/cabinetdb.dart';
+import 'package:app/db/cabinet_db.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
 
@@ -116,13 +116,27 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text(
-          widget.medicineToEdit == null ? "Add Reminder" : "Edit Reminder",
+        toolbarHeight: 130,
+        leading: Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: BackButton(onPressed: () => Navigator.pop(context)),
+          ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
+        titleSpacing: -37,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 70.0),
+          child: Text(
+            widget.medicineToEdit == null ? "Add Reminder" : "Edit Reminder",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 35,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
         ),
+        centerTitle: false,
         automaticallyImplyLeading: false,
       ),
       body: Padding(
