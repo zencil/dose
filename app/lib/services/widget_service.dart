@@ -77,8 +77,8 @@ class WidgetService {
         name: androidWidgetName,
         iOSName: iOSWidgetName,
       );
-    } catch (e) {
-      print('Widget update failed: $e');
+    } catch (_) {
+      // Silently handle widget update failures
     }
   }
 }
