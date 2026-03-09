@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -7,6 +8,53 @@ import 'package:app/models/cabinet_model.dart';
 import 'package:app/models/intake_model.dart';
 import 'package:app/db/intake_log.dart' as log_db;
 import 'package:app/services/widget_service.dart';
+
+/// Handles the "Done" action from a notification by updating stock and logging intake.
+Future<void> _handleDoneAction(int id) async {
+  final med = await DatabaseHelper.instance.readMedicine(id);
+  if (med != null && med.currstock > 0) {
+    final updatedMed = Cabinet(
+      id: med.id,
+      name: med.name,
+      dosage: med.dosage,
+      time: med.time,
+      initstock: med.initstock,
+      currstock: med.currstock - 1,
+      priority: med.priority,
+    );
+    await DatabaseHelper.instance.updateMedicine(updatedMed);
+
+    final now = DateTime.now();
+    String timeString =
+        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+    String dateString =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+    final intake = Intake(
+      id: med.id,
+      name: med.name,
+      ttime: med.time,
+      time: timeString,
+      date: dateString,
+      currstock: med.currstock - 1,
+    );
+    await log_db.DatabaseHelper.instance.createlog(intake);
+    await WidgetService.updateWidgetState();
+  }
+}
+
+@pragma('vm:entry-point')
+Future<void> onBackgroundNotificationResponse(NotificationResponse response) async {
+  // Background actions run in a separate isolate — initialize Flutter bindings first
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (response.payload != null && response.payload!.startsWith('med_')) {
+    final int id = int.parse(response.payload!.split('_')[1]);
+    if (response.actionId == 'action_done') {
+      await _handleDoneAction(id);
+    }
+  }
+}
 
 class NotificationHelper {
   static final NotificationHelper _instance = NotificationHelper._internal();
@@ -32,43 +80,13 @@ class NotificationHelper {
       onDidReceiveNotificationResponse: (NotificationResponse response) async {
         if (response.payload != null && response.payload!.startsWith('med_')) {
           final int id = int.parse(response.payload!.split('_')[1]);
-
           if (response.actionId == 'action_done') {
-            final med = await DatabaseHelper.instance.readMedicine(id);
-            if (med != null && med.currstock > 0) {
-              final updatedMed = Cabinet(
-                id: med.id,
-                name: med.name,
-                dosage: med.dosage,
-                time: med.time,
-                initstock: med.initstock,
-                currstock: med.currstock - 1,
-                priority: med.priority,
-              );
-              await DatabaseHelper.instance.updateMedicine(updatedMed);
-
-              final now = DateTime.now();
-              String timeString =
-                  "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
-              String dateString =
-                  "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-
-              final intake = Intake(
-                id: med.id,
-                name: med.name,
-                ttime: med.time,
-                time: timeString,
-                date: dateString,
-                currstock: med.currstock - 1,
-              );
-              await log_db.DatabaseHelper.instance.createlog(intake);
-              await WidgetService.updateWidgetState();
-            }
+            await _handleDoneAction(id);
           }
         }
       },
+      onDidReceiveBackgroundNotificationResponse: onBackgroundNotificationResponse,
     );
-
   }
 
   Future<void> scheduleMedicineNotification(
@@ -101,8 +119,16 @@ class NotificationHelper {
           importance: Importance.max,
           priority: Priority.high,
           actions: [
-            AndroidNotificationAction('action_done', 'Done'),
-            AndroidNotificationAction('action_not_taken', 'Not taken'),
+            AndroidNotificationAction(
+              'action_done',
+              'Done',
+              showsUserInterface: true,
+            ),
+            AndroidNotificationAction(
+              'action_not_taken',
+              'Not taken',
+              showsUserInterface: true,
+            ),
           ],
         );
 
