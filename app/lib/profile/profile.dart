@@ -1,12 +1,113 @@
 import 'package:flutter/material.dart';
+import 'package:app/profile/cabinet/cabinet.dart';
+import 'package:app/profile/about.dart';
+import 'package:app/profile/settings/settings.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Profile Content'),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _buildOutlinedButton(
+              context: context,
+              label: 'Profile',
+              icon: Icons.person_outline,
+              onTap: () {
+                // Future profile functionalities
+              },
+            ),
+            const SizedBox(height: 20),
+            _buildOutlinedButton(
+              context: context,
+              label: 'Cabinet',
+              icon: Icons.medication_outlined,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CabinetPage()),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            _buildOutlinedButton(
+              context: context,
+              label: 'Settings',
+              icon: Icons.settings_outlined,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            _buildOutlinedButton(
+              context: context,
+              label: 'About',
+              icon: Icons.info_outline,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AboutPage()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOutlinedButton({
+    required BuildContext context,
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return SizedBox(
+      width: 350,
+      child: OutlinedButton(
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outlineVariant,
+            width: 1.5,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Row(
+          children: [
+            // MD3 Icon on the left side
+            Icon(icon, size: 28, color: Theme.of(context).colorScheme.onSurface),
+            const SizedBox(width: 16),
+            
+            // Label text following the icon
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            
+            // Pushes the arrow to the right edge
+            const Spacer(),
+            
+            // Arrow symbol at the right end
+            Icon(Icons.arrow_forward_ios, size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ],
+        ),
+      ),
     );
   }
 }

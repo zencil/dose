@@ -67,37 +67,6 @@ class _HomePageState extends State<HomePage> {
     final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
-        Row(
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CabinetPage()),
-                );
-              },
-              child: const Text('Cabinet'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AboutPage()),
-                );
-              },
-              child: const Text('About'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SettingsPage()),
-                );
-              },
-              child: const Text('Settings'),
-            ),
-          ],
-        ),
         Expanded(
           child: FutureBuilder<List<Cabinet>>(
             future: _medicinesFuture,
