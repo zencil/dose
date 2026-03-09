@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app/services/theme_service.dart';
+import 'package:app/profile/about_page.dart';
+import 'package:app/profile/help_support.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -35,13 +37,78 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         centerTitle: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_buildThemeSelector(context)],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSectionTitle('Standard'),
+              _buildThemeSelector(context),
+              _buildListTile(
+                icon: Icons.notifications_none_outlined,
+                title: 'Notifications',
+                subtitle: 'Manage your alerts',
+                onTap: () {
+                  // TODO: Implement notification settings
+                },
+              ),
+              const Divider(height: 32),
+              _buildSectionTitle('Support'),
+              _buildListTile(
+                icon: Icons.help_outline,
+                title: 'Help and Support',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HelpSupportPage(),
+                    ),
+                  );
+                },
+              ),
+              _buildListTile(
+                icon: Icons.info_outline,
+                title: 'About',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AboutPage()),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListTile({
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: subtitle != null ? Text(subtitle) : null,
+      onTap: onTap,
     );
   }
 
@@ -56,7 +123,6 @@ class _SettingsPageState extends State<SettingsPage> {
         if (currentMode == ThemeMode.dark) subtitleText = 'Dark';
 
         return ListTile(
-          contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.brightness_6),
           title: const Text('Theme'),
           subtitle: Text(subtitleText),
