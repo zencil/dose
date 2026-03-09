@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:app/models/cabinet_model.dart';
 import 'package:app/db/cabinet_db.dart';
 import 'package:app/home/add_menu.dart';
+import 'package:app/services/widget_service.dart';
 
 class CabinetPage extends StatefulWidget {
   const CabinetPage({super.key});
@@ -80,6 +81,7 @@ class _CabinetPageState extends State<CabinetPage> {
 
   void _deleteMedicine(int id) async {
     await DatabaseHelper.instance.deleteMedicine(id);
+    await WidgetService.updateWidgetState();
     _refreshMedicines();
   }
 

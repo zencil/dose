@@ -6,6 +6,7 @@ import 'package:app/db/cabinet_db.dart';
 import 'package:app/models/cabinet_model.dart';
 import 'package:app/models/intake_model.dart';
 import 'package:app/db/intake_log.dart' as log_db;
+import 'package:app/services/widget_service.dart';
 
 class NotificationHelper {
   static final NotificationHelper _instance = NotificationHelper._internal();
@@ -61,6 +62,7 @@ class NotificationHelper {
                 currstock: med.currstock - 1,
               );
               await log_db.DatabaseHelper.instance.createlog(intake);
+              await WidgetService.updateWidgetState();
             }
           }
         }
