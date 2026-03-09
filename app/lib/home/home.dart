@@ -32,7 +32,12 @@ class _HomePageState extends State<HomePage> {
 
     final result = await showMenu(
       context: context,
-      position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx, position.dy),
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        position.dx,
+        position.dy,
+      ),
       items: [
         PopupMenuItem(
           value: 'delete',
@@ -48,15 +53,11 @@ class _HomePageState extends State<HomePage> {
     );
 
     if (result == 'delete') {
-<<<<<<< HEAD
       await DatabaseHelper.instance.deleteMedicine(id);
       await NotificationHelper().cancelNotification(id);
       await AlarmService().cancelAlarm(id);
-=======
-      await DatabaseHelper.instance.deletemed(id);
->>>>>>> ecb25a6
       setState(() {
-         _refreshList();
+        _refreshList();
       });
     }
   }
@@ -72,9 +73,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const CabinetPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const CabinetPage()),
                 );
               },
               child: const Text('Cabinet'),
@@ -83,9 +82,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const AboutPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const AboutPage()),
                 );
               },
               child: const Text('About'),
@@ -94,9 +91,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const SettingsPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
                 );
               },
               child: const Text('Settings'),
@@ -134,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               }
-              
+
               return ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: medicines.length,
@@ -150,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.circular(16),
                         side: BorderSide(color: colorScheme.outlineVariant),
                       ),
-                      color: colorScheme.surfaceContainer, 
+                      color: colorScheme.surfaceContainer,
                       margin: const EdgeInsets.only(bottom: 12),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -163,7 +158,10 @@ class _HomePageState extends State<HomePage> {
                                 color: colorScheme.tertiaryContainer,
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(Icons.medication, color: colorScheme.onTertiaryContainer),
+                              child: Icon(
+                                Icons.medication,
+                                color: colorScheme.onTertiaryContainer,
+                              ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -205,7 +203,10 @@ class _HomePageState extends State<HomePage> {
                                 color: colorScheme.primaryContainer,
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Icon(Icons.check, color: colorScheme.onPrimaryContainer),
+                              child: Icon(
+                                Icons.check,
+                                color: colorScheme.onPrimaryContainer,
+                              ),
                             ),
                           ],
                         ),

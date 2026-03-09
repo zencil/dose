@@ -40,18 +40,14 @@ CREATE TABLE cabinet (
 ''');
   }
 
-  Future<int> createmed(Cabinet cabinet) async {
+  Future<int> createMedicine(Cabinet cabinet) async {
     final db = await instance.database;
     return await db.insert('cabinet', cabinet.toMap());
   }
 
   Future<Cabinet?> readMedicine(int id) async {
     final db = await instance.database;
-    final maps = await db.query(
-      'cabinet',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final maps = await db.query('cabinet', where: 'id = ?', whereArgs: [id]);
 
     if (maps.isNotEmpty) {
       return Cabinet.fromMap(maps.first);
@@ -66,7 +62,6 @@ CREATE TABLE cabinet (
     return result.map((json) => Cabinet.fromMap(json)).toList();
   }
 
-<<<<<<< HEAD
   Future<int> updateMedicine(Cabinet medicine) async {
     final db = await instance.database;
     return await db.update(
@@ -78,14 +73,7 @@ CREATE TABLE cabinet (
   }
 
   Future<int> deleteMedicine(int id) async {
-=======
-  Future<int> deletemed(int id) async {
->>>>>>> ecb25a6
     final db = await instance.database;
-    return await db.delete(
-      'cabinet',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('cabinet', where: 'id = ?', whereArgs: [id]);
   }
 }
