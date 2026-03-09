@@ -88,7 +88,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
 
       int savedId;
       if (widget.medicineToEdit == null) {
-        savedId = await DatabaseHelper.instance.createmed(medicine);
+        savedId = await DatabaseHelper.instance.createMedicine(medicine);
       } else {
         await DatabaseHelper.instance.updateMedicine(medicine);
         savedId = medicine.id!;
