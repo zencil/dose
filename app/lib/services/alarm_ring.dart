@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
 import 'package:app/db/cabinetdb.dart';
 import 'package:app/models/cabinet_model.dart';
-import 'package:app/models/intake.dart';
+import 'package:app/models/intake_model.dart';
 import 'package:app/db/intake_log.dart' as log_db;
 
 class AlarmRingScreen extends StatelessWidget {
@@ -37,7 +37,9 @@ class AlarmRingScreen extends StatelessWidget {
                 const SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: () async {
-                    final med = await DatabaseHelper.instance.readMedicine(alarmSettings.id);
+                    final med = await DatabaseHelper.instance.readMedicine(
+                      alarmSettings.id,
+                    );
                     if (med != null && med.currstock > 0) {
                       final updatedMed = Cabinet(
                         id: med.id,
@@ -51,8 +53,10 @@ class AlarmRingScreen extends StatelessWidget {
                       await DatabaseHelper.instance.updateMedicine(updatedMed);
 
                       final now = DateTime.now();
-                      String timeString = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
-                      String dateString = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+                      String timeString =
+                          "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+                      String dateString =
+                          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
 
                       final intake = Intake(
                         id: med.id,

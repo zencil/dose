@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:app/home/homepage.dart';
+import 'package:app/home/home_page.dart';
 import 'package:app/analytics/analytics.dart';
 import 'package:app/profile/profile_page.dart';
 import 'package:app/home/add_menu.dart';

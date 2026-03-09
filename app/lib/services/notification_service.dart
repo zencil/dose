@@ -4,7 +4,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:app/db/cabinetdb.dart';
 import 'package:app/models/cabinet_model.dart';
-import 'package:app/models/intake.dart';
+import 'package:app/models/intake_model.dart';
 import 'package:app/db/intake_log.dart' as log_db;
 
 class NotificationHelper {
@@ -12,22 +12,26 @@ class NotificationHelper {
   factory NotificationHelper() => _instance;
   NotificationHelper._internal();
 
-  final FlutterLocalNotificationsPlugin plugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin plugin =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     tz.initializeTimeZones();
     final TimezoneInfo timeZoneInfo = await FlutterTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(timeZoneInfo.identifier));
 
-    const AndroidInitializationSettings androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings settings = InitializationSettings(android: androidSettings);
-    
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const InitializationSettings settings = InitializationSettings(
+      android: androidSettings,
+    );
+
     await plugin.initialize(
       settings: settings,
       onDidReceiveNotificationResponse: (NotificationResponse response) async {
         if (response.payload != null && response.payload!.startsWith('med_')) {
           final int id = int.parse(response.payload!.split('_')[1]);
-          
+
           if (response.actionId == 'action_done') {
             final med = await DatabaseHelper.instance.readMedicine(id);
             if (med != null && med.currstock > 0) {
@@ -41,11 +45,13 @@ class NotificationHelper {
                 priority: med.priority,
               );
               await DatabaseHelper.instance.updateMedicine(updatedMed);
-              
+
               final now = DateTime.now();
-              String timeString = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
-              String dateString = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-              
+              String timeString =
+                  "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+              String dateString =
+                  "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
               final intake = Intake(
                 id: med.id,
                 name: med.name,
@@ -61,35 +67,52 @@ class NotificationHelper {
       },
     );
 
-    final androidImplementation = plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    final androidImplementation = plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     await androidImplementation?.requestNotificationsPermission();
     await androidImplementation?.requestExactAlarmsPermission();
   }
 
-  Future<void> scheduleMedicineNotification(int id, String name, String timeString) async {
+  Future<void> scheduleMedicineNotification(
+    int id,
+    String name,
+    String timeString,
+  ) async {
     final parts = timeString.split(':');
     final int hour = int.parse(parts[0]);
     final int minute = int.parse(parts[1]);
 
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
 
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'priority_channel',
-      'Priority Reminders',
-      importance: Importance.max,
-      priority: Priority.high,
-      actions: [
-        AndroidNotificationAction('action_done', 'Done'),
-        AndroidNotificationAction('action_not_taken', 'Not taken'),
-      ],
-    );
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'priority_channel',
+          'Priority Reminders',
+          importance: Importance.max,
+          priority: Priority.high,
+          actions: [
+            AndroidNotificationAction('action_done', 'Done'),
+            AndroidNotificationAction('action_not_taken', 'Not taken'),
+          ],
+        );
 
-    const NotificationDetails details = NotificationDetails(android: androidDetails);
+    const NotificationDetails details = NotificationDetails(
+      android: androidDetails,
+    );
 
     await plugin.zonedSchedule(
       id: id,
@@ -98,12 +121,12 @@ class NotificationHelper {
       scheduledDate: scheduledDate,
       notificationDetails: details,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time, 
+      matchDateTimeComponents: DateTimeComponents.time,
       payload: 'med_$id',
     );
   }
 
   Future<void> cancelNotification(int id) async {
-  await plugin.cancel(id: id); 
+    await plugin.cancel(id: id);
   }
 }
