@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:app/home/home.dart';
+import 'package:app/home/homepage.dart';
 import 'package:app/analytics/analytics.dart';
-import 'package:app/profile/profile.dart';
+import 'package:app/profile/profile_page.dart';
 import 'package:app/home/add_menu.dart';
 import 'dart:async';
 import 'package:alarm/alarm.dart';
@@ -18,7 +18,7 @@ class Dose extends StatefulWidget {
 class _DoseState extends State<Dose> {
   int _selectedIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  
+
   Key _homeKey = UniqueKey();
 
   List<Widget> _pages() => [
@@ -33,7 +33,7 @@ class _DoseState extends State<Dose> {
         return "Dose";
       case 1:
         return "Analytics";
-      case 2: 
+      case 2:
         final hour = DateTime.now().hour;
         if (hour < 12) {
           return "Good Morning";
@@ -75,23 +75,21 @@ class _DoseState extends State<Dose> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Padding(
-          padding: const EdgeInsets.only(top: 70.0), 
+          padding: const EdgeInsets.only(top: 70.0),
           child: Text(
             _getAppBarTitle(_selectedIndex),
             style: TextStyle(
-              fontWeight: FontWeight.bold, 
-              fontSize: 35, 
-              color: Theme.of(context).colorScheme.primary, 
+              fontWeight: FontWeight.bold,
+              fontSize: 35,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
         centerTitle: false,
-        toolbarHeight: 110, 
-        
-        automaticallyImplyLeading: false, 
-        actions: const [
-          SizedBox.shrink(), 
-        ], 
+        toolbarHeight: 110,
+
+        automaticallyImplyLeading: false,
+        actions: const [SizedBox.shrink()],
       ),
       endDrawer: Drawer(
         width: MediaQuery.of(context).size.width,
@@ -119,9 +117,21 @@ class _DoseState extends State<Dose> {
           });
         },
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.analytics_outlined), selectedIcon: Icon(Icons.analytics), label: 'Analytics'),
-          NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'Profile'),
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.analytics_outlined),
+            selectedIcon: Icon(Icons.analytics),
+            label: 'Analytics',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: 'Profile',
+          ),
         ],
       ),
       body: _pages()[_selectedIndex],
