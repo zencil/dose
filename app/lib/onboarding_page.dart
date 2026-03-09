@@ -73,9 +73,9 @@ class _OnboardingPageState extends State<OnboardingPage>
     await prefs.setString('user_sex', _selectedSex);
 
     if (mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const Dose()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const Dose()));
     }
   }
 
@@ -98,7 +98,9 @@ class _OnboardingPageState extends State<OnboardingPage>
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                       height: 4,
-                      margin: EdgeInsets.only(right: i < _totalPages - 1 ? 6 : 0),
+                      margin: EdgeInsets.only(
+                        right: i < _totalPages - 1 ? 6 : 0,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(2),
                         color: i <= _currentPage
@@ -167,10 +169,7 @@ class _OnboardingPageState extends State<OnboardingPage>
           const SizedBox(height: 16),
           Text(
             'Your personal medicine companion',
-            style: TextStyle(
-              fontSize: 16,
-              color: cs.onSurfaceVariant,
-            ),
+            style: TextStyle(fontSize: 16, color: cs.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const Spacer(flex: 3),
@@ -266,10 +265,7 @@ class _OnboardingPageState extends State<OnboardingPage>
           const SizedBox(height: 12),
           Text(
             'Dose needs a few permissions to work properly.',
-            style: TextStyle(
-              fontSize: 14,
-              color: cs.onSurfaceVariant,
-            ),
+            style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -309,10 +305,11 @@ class _OnboardingPageState extends State<OnboardingPage>
                     : Icons.security_rounded,
               ),
               label: Text(
-                (_notificationGranted && _alarmGranted)
-                    ? 'Continue'
-                    : 'Grant',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                (_notificationGranted && _alarmGranted) ? 'Continue' : 'Grant',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               style: FilledButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -339,7 +336,9 @@ class _OnboardingPageState extends State<OnboardingPage>
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: granted ? cs.primary.withValues(alpha: 0.5) : cs.outlineVariant,
+          color: granted
+              ? cs.primary.withValues(alpha: 0.5)
+              : cs.outlineVariant,
         ),
       ),
       color: granted
@@ -380,10 +379,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: cs.onSurfaceVariant,
-                    ),
+                    style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -430,10 +426,7 @@ class _OnboardingPageState extends State<OnboardingPage>
             const SizedBox(height: 8),
             Text(
               'Tell us a little about yourself.',
-              style: TextStyle(
-                fontSize: 14,
-                color: cs.onSurfaceVariant,
-              ),
+              style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
             ),
             const SizedBox(height: 36),
 
@@ -484,10 +477,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                 fillColor: cs.surfaceContainer,
               ),
               items: _sexOptions.map((option) {
-                return DropdownMenuItem(
-                  value: option,
-                  child: Text(option),
-                );
+                return DropdownMenuItem(value: option, child: Text(option));
               }).toList(),
               onChanged: (value) {
                 if (value != null) {
