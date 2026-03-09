@@ -105,6 +105,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
+  fl_chart:
+    dependency: "direct main"
+    description:
+      name: fl_chart
+      sha256: "5276944c6ffc975ae796569a826c38a62d2abcf264e26b88fa6f482e107f4237"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.70.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -457,10 +465,10 @@ packages:
     dependency: transitive
     description:
       name: sqflite_android
-      sha256: ecd684501ebc2ae9a83536e8b15731642b9570dc8623e0073d227d0ee2bfea88
+      sha256: "881e28efdcc9950fd8e9bb42713dcf1103e62a2e7168f23c9338d82db13dec40"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.2+2"
+    version: "2.4.2+3"
   sqflite_common:
     dependency: transitive
     description:
@@ -533,7 +541,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.9"
-<<<<<<< HEAD
   timezone:
     dependency: "direct main"
     description:
@@ -614,8 +621,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.5"
-=======
->>>>>>> ecb25a6
   vector_math:
     dependency: transitive
     description:

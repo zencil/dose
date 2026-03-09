@@ -27,7 +27,29 @@ class _HistoryPageState extends State<HistoryPage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Activity Log')),
+      appBar: AppBar(
+        toolbarHeight: 130,
+        leading: Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: BackButton(onPressed: () => Navigator.pop(context)),
+          ),
+        ),
+        titleSpacing: -37,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 70.0),
+          child: Text(
+            'History',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 35,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ),
+        centerTitle: false,
+      ),
       body: FutureBuilder<List<Intake>>(
         future: _logsFuture,
         builder: (context, snapshot) {

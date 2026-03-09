@@ -88,7 +88,7 @@ class _CabinetPageState extends State<CabinetPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        toolbarHeight: 110,
+        toolbarHeight: 130,
         leading: Align(
           alignment: Alignment.topCenter,
           child: Padding(

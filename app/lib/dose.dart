@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/home/home_page.dart';
-import 'package:app/analytics/analytics.dart';
+import 'package:app/analytics/analytics_page.dart';
 import 'package:app/profile/profile_page.dart';
 import 'package:app/home/add_menu.dart';
 import 'dart:async';
@@ -84,7 +84,7 @@ class _DoseState extends State<Dose> {
           ),
         ),
         centerTitle: false,
-        toolbarHeight: 110,
+        toolbarHeight: 130,
 
         automaticallyImplyLeading: false,
         actions: const [SizedBox.shrink()],
