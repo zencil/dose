@@ -6,6 +6,7 @@ import 'package:app/home/add_menu.dart';
 import 'dart:async';
 import 'package:alarm/alarm.dart';
 import 'package:app/services/alarm_ring.dart';
+import 'package:app/db/log_dumper.dart';
 
 class Dose extends StatefulWidget {
   const Dose({super.key});
@@ -51,6 +52,7 @@ class _DoseState extends State<Dose> {
   @override
   void initState() {
     super.initState();
+    dumpLogs(); // Helpful to see the intake logs on startup
     ringSubscription = Alarm.ringStream.stream.listen((alarmSettings) {
       Navigator.push(
         context,

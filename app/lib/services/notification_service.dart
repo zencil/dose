@@ -4,6 +4,8 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:app/db/cabinetdb.dart';
 import 'package:app/models/cabinet_model.dart';
+import 'package:app/models/intake.dart';
+import 'package:app/db/intake_log.dart' as log_db;
 
 class NotificationHelper {
   static final NotificationHelper _instance = NotificationHelper._internal();
@@ -39,6 +41,20 @@ class NotificationHelper {
                 priority: med.priority,
               );
               await DatabaseHelper.instance.updateMedicine(updatedMed);
+              
+              final now = DateTime.now();
+              String timeString = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+              String dateString = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+              
+              final intake = Intake(
+                id: med.id,
+                name: med.name,
+                ttime: med.time,
+                time: timeString,
+                date: dateString,
+                currstock: med.currstock - 1,
+              );
+              await log_db.DatabaseHelper.instance.createlog(intake);
             }
           }
         }
