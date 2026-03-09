@@ -4,7 +4,7 @@ import 'package:app/main.dart';
 void main() {
   testWidgets('App launches and displays title', (WidgetTester tester) async {
     // 1. Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const MyApp(onboardingComplete: true));
 
     // 2. Verify that the "Dose" title is present in the AppBar.
     // Note: We use find.text containing 'Dose' because the actual text might be 

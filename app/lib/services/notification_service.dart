@@ -67,12 +67,6 @@ class NotificationHelper {
       },
     );
 
-    final androidImplementation = plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >();
-    await androidImplementation?.requestNotificationsPermission();
-    await androidImplementation?.requestExactAlarmsPermission();
   }
 
   Future<void> scheduleMedicineNotification(
