@@ -5,7 +5,7 @@ class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
   Future<void> _launchGitHub() async {
-    final Uri url = Uri.parse('https://github.com/orbitronhd-dev/dose');
+    final Uri url = Uri.parse('https://github.com/orbitronhd-org/dose');
     if (!await launchUrl(url)) {
       debugPrint('Could not launch $url');
     }

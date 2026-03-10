@@ -34,7 +34,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
     if (widget.medicineToEdit != null) {
       final med = widget.medicineToEdit!;
       _nameController.text = med.name;
-      _dosageController.text = med.dosage.replaceAll(' mg', '');
+      _dosageController.text = med.dosage.replaceAll(' pills/spoons', '');
       _stockController.text = med.currstock.toString();
       _priority = med.priority;
 
@@ -78,7 +78,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
       final medicine = Cabinet(
         id: widget.medicineToEdit?.id,
         name: _nameController.text,
-        dosage: "${_dosageController.text} mg",
+        dosage: "${_dosageController.text} pills/spoons",
         time: timeString,
         currstock: int.tryParse(_stockController.text) ?? 0,
         initstock: widget.medicineToEdit != null
@@ -95,12 +95,22 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         savedId = medicine.id!;
       }
 
+      // When editing, cancel old alarm/notification before rescheduling
+      if (widget.medicineToEdit != null) {
+        await AlarmService().cancelAlarm(savedId);
+        await NotificationHelper().cancelNotification(savedId);
+      }
+
       await AlarmService().scheduleMedicineAlarm(savedId, medicine);
-      await NotificationHelper().scheduleMedicineNotification(
-        savedId,
-        medicine.name,
-        timeString,
-      );
+      // Only schedule a notification for non-high priority medicines
+      // (high priority already gets a full-screen alarm)
+      if (medicine.priority != 2) {
+        await NotificationHelper().scheduleMedicineNotification(
+          savedId,
+          medicine.name,
+          timeString,
+        );
+      }
 
       // Trigger widget update
       await WidgetService.updateWidgetState();
@@ -111,6 +121,29 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         Navigator.pop(context);
       }
     }
+  }
+
+  InputDecoration _buildInputDecoration(String label, {String? suffixText}) {
+    final cs = Theme.of(context).colorScheme;
+    return InputDecoration(
+      labelText: label,
+      suffixText: suffixText,
+      filled: true,
+      fillColor: cs.surfaceContainer,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(20),
+        borderSide: const BorderSide(width: 3.0),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(20),
+        borderSide: BorderSide(width: 3.0, color: cs.outlineVariant),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(20),
+        borderSide: BorderSide(width: 3.0, color: cs.primary),
+      ),
+    );
   }
 
   @override
@@ -144,7 +177,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         automaticallyImplyLeading: false,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Form(
           key: _formKey,
           child: ListView(
@@ -152,10 +185,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: "Medicine Name",
-                  border: OutlineInputBorder(),
-                ),
+                decoration: _buildInputDecoration("Medicine Name"),
                 validator: (value) => value!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
@@ -163,11 +193,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
               TextFormField(
                 controller: _dosageController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: "Dosage",
-                  suffixText: "mg",
-                  border: OutlineInputBorder(),
-                ),
+                decoration: _buildInputDecoration("Dosage", suffixText: "pills/spoons"),
                 validator: (value) => value!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
@@ -179,14 +205,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                     child: InkWell(
                       onTap: () => _selectTime(context),
                       child: InputDecorator(
-                        decoration: const InputDecoration(
-                          labelText: "Time",
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 16,
-                          ),
-                        ),
+                        decoration: _buildInputDecoration("Time"),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -208,11 +227,9 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                   Expanded(
                     child: DropdownButtonFormField<int>(
                       initialValue: _cycle,
-                      decoration: const InputDecoration(
-                        labelText: "Cycle",
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
+                      decoration: _buildInputDecoration("Cycle").copyWith(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
                           vertical: 16,
                         ),
                       ),
@@ -233,37 +250,30 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
 
               TextFormField(
                 controller: _conditionController,
-                decoration: const InputDecoration(
-                  labelText: "Condition",
-                  border: OutlineInputBorder(),
-                ),
+                decoration: _buildInputDecoration("Condition"),
               ),
               const SizedBox(height: 16),
 
               TextFormField(
                 controller: _doctorController,
-                decoration: const InputDecoration(
-                  labelText: "Prescribed By",
-                  border: OutlineInputBorder(),
-                ),
+                decoration: _buildInputDecoration("Prescribed By"),
               ),
               const SizedBox(height: 16),
 
               TextFormField(
                 controller: _stockController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: "Current Stock",
-                  border: OutlineInputBorder(),
-                ),
+                decoration: _buildInputDecoration("Current Stock"),
               ),
               const SizedBox(height: 16),
 
               DropdownButtonFormField<int>(
                 initialValue: _priority,
-                decoration: const InputDecoration(
-                  labelText: "Priority",
-                  border: OutlineInputBorder(),
+                decoration: _buildInputDecoration("Priority").copyWith(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                 ),
                 items: const [
                   DropdownMenuItem(value: 2, child: Text("High")),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:app/services/analytics_service.dart';
 
 class AnalyticsPage extends StatefulWidget {
@@ -31,21 +32,83 @@ class _AnalyticsPageState extends State<AnalyticsPage>
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        setState(() => _loadData());
-      },
-      child: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        children: [
-          _buildAdherencePieCard(context),
-          const SizedBox(height: 16),
-          _buildAdherenceTrendCard(context),
-          const SizedBox(height: 16),
-          _buildStockTimelineCard(context),
-          const SizedBox(height: 24),
-        ],
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _shareReport,
+        icon: const Icon(Icons.share),
+        label: const Text('Export'),
       ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() => _loadData());
+        },
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          children: [
+            _buildAdherencePieCard(context),
+            const SizedBox(height: 16),
+            _buildAdherenceTrendCard(context),
+            const SizedBox(height: 16),
+            _buildStockTimelineCard(context),
+            const SizedBox(height: 80),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _shareReport() async {
+    final adherence = await _adherenceFuture;
+    final monthly = await _monthlyFuture;
+    final stock = await _stockFuture;
+
+    final buf = StringBuffer();
+    buf.writeln('📋 Dose — Medicine Adherence Report');
+    buf.writeln('Generated: ${DateTime.now().toString().substring(0, 16)}');
+    buf.writeln();
+
+    // Adherence overview
+    buf.writeln('── Adherence Overview ──');
+    if (adherence.total > 0) {
+      final takenPct = ((adherence.taken / adherence.total) * 100).toStringAsFixed(1);
+      final latePct = ((adherence.late / adherence.total) * 100).toStringAsFixed(1);
+      final skippedPct = ((adherence.skipped / adherence.total) * 100).toStringAsFixed(1);
+      buf.writeln('On Time: ${adherence.taken} ($takenPct%)');
+      buf.writeln('Late:    ${adherence.late} ($latePct%)');
+      buf.writeln('Skipped: ${adherence.skipped} ($skippedPct%)');
+      buf.writeln('Total:   ${adherence.total} doses tracked');
+    } else {
+      buf.writeln('No data recorded yet.');
+    }
+    buf.writeln();
+
+    // Monthly trend
+    buf.writeln('── Monthly Adherence Trend ──');
+    if (monthly.isNotEmpty) {
+      for (final m in monthly) {
+        buf.writeln('${m.month}: ${m.percent.toStringAsFixed(1)}%');
+      }
+    } else {
+      buf.writeln('No monthly data available.');
+    }
+    buf.writeln();
+
+    // Stock summary
+    buf.writeln('── Current Stock ──');
+    if (stock.isNotEmpty) {
+      for (final s in stock) {
+        final current = s.points.isNotEmpty ? s.points.last.stock : s.initStock;
+        buf.writeln('${s.name}: $current remaining (started with ${s.initStock})');
+      }
+    } else {
+      buf.writeln('No stock data available.');
+    }
+    buf.writeln();
+    buf.writeln('— Sent from Dose app');
+
+    await SharePlus.instance.share(
+      ShareParams(text: buf.toString()),
     );
   }
 
@@ -57,7 +120,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: cs.outlineVariant),
+        side: BorderSide(color: cs.outlineVariant, width: 3.0),
       ),
       color: cs.surfaceContainer,
       child: Padding(
@@ -179,8 +242,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
         titleStyle: TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
-          shadows: const [Shadow(blurRadius: 2, color: Colors.black38)],
+          color: cs.surface,
         ),
         badgePositionPercentageOffset: isTouched ? 1.2 : null,
       );
@@ -230,7 +292,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: cs.outlineVariant),
+        side: BorderSide(color: cs.outlineVariant, width: 3.0),
       ),
       color: cs.surfaceContainer,
       child: Padding(
@@ -432,7 +494,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: cs.outlineVariant),
+        side: BorderSide(color: cs.outlineVariant, width: 3.0),
       ),
       color: cs.surfaceContainer,
       child: Padding(

@@ -56,6 +56,7 @@ class _OnboardingPageState extends State<OnboardingPage>
   Future<void> _requestPermissions() async {
     final notifStatus = await Permission.notification.request();
     final alarmStatus = await Permission.scheduleExactAlarm.request();
+    await Permission.ignoreBatteryOptimizations.request();
 
     setState(() {
       _notificationGranted = notifStatus.isGranted;

@@ -15,10 +15,7 @@ class AlarmService {
       vibrate: true,
       warningNotificationOnKill: true,
       androidFullScreenIntent: true,
-      volumeSettings: VolumeSettings.fade(
-        volume: 1.0,
-        fadeDuration: const Duration(seconds: 3),
-      ),
+      volumeSettings: const VolumeSettings.fixed(volume: 1.0),
       notificationSettings: NotificationSettings(
         title: 'Test Alarm',
         body: 'Testing the alarm system.',
@@ -61,10 +58,7 @@ class AlarmService {
     vibrate: true,
     warningNotificationOnKill: true,
     androidFullScreenIntent: true,
-    volumeSettings: VolumeSettings.fade(
-      volume: 1.0,
-      fadeDuration: const Duration(seconds: 3),
-    ),
+    volumeSettings: const VolumeSettings.fixed(volume: 1.0),
     notificationSettings: NotificationSettings(
       title: 'Time to take ${medicine.name}',
       body: 'Please take your scheduled dose.',

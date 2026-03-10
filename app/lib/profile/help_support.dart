@@ -7,7 +7,7 @@ class HelpSupportPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 110,
+        toolbarHeight: 130,
         leading: Align(
           alignment: Alignment.topCenter,
           child: Padding(
@@ -28,6 +28,7 @@ class HelpSupportPage extends StatelessWidget {
           ),
         ),
         centerTitle: false,
+        actions: const [SizedBox.shrink()],
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -37,9 +38,9 @@ class HelpSupportPage extends StatelessWidget {
             Text(
               'Contact Us',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
             const SizedBox(height: 16),
             _buildContactItem(
@@ -52,9 +53,9 @@ class HelpSupportPage extends StatelessWidget {
             Text(
               'FAQ',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -82,10 +83,7 @@ class HelpSupportPage extends StatelessWidget {
           children: [
             Text(
               name,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             ),
             Text(
               number,

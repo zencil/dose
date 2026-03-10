@@ -51,7 +51,7 @@ class AnalyticsService {
   AnalyticsService._init();
 
   /// Tolerance in minutes for classifying a dose as "on time" vs "late".
-  static const int _lateThresholdMinutes = 15;
+  static const int _lateThresholdMinutes = 5;
 
   /// Parse a time string "HH:MM" to minutes since midnight.
   int _timeToMinutes(String time) {
