@@ -25,30 +25,45 @@ class DatabaseHelper {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
     const integerType = 'INTEGER NOT NULL';
-    const timeType = 'TIME NOT NULL';
 
     await db.execute('''
 CREATE TABLE intake_log ( 
   id $idType, 
   name $textType,
-  ttime $timeType,
-  time $timeType,
+  ttime $textType,
+  time $textType,
   date $textType,
-  currstock $integerType,
-  FOREIGN KEY (id) REFERENCES cabinet (id),
-  FOREIGN KEY (name) REFERENCES cabinet (name),
-  FOREIGN KEY (ttime) REFERENCES cabinet (time),
-  FOREIGN KEY (currstock) REFERENCES cabinet (currstock)
+  currstock $integerType
   )''');
   }
 
   Future<int> createlog(Intake intake) async {
     final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS intake_log ( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        name TEXT NOT NULL,
+        ttime TEXT NOT NULL,
+        time TEXT NOT NULL,
+        date TEXT NOT NULL,
+        currstock INTEGER NOT NULL
+      )
+    ''');
     return await db.insert('intake_log', intake.toMap());
   }
 
   Future<List<Intake>> readintakelog() async {
     final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS intake_log ( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        name TEXT NOT NULL,
+        ttime TEXT NOT NULL,
+        time TEXT NOT NULL,
+        date TEXT NOT NULL,
+        currstock INTEGER NOT NULL
+      )
+    ''');
     const orderBy = 'time ASC';
     final result = await db.query('intake_log', orderBy: orderBy);
     return result.map((json) => Intake.fromMap(json)).toList();

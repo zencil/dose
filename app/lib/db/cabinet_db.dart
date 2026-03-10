@@ -25,14 +25,13 @@ class DatabaseHelper {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
     const integerType = 'INTEGER NOT NULL';
-    const timeType = 'TIME NOT NULL';
 
     await db.execute('''
 CREATE TABLE cabinet ( 
   id $idType, 
   name $textType,
-  dosage $integerType,
-  time $timeType,
+  dosage $textType,
+  time $textType,
   currstock $integerType,
   initstock $integerType,
   priority $integerType
@@ -42,11 +41,33 @@ CREATE TABLE cabinet (
 
   Future<int> createMedicine(Cabinet cabinet) async {
     final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS cabinet ( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        name TEXT NOT NULL,
+        dosage TEXT NOT NULL,
+        time TEXT NOT NULL,
+        currstock INTEGER NOT NULL,
+        initstock INTEGER NOT NULL,
+        priority INTEGER NOT NULL
+      )
+    ''');
     return await db.insert('cabinet', cabinet.toMap());
   }
 
   Future<Cabinet?> readMedicine(int id) async {
     final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS cabinet ( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        name TEXT NOT NULL,
+        dosage TEXT NOT NULL,
+        time TEXT NOT NULL,
+        currstock INTEGER NOT NULL,
+        initstock INTEGER NOT NULL,
+        priority INTEGER NOT NULL
+      )
+    ''');
     final maps = await db.query('cabinet', where: 'id = ?', whereArgs: [id]);
 
     if (maps.isNotEmpty) {
@@ -57,6 +78,17 @@ CREATE TABLE cabinet (
 
   Future<List<Cabinet>> readAllMedicines() async {
     final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS cabinet ( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        name TEXT NOT NULL,
+        dosage TEXT NOT NULL,
+        time TEXT NOT NULL,
+        currstock INTEGER NOT NULL,
+        initstock INTEGER NOT NULL,
+        priority INTEGER NOT NULL
+      )
+    ''');
     const orderBy = 'time ASC';
     final result = await db.query('cabinet', orderBy: orderBy);
     return result.map((json) => Cabinet.fromMap(json)).toList();
@@ -64,6 +96,17 @@ CREATE TABLE cabinet (
 
   Future<int> updateMedicine(Cabinet medicine) async {
     final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS cabinet ( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        name TEXT NOT NULL,
+        dosage TEXT NOT NULL,
+        time TEXT NOT NULL,
+        currstock INTEGER NOT NULL,
+        initstock INTEGER NOT NULL,
+        priority INTEGER NOT NULL
+      )
+    ''');
     return await db.update(
       'cabinet',
       medicine.toMap(),
@@ -74,6 +117,17 @@ CREATE TABLE cabinet (
 
   Future<int> deleteMedicine(int id) async {
     final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS cabinet ( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        name TEXT NOT NULL,
+        dosage TEXT NOT NULL,
+        time TEXT NOT NULL,
+        currstock INTEGER NOT NULL,
+        initstock INTEGER NOT NULL,
+        priority INTEGER NOT NULL
+      )
+    ''');
     return await db.delete('cabinet', where: 'id = ?', whereArgs: [id]);
   }
 }

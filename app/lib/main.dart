@@ -7,6 +7,7 @@ import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
 import 'package:app/services/theme_service.dart';
 
+<<<<<<< HEAD
 import 'package:workmanager/workmanager.dart';
 import 'package:app/services/widget_service.dart';
 
@@ -17,6 +18,10 @@ void callbackDispatcher() {
     return Future.value(true);
   });
 }
+=======
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:app/onboarding/onboarding_screen.dart';
+>>>>>>> 25ade3fcfaf73c61c14e1377fe5e43402af38372
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +29,7 @@ void main() async {
   await NotificationHelper().init();
   await AlarmService().init();
 
+<<<<<<< HEAD
   // Initialize background worker for widget updates
   Workmanager().initialize(callbackDispatcher);
   Workmanager().registerPeriodicTask(
@@ -45,6 +51,18 @@ class MyApp extends StatelessWidget {
   final bool onboardingComplete;
 
   const MyApp({super.key, required this.onboardingComplete});
+=======
+  final prefs = await SharedPreferences.getInstance();
+  final showOnboarding = !(prefs.getBool('has_completed_onboarding') ?? false);
+
+  runApp(MyApp(showOnboarding: showOnboarding));
+}
+
+class MyApp extends StatelessWidget {
+  final bool showOnboarding;
+
+  const MyApp({super.key, required this.showOnboarding});
+>>>>>>> 25ade3fcfaf73c61c14e1377fe5e43402af38372
 
   static final _defaultLightColorScheme = ColorScheme.fromSeed(
     seedColor: Colors.deepPurple,
@@ -79,10 +97,15 @@ class MyApp extends StatelessWidget {
                 highlightColor: Colors.transparent,
                 splashFactory: NoSplash.splashFactory,
               ),
+<<<<<<< HEAD
               themeMode: themeMode,
               home: onboardingComplete
                   ? const Dose()
                   : const OnboardingPage(),
+=======
+              themeMode: themeMode, 
+              home: showOnboarding ? const OnboardingScreen() : const Dose(),
+>>>>>>> 25ade3fcfaf73c61c14e1377fe5e43402af38372
             );
           },
         );
