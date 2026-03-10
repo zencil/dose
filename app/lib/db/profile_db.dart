@@ -39,13 +39,53 @@ CREATE TABLE profile (
 
   Future<int> createprof(profile profile) async {
     final db = await instance.database;
+    // Ensure table exists just in case another helper created the DB first
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS profile ( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        name TEXT NOT NULL,
+        donor TEXT NOT NULL,
+        dob TEXT NOT NULL,
+        bloodtype TEXT NOT NULL,
+        sex TEXT NOT NULL
+      )
+    ''');
     return await db.insert('profile', profile.toMap());
   }
 
   Future<List<profile>> readprofile() async {
     final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS profile ( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        name TEXT NOT NULL,
+        donor TEXT NOT NULL,
+        dob TEXT NOT NULL,
+        bloodtype TEXT NOT NULL,
+        sex TEXT NOT NULL
+      )
+    ''');
     final result = await db.query('profile');
     return result.map((json) => profile.fromMap(json)).toList();
   }
 
+  Future<int> updateProfile(profile profileData) async {
+    final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS profile ( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        name TEXT NOT NULL,
+        donor TEXT NOT NULL,
+        dob TEXT NOT NULL,
+        bloodtype TEXT NOT NULL,
+        sex TEXT NOT NULL
+      )
+    ''');
+    return await db.update(
+      'profile',
+      profileData.toMap(),
+      where: 'id = ?',
+      whereArgs: [profileData.id],
+    );
+  }
 }

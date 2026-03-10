@@ -5,16 +5,25 @@ import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
 import 'package:app/services/theme_service.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:app/onboarding/onboarding_screen.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ThemeService().init();
   await NotificationHelper().init();
   await AlarmService().init();
-  runApp(const MyApp()); 
+
+  final prefs = await SharedPreferences.getInstance();
+  final showOnboarding = !(prefs.getBool('has_completed_onboarding') ?? false);
+
+  runApp(MyApp(showOnboarding: showOnboarding));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool showOnboarding;
+
+  const MyApp({super.key, required this.showOnboarding});
 
   static final _defaultLightColorScheme = ColorScheme.fromSeed(
     seedColor: Colors.deepPurple, 
@@ -50,7 +59,7 @@ class MyApp extends StatelessWidget {
                 splashFactory: NoSplash.splashFactory,
               ),
               themeMode: themeMode, 
-              home: const Dose(),
+              home: showOnboarding ? const OnboardingScreen() : const Dose(),
             );
           },
         );
