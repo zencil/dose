@@ -3,7 +3,7 @@ import 'package:app/models/profile_model.dart';
 import 'package:app/db/profile_db.dart';
 
 class EditProfilePage extends StatefulWidget {
-  final profile profileData;
+  final Profile profileData;
 
   const EditProfilePage({super.key, required this.profileData});
 
@@ -32,7 +32,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _saveProfile() async {
     if (_formKey.currentState!.validate()) {
-      final updatedProfile = profile(
+      final updatedProfile = Profile(
         id: widget.profileData.id,
         name: _nameController.text.trim(),
         dob: _dobController.text.trim(),

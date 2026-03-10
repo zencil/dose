@@ -1,4 +1,4 @@
-class profile {
+class Profile {
   final int? id;
   final String name;
   final String donor;
@@ -6,7 +6,7 @@ class profile {
   final String bloodtype;
   final String sex;
 
-  profile({
+  Profile({
     this.id,
     required this.name,
     required this.donor,
@@ -26,8 +26,8 @@ class profile {
     };
   }
 //should dosage be on home screen?
-  static profile fromMap(Map<String, dynamic> map) {
-    return profile(
+  static Profile fromMap(Map<String, dynamic> map) {
+    return Profile(
       id: map['id'],
       name: map['name'],
       donor: map['donor'],

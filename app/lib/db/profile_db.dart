@@ -37,7 +37,7 @@ CREATE TABLE profile (
 ''');
   }
 
-  Future<int> createprof(profile profile) async {
+  Future<int> createprof(Profile profile) async {
     final db = await instance.database;
     // Ensure table exists just in case another helper created the DB first
     await db.execute('''
@@ -53,7 +53,7 @@ CREATE TABLE profile (
     return await db.insert('profile', profile.toMap());
   }
 
-  Future<List<profile>> readprofile() async {
+  Future<List<Profile>> readprofile() async {
     final db = await instance.database;
     await db.execute('''
       CREATE TABLE IF NOT EXISTS profile ( 
@@ -66,10 +66,10 @@ CREATE TABLE profile (
       )
     ''');
     final result = await db.query('profile');
-    return result.map((json) => profile.fromMap(json)).toList();
+    return result.map((json) => Profile.fromMap(json)).toList();
   }
 
-  Future<int> updateProfile(profile profileData) async {
+  Future<int> updateProfile(Profile profileData) async {
     final db = await instance.database;
     await db.execute('''
       CREATE TABLE IF NOT EXISTS profile ( 

@@ -1,12 +1,11 @@
 import 'package:app/models/cabinet_model.dart';
 import 'package:app/models/intake_model.dart' as log_model;
+import 'package:app/models/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:app/db/cabinet_db.dart';
 import 'package:app/db/intake_log_db.dart' as log_db;
-import 'package:app/services/notification_service.dart';
-import 'package:app/services/alarm_service.dart';
-import 'package:app/services/widget_service.dart';
-import 'package:app/services/snooze_service.dart';
+import 'package:app/widgets/dose_card.dart';
+import 'package:app/services/intake_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,76 +30,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool _isUpcoming(Cabinet med, List<log_model.Intake> todayLogs) {
-    final now = DateTime.now();
-    final todayStr =
-        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-
-    bool isTaken = todayLogs.any(
-      (log) =>
-          log.name == med.name && log.ttime == med.time && log.date == todayStr,
-    );
-    if (isTaken) return false;
-
-    final timeParts = med.time.split(':');
-    final int hour = int.parse(timeParts[0]);
-    final int minute = int.parse(timeParts[1]);
-
-    // Handle day wraparounds conceptually by checking diff
-    var targetTime = DateTime(now.year, now.month, now.day, hour, minute);
-
-    // If target is 23:50 and now is 00:10 (next day)
-    // Diff is target - now -> -20.
-    // So normal diff works nicely within the same day.
-    int diff = targetTime.difference(now).inMinutes;
-
-    // Check edge case where target is close to midnight
-    if (diff < -12 * 60) diff += 24 * 60;
-    if (diff > 12 * 60) diff -= 24 * 60;
-
-    return diff >= -30 && diff <= 30;
+    return IntakeService.isUpcoming(med, todayLogs);
   }
 
   Future<void> _handleDone(Cabinet med) async {
-    if (med.currstock > 0) {
-      final updatedMed = Cabinet(
-        id: med.id,
-        name: med.name,
-        dosage: med.dosage,
-        time: med.time,
-        initstock: med.initstock,
-        currstock: med.currstock - 1,
-        priority: med.priority,
-      );
-      await DatabaseHelper.instance.updateMedicine(updatedMed);
-
-      final now = DateTime.now();
-      String timeStr =
-          "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
-      String dateStr =
-          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-
-      final intake = log_model.Intake(
-        id: med.id,
-        name: med.name,
-        ttime: med.time,
-        time: timeStr,
-        date: dateStr,
-        currstock: med.currstock - 1,
-      );
-      await log_db.DatabaseHelper.instance.createlog(intake);
-      await WidgetService.updateWidgetState();
-
-      if (updatedMed.currstock < 3) {
-        await NotificationHelper().showLowStockNotification(updatedMed);
-      }
-    }
-
-    if (med.id != null) {
-      await SnoozeService.resetSnooze(med.id!);
-      await NotificationHelper().cancelNotification(med.id!);
-      await AlarmService().cancelAlarm(med.id!);
-    }
-
+    await IntakeService.handleDone(med);
     setState(() {
       _refreshList();
     });
@@ -182,12 +116,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: cs.surfaceContainer,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: cs.outlineVariant, width: 3.0),
-                ),
+              DoseCard(
+                padding: EdgeInsets.zero,
                 child: ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -196,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                   separatorBuilder: (context, index) => Divider(
                     height: 1,
                     thickness: 1,
-                    color: cs.outlineVariant.withOpacity(0.5),
+                    color: cs.outlineVariant.withValues(alpha: 0.5),
                   ),
                   itemBuilder: (context, index) {
                     final med = lowStockMedicines[index];
@@ -266,18 +196,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildUpcomingCard(Cabinet med, ColorScheme cs) {
-    return Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 12.0),
-      color: cs.surfaceContainer,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: cs.outlineVariant, width: 3.0),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
+    return DoseCard(
+      child: Row(
+        children: [
             Container(
               width: 48,
               height: 48,
@@ -302,7 +223,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    med.dosage.replaceAll('mg', 'pills/spoons'),
+                    med.dosage.formattedDosage,
                     style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
                   ),
                 ],
@@ -332,7 +253,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -340,12 +260,8 @@ class _HomePageState extends State<HomePage> {
     Map<String, String> uniqueMedicines,
     ColorScheme cs,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: cs.surfaceContainer,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: cs.outlineVariant, width: 3.0),
-      ),
+    return DoseCard(
+      padding: EdgeInsets.zero,
       child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -374,7 +290,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 Text(
-                  dosage.replaceAll('mg', 'pills/spoons'),
+                  dosage.formattedDosage,
                   style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
                 ),
               ],

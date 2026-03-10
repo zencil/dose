@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:app/services/analytics_service.dart';
+import 'package:app/widgets/dose_card.dart';
 
 class AnalyticsPage extends StatefulWidget {
   const AnalyticsPage({super.key});
@@ -116,16 +117,9 @@ class _AnalyticsPageState extends State<AnalyticsPage>
 
   Widget _buildAdherencePieCard(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: cs.outlineVariant, width: 3.0),
-      ),
-      color: cs.surfaceContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
+    return DoseCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -161,7 +155,6 @@ class _AnalyticsPageState extends State<AnalyticsPage>
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -288,16 +281,9 @@ class _AnalyticsPageState extends State<AnalyticsPage>
 
   Widget _buildAdherenceTrendCard(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: cs.outlineVariant, width: 3.0),
-      ),
-      color: cs.surfaceContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
+    return DoseCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -338,7 +324,6 @@ class _AnalyticsPageState extends State<AnalyticsPage>
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -490,16 +475,9 @@ class _AnalyticsPageState extends State<AnalyticsPage>
 
   Widget _buildStockTimelineCard(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: cs.outlineVariant, width: 3.0),
-      ),
-      color: cs.surfaceContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
+    return DoseCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -540,7 +518,6 @@ class _AnalyticsPageState extends State<AnalyticsPage>
             ),
           ],
         ),
-      ),
     );
   }
 

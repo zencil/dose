@@ -85,7 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _completeOnboarding() async {
     // Save Profile Data to Database
-    final newProfile = profile(
+    final newProfile = Profile(
       name: _nameController.text.trim(),
       dob: _dobController.text.trim(),
       bloodtype: _bloodTypeController.text.trim(),

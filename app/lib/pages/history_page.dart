@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app/models/intake_model.dart';
 import 'package:app/db/intake_log_db.dart' as log_db;
+import 'package:app/widgets/dose_card.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -86,20 +87,8 @@ class _HistoryPageState extends State<HistoryPage> {
             itemCount: logs.length,
             itemBuilder: (context, index) {
               final log = logs[index];
-              return Card(
-                elevation: 0,
-                margin: const EdgeInsets.only(bottom: 12),
-                color: colorScheme.surfaceContainer,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(
-                    color: colorScheme.outlineVariant,
-                    width: 3.0,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
+              return DoseCard(
+                child: Row(
                     children: [
                       Container(
                         width: 48,
@@ -160,7 +149,6 @@ class _HistoryPageState extends State<HistoryPage> {
                       ),
                     ],
                   ),
-                ),
               );
             },
           );

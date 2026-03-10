@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:app/models/cabinet_model.dart';
+import 'package:app/models/extensions.dart';
 import 'package:app/db/cabinet_db.dart';
 import 'package:app/pages/add_menu_page.dart';
 import 'package:app/services/widget_service.dart';
+import 'package:app/widgets/dose_card.dart';
 
 class CabinetPage extends StatefulWidget {
   const CabinetPage({super.key});
@@ -153,17 +155,8 @@ class _CabinetPageState extends State<CabinetPage> {
             itemCount: medicines.length,
             itemBuilder: (context, index) {
               final medicine = medicines[index];
-              return Card(
-                elevation: 0,
-                margin: const EdgeInsets.only(bottom: 12.0),
-                color: Theme.of(context).colorScheme.surfaceContainer,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                    width: 3.0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+              return DoseCard(
+                padding: EdgeInsets.zero,
                 child: Theme(
                   data: Theme.of(
                     context,
@@ -199,7 +192,7 @@ class _CabinetPageState extends State<CabinetPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Dosage: ${medicine.dosage.replaceAll('mg', 'pills/spoons')}',
+                              'Dosage: ${medicine.dosage.formattedDosage}',
                               style: const TextStyle(fontSize: 14),
                             ),
                             const SizedBox(height: 4),

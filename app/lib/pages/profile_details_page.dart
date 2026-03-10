@@ -11,7 +11,7 @@ class ProfileDetailsPage extends StatefulWidget {
 }
 
 class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
-  List<profile> _profiles = [];
+  List<Profile> _profiles = [];
   bool _isLoading = true;
 
   @override
@@ -28,7 +28,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
     });
   }
 
-  void _navigateToEditProfile(profile p) async {
+  void _navigateToEditProfile(Profile p) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => EditProfilePage(profileData: p)),
