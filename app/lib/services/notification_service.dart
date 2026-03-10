@@ -142,7 +142,7 @@ class NotificationHelper {
       body: 'Did you take your dose?',
       scheduledDate: scheduledDate,
       notificationDetails: details,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.alarmClock,
       matchDateTimeComponents: DateTimeComponents.time,
       payload: 'med_$id',
     );

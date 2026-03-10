@@ -179,8 +179,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
         titleStyle: TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
-          shadows: const [Shadow(blurRadius: 2, color: Colors.black38)],
+          color: cs.surface,
         ),
         badgePositionPercentageOffset: isTouched ? 1.2 : null,
       );
