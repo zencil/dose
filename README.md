@@ -1,9 +1,8 @@
 # Dose
 
 ![Build Status](https://github.com/orbitronhd-org/dose/actions/workflows/dart.yml/badge.svg?branch=main)
-
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-![Version](https://img.shields.io/badge/version-0.9.0%2B1-blue.svg)
+ 
+![Version](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Forbitronhd-org%2Fdose%2Fmain%2Fapp%2Fpubspec.yaml&query=%24.version&label=version&color=blue)
 
 Simple and modern medicine intake tracking app built using Flutter for Android.
 
