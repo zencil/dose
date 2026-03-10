@@ -3,6 +3,8 @@ import 'package:app/models/intake_model.dart' as log_model;
 import 'package:flutter/material.dart';
 import 'package:app/db/cabinet_db.dart';
 import 'package:app/db/intake_log.dart' as log_db;
+import 'package:app/services/notification_service.dart';
+import 'package:app/services/alarm_service.dart';
 import 'package:app/services/widget_service.dart';
 import 'package:app/services/snooze_service.dart';
 
@@ -87,10 +89,16 @@ class _HomePageState extends State<HomePage> {
       );
       await log_db.DatabaseHelper.instance.createlog(intake);
       await WidgetService.updateWidgetState();
+
+      if (updatedMed.currstock < 3) {
+        await NotificationHelper().showLowStockNotification(updatedMed);
+      }
     }
     
     if (med.id != null) {
       await SnoozeService.resetSnooze(med.id!);
+      await NotificationHelper().cancelNotification(med.id!);
+      await AlarmService().cancelAlarm(med.id!);
     }
 
     setState(() {
@@ -129,6 +137,9 @@ class _HomePageState extends State<HomePage> {
         final upcomingMedicines = medicines.where((med) => _isUpcoming(med, logs)).toList();
         upcomingMedicines.sort((a, b) => a.time.compareTo(b.time));
 
+        // Determine Low Stock list
+        final lowStockMedicines = medicines.where((med) => med.currstock < 3).toList();
+
         // Create deduplicated condesned list
         final Map<String, String> uniqueMedicines = {};
         for (final med in medicines) {
@@ -152,6 +163,74 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               ...upcomingMedicines.map((med) => _buildUpcomingCard(med, cs)),
+            ],
+
+            if (lowStockMedicines.isNotEmpty) ...[
+              // Low Stock Header
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0, bottom: 12.0),
+                child: Text(
+                  'Restock Reminder',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: cs.error,
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: cs.surfaceContainer,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: cs.outlineVariant,
+                    width: 3.0,
+                  ),
+                ),
+                child: ListView.separated(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  itemCount: lowStockMedicines.length,
+                  separatorBuilder: (context, index) => Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: cs.outlineVariant.withOpacity(0.5),
+                  ),
+                  itemBuilder: (context, index) {
+                    final med = lowStockMedicines[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 14.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              med.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text(
+                            'Stock: ${med.currstock}',
+                            style: TextStyle(
+                              color: cs.error,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
 
             // All Medicines Header

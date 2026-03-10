@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -9,6 +9,8 @@ import 'package:app/models/intake_model.dart';
 import 'package:app/db/intake_log.dart' as log_db;
 import 'package:app/services/widget_service.dart';
 import 'package:app/services/snooze_service.dart';
+import 'package:app/main.dart';
+import 'package:app/profile/cabinet/cabinet_page.dart';
 
 /// Handles the "Done" action from a notification by updating stock and logging intake.
 Future<void> _handleDoneAction(int id) async {
@@ -41,6 +43,10 @@ Future<void> _handleDoneAction(int id) async {
     );
     await log_db.DatabaseHelper.instance.createlog(intake);
     await WidgetService.updateWidgetState();
+    
+    if (updatedMed.currstock < 3) {
+      await NotificationHelper().showLowStockNotification(updatedMed);
+    }
   }
   await SnoozeService.resetSnooze(id);
 }
@@ -103,6 +109,12 @@ class NotificationHelper {
             await _handleDoneAction(id);
           } else if (response.actionId == 'action_snooze') {
             await _handleSnoozeAction(id);
+          }
+        } else if (response.payload != null && response.payload!.startsWith('restock_')) {
+          if (response.actionId == 'action_restock' || response.actionId == null) {
+            navigatorKey.currentState?.push(
+              MaterialPageRoute(builder: (_) => const CabinetPage()),
+            );
           }
         }
       },
@@ -223,5 +235,36 @@ class NotificationHelper {
 
   Future<void> cancelNotification(int id) async {
     await plugin.cancel(id: id);
+  }
+
+  /// Displays a low stock notification prompting the user to restock.
+  Future<void> showLowStockNotification(Cabinet med) async {
+    if (med.id == null) return;
+    
+    final actions = <AndroidNotificationAction>[
+      const AndroidNotificationAction(
+        'action_restock',
+        'Restock',
+        showsUserInterface: true,
+      ),
+    ];
+
+    final androidDetails = AndroidNotificationDetails(
+      'stock_channel',
+      'Low Stock Alerts',
+      importance: Importance.defaultImportance,
+      priority: Priority.defaultPriority,
+      actions: actions,
+    );
+
+    final details = NotificationDetails(android: androidDetails);
+
+    await plugin.show(
+      id: med.id! + 100000, // Offset ID to avoid colliding with medication alarm IDs
+      title: 'Low Stock Alert',
+      body: 'You have less than 3 doses of ${med.name} left. Please restock.',
+      notificationDetails: details,
+      payload: 'restock_${med.id}',
+    );
   }
 }

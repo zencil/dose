@@ -18,6 +18,8 @@ void callbackDispatcher() {
   });
 }
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ThemeService().init();
@@ -64,6 +66,7 @@ class MyApp extends StatelessWidget {
           valueListenable: ThemeService().themeNotifier,
           builder: (context, themeMode, _) {
             return MaterialApp(
+              navigatorKey: navigatorKey,
               debugShowCheckedModeBanner: false,
               theme: ThemeData(
                 colorScheme: lightDynamic ?? _defaultLightColorScheme,

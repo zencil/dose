@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:alarm/alarm.dart';
 import 'package:app/db/cabinet_db.dart';
 import 'package:app/models/cabinet_model.dart';
@@ -6,6 +7,7 @@ import 'package:app/models/intake_model.dart';
 import 'package:app/db/intake_log.dart' as log_db;
 import 'package:app/services/widget_service.dart';
 import 'package:app/services/snooze_service.dart';
+import 'package:app/services/notification_service.dart';
 
 class AlarmRingScreen extends StatefulWidget {
   final AlarmSettings alarmSettings;
@@ -19,11 +21,29 @@ class AlarmRingScreen extends StatefulWidget {
 class _AlarmRingScreenState extends State<AlarmRingScreen> {
   bool _canSnooze = true;
   int _snoozeCount = 0;
+  Timer? _snoozeTimer;
 
   @override
   void initState() {
     super.initState();
     _loadSnoozeState();
+    _startAutoSnoozeTimer();
+  }
+
+  void _startAutoSnoozeTimer() {
+    _snoozeTimer = Timer(const Duration(seconds: 50), () {
+      if (_canSnooze) {
+        _handleSnooze();
+      } else {
+        _handleQuietDone();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _snoozeTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadSnoozeState() async {
@@ -36,7 +56,14 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
     }
   }
 
+  Future<void> _handleQuietDone() async {
+    _snoozeTimer?.cancel();
+    await Alarm.stop(widget.alarmSettings.id);
+    if (mounted) Navigator.pop(context);
+  }
+
   Future<void> _handleDone() async {
+    _snoozeTimer?.cancel();
     // Close screen and stop alarm immediately
     Navigator.pop(context);
     await Alarm.stop(widget.alarmSettings.id);
@@ -73,11 +100,16 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
       );
       await log_db.DatabaseHelper.instance.createlog(intake);
       await WidgetService.updateWidgetState();
+
+      if (updatedMed.currstock < 3) {
+        await NotificationHelper().showLowStockNotification(updatedMed);
+      }
     }
     await SnoozeService.resetSnooze(widget.alarmSettings.id);
   }
 
   Future<void> _handleSnooze() async {
+    _snoozeTimer?.cancel();
     final result = await SnoozeService.incrementSnooze(widget.alarmSettings.id);
     if (result == -1) return;
 
@@ -133,13 +165,21 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (_canSnooze)
-                  ElevatedButton.icon(
+                  FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
                     onPressed: _handleSnooze,
                     icon: const Icon(Icons.snooze),
                     label: const Text('Snooze'),
                   ),
                 if (_canSnooze) const SizedBox(width: 20),
-                ElevatedButton.icon(
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
                   onPressed: _handleDone,
                   icon: const Icon(Icons.check),
                   label: const Text('Done'),
