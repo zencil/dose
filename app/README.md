@@ -2,35 +2,37 @@
 
 ```text
 lib/
-├── analytics/
-│   └── analytics_page.dart
 ├── db/
 │   ├── cabinet_db.dart
-│   ├── intake_log.dart
-│   └── profile_db.dart
-├── home/
-│   ├── add_menu.dart
-│   ├── history_page.dart
-│   └── home_page.dart
+│   ├── intake_log_db.dart
+│   ├── profile_db.dart
+│   └── README_DB.md
 ├── models/
 │   ├── cabinet_model.dart
 │   ├── intake_model.dart
 │   └── profile_model.dart
-├── profile/
-│   ├── cabinet/
-│   │   └── cabinet_page.dart
-│   ├── settings/
-│   │   └── settings_page.dart
+├── pages/
 │   ├── about_page.dart
-│   ├── help_support.dart
-│   └── profile_page.dart
+│   ├── add_menu_page.dart
+│   ├── analytics_page.dart
+│   ├── cabinet_page.dart
+│   ├── edit_profile_page.dart
+│   ├── history_page.dart
+│   ├── home_page.dart
+│   ├── onboarding_page.dart
+│   ├── profile_details_page.dart
+│   ├── profile_page.dart
+│   ├── settings_page.dart
+│   └── support_page.dart
 ├── services/
-│   ├── alarm_ring.dart
+│   ├── alarm_ring_service.dart
 │   ├── alarm_service.dart
 │   ├── analytics_service.dart
+│   ├── backup_service.dart
 │   ├── notification_service.dart
-│   └── theme_service.dart
+│   ├── snooze_service.dart
+│   ├── theme_service.dart
+│   └── widget_service.dart
 ├── dose.dart
-├── main.dart
-└── onboarding_page.dart
+└── main.dart
 ```
