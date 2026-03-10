@@ -5,11 +5,104 @@ import 'package:app/models/cabinet_model.dart';
 import 'package:app/models/intake_model.dart';
 import 'package:app/db/intake_log.dart' as log_db;
 import 'package:app/services/widget_service.dart';
+import 'package:app/services/snooze_service.dart';
 
-class AlarmRingScreen extends StatelessWidget {
+class AlarmRingScreen extends StatefulWidget {
   final AlarmSettings alarmSettings;
 
   const AlarmRingScreen({super.key, required this.alarmSettings});
+
+  @override
+  State<AlarmRingScreen> createState() => _AlarmRingScreenState();
+}
+
+class _AlarmRingScreenState extends State<AlarmRingScreen> {
+  bool _canSnooze = true;
+  int _snoozeCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSnoozeState();
+  }
+
+  Future<void> _loadSnoozeState() async {
+    final count = await SnoozeService.getSnoozeCount(widget.alarmSettings.id);
+    if (mounted) {
+      setState(() {
+        _snoozeCount = count;
+        _canSnooze = count < SnoozeService.maxSnoozes;
+      });
+    }
+  }
+
+  Future<void> _handleDone() async {
+    // Close screen and stop alarm immediately
+    Navigator.pop(context);
+    await Alarm.stop(widget.alarmSettings.id);
+
+    // Then log intake and update stock in the background
+    final med = await DatabaseHelper.instance.readMedicine(
+      widget.alarmSettings.id,
+    );
+    if (med != null && med.currstock > 0) {
+      final updatedMed = Cabinet(
+        id: med.id,
+        name: med.name,
+        dosage: med.dosage,
+        time: med.time,
+        initstock: med.initstock,
+        currstock: med.currstock - 1,
+        priority: med.priority,
+      );
+      await DatabaseHelper.instance.updateMedicine(updatedMed);
+
+      final now = DateTime.now();
+      String timeString =
+          "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+      String dateString =
+          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+      final intake = Intake(
+        id: med.id,
+        name: med.name,
+        ttime: med.time,
+        time: timeString,
+        date: dateString,
+        currstock: med.currstock - 1,
+      );
+      await log_db.DatabaseHelper.instance.createlog(intake);
+      await WidgetService.updateWidgetState();
+    }
+    await SnoozeService.resetSnooze(widget.alarmSettings.id);
+  }
+
+  Future<void> _handleSnooze() async {
+    final result = await SnoozeService.incrementSnooze(widget.alarmSettings.id);
+    if (result == -1) return;
+
+    // Stop current alarm
+    await Alarm.stop(widget.alarmSettings.id);
+
+    // Re-schedule the same alarm 5 minutes from now
+    final snoozeTime = DateTime.now().add(
+      const Duration(minutes: SnoozeService.snoozeDurationMinutes),
+    );
+    final snoozedAlarm = AlarmSettings(
+      id: widget.alarmSettings.id,
+      dateTime: snoozeTime,
+      assetAudioPath: widget.alarmSettings.assetAudioPath,
+      loopAudio: widget.alarmSettings.loopAudio,
+      vibrate: widget.alarmSettings.vibrate,
+      warningNotificationOnKill: widget.alarmSettings.warningNotificationOnKill,
+      androidFullScreenIntent: widget.alarmSettings.androidFullScreenIntent,
+      volumeSettings: widget.alarmSettings.volumeSettings,
+      notificationSettings: widget.alarmSettings.notificationSettings,
+    );
+    await Alarm.set(alarmSettings: snoozedAlarm);
+
+    if (mounted) Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,61 +114,35 @@ class AlarmRingScreen extends StatelessWidget {
             const Icon(Icons.alarm, size: 100),
             const SizedBox(height: 20),
             Text(
-              alarmSettings.notificationSettings.title,
+              widget.alarmSettings.notificationSettings.title,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
+            if (_snoozeCount > 0)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  'Snoozed $_snoozeCount/${SnoozeService.maxSnoozes} times',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+              ),
             const SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    await Alarm.stop(alarmSettings.id);
-                    if (context.mounted) Navigator.pop(context);
-                  },
-                  child: const Text('Stop Alarm'),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () async {
-                    final med = await DatabaseHelper.instance.readMedicine(
-                      alarmSettings.id,
-                    );
-                    if (med != null && med.currstock > 0) {
-                      final updatedMed = Cabinet(
-                        id: med.id,
-                        name: med.name,
-                        dosage: med.dosage,
-                        time: med.time,
-                        initstock: med.initstock,
-                        currstock: med.currstock - 1,
-                        priority: med.priority,
-                      );
-                      await DatabaseHelper.instance.updateMedicine(updatedMed);
-
-                      final now = DateTime.now();
-                      String timeString =
-                          "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
-                      String dateString =
-                          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-
-                      final intake = Intake(
-                        id: med.id,
-                        name: med.name,
-                        ttime: med.time,
-                        time: timeString,
-                        date: dateString,
-                        currstock: med.currstock - 1,
-                      );
-                      await log_db.DatabaseHelper.instance.createlog(intake);
-                      
-                      // Update home screen widget instantly
-                      await WidgetService.updateWidgetState();
-                    }
-                    await Alarm.stop(alarmSettings.id);
-                    if (context.mounted) Navigator.pop(context);
-                  },
-                  child: const Text('Done'),
+                if (_canSnooze)
+                  ElevatedButton.icon(
+                    onPressed: _handleSnooze,
+                    icon: const Icon(Icons.snooze),
+                    label: const Text('Snooze'),
+                  ),
+                if (_canSnooze) const SizedBox(width: 20),
+                ElevatedButton.icon(
+                  onPressed: _handleDone,
+                  icon: const Icon(Icons.check),
+                  label: const Text('Done'),
                 ),
               ],
             ),

@@ -8,6 +8,7 @@ import 'package:app/models/cabinet_model.dart';
 import 'package:app/models/intake_model.dart';
 import 'package:app/db/intake_log.dart' as log_db;
 import 'package:app/services/widget_service.dart';
+import 'package:app/services/snooze_service.dart';
 
 /// Handles the "Done" action from a notification by updating stock and logging intake.
 Future<void> _handleDoneAction(int id) async {
@@ -41,17 +42,35 @@ Future<void> _handleDoneAction(int id) async {
     await log_db.DatabaseHelper.instance.createlog(intake);
     await WidgetService.updateWidgetState();
   }
+  await SnoozeService.resetSnooze(id);
+}
+
+/// Handles "Snooze" by rescheduling the notification 5 minutes later.
+Future<void> _handleSnoozeAction(int id) async {
+  final result = await SnoozeService.incrementSnooze(id);
+  if (result == -1) return; // limit reached
+
+  final med = await DatabaseHelper.instance.readMedicine(id);
+  if (med != null) {
+    // Schedule a new notification 5 minutes from now
+    await NotificationHelper().scheduleSnoozeNotification(
+      id,
+      med.name,
+      canSnoozeAgain: result < SnoozeService.maxSnoozes,
+    );
+  }
 }
 
 @pragma('vm:entry-point')
 Future<void> onBackgroundNotificationResponse(NotificationResponse response) async {
-  // Background actions run in a separate isolate — initialize Flutter bindings first
   WidgetsFlutterBinding.ensureInitialized();
 
   if (response.payload != null && response.payload!.startsWith('med_')) {
     final int id = int.parse(response.payload!.split('_')[1]);
     if (response.actionId == 'action_done') {
       await _handleDoneAction(id);
+    } else if (response.actionId == 'action_snooze') {
+      await _handleSnoozeAction(id);
     }
   }
 }
@@ -82,6 +101,8 @@ class NotificationHelper {
           final int id = int.parse(response.payload!.split('_')[1]);
           if (response.actionId == 'action_done') {
             await _handleDoneAction(id);
+          } else if (response.actionId == 'action_snooze') {
+            await _handleSnoozeAction(id);
           }
         }
       },
@@ -112,29 +133,15 @@ class NotificationHelper {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-          'priority_channel',
-          'Priority Reminders',
-          importance: Importance.max,
-          priority: Priority.high,
-          actions: [
-            AndroidNotificationAction(
-              'action_done',
-              'Done',
-              showsUserInterface: true,
-            ),
-            AndroidNotificationAction(
-              'action_not_taken',
-              'Not taken',
-              showsUserInterface: true,
-            ),
-          ],
-        );
-
-    const NotificationDetails details = NotificationDetails(
-      android: androidDetails,
+    final androidDetails = AndroidNotificationDetails(
+      'priority_channel',
+      'Priority Reminders',
+      importance: Importance.max,
+      priority: Priority.high,
+      actions: await _buildNotificationActions(id),
     );
+
+    final details = NotificationDetails(android: androidDetails);
 
     await plugin.zonedSchedule(
       id: id,
@@ -146,6 +153,72 @@ class NotificationHelper {
       matchDateTimeComponents: DateTimeComponents.time,
       payload: 'med_$id',
     );
+  }
+
+  /// Schedules a snoozed notification 5 minutes from now.
+  Future<void> scheduleSnoozeNotification(
+    int id,
+    String name, {
+    required bool canSnoozeAgain,
+  }) async {
+    final snoozeTime = tz.TZDateTime.now(tz.local).add(
+      const Duration(minutes: SnoozeService.snoozeDurationMinutes),
+    );
+
+    final actions = <AndroidNotificationAction>[
+      const AndroidNotificationAction(
+        'action_done',
+        'Done',
+        showsUserInterface: true,
+      ),
+    ];
+    if (canSnoozeAgain) {
+      actions.add(const AndroidNotificationAction(
+        'action_snooze',
+        'Snooze',
+        showsUserInterface: true,
+      ));
+    }
+
+    final androidDetails = AndroidNotificationDetails(
+      'priority_channel',
+      'Priority Reminders',
+      importance: Importance.max,
+      priority: Priority.high,
+      actions: actions,
+    );
+
+    final details = NotificationDetails(android: androidDetails);
+
+    await plugin.zonedSchedule(
+      id: id,
+      title: 'Reminder: Take $name',
+      body: 'You snoozed this reminder. Did you take your dose?',
+      scheduledDate: snoozeTime,
+      notificationDetails: details,
+      androidScheduleMode: AndroidScheduleMode.alarmClock,
+      payload: 'med_$id',
+    );
+  }
+
+  /// Builds notification actions, conditionally including Snooze based on count.
+  Future<List<AndroidNotificationAction>> _buildNotificationActions(int id) async {
+    final canSnooze = await SnoozeService.canSnooze(id);
+    final actions = <AndroidNotificationAction>[
+      const AndroidNotificationAction(
+        'action_done',
+        'Done',
+        showsUserInterface: true,
+      ),
+    ];
+    if (canSnooze) {
+      actions.add(const AndroidNotificationAction(
+        'action_snooze',
+        'Snooze',
+        showsUserInterface: true,
+      ));
+    }
+    return actions;
   }
 
   Future<void> cancelNotification(int id) async {

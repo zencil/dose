@@ -95,12 +95,22 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         savedId = medicine.id!;
       }
 
+      // When editing, cancel old alarm/notification before rescheduling
+      if (widget.medicineToEdit != null) {
+        await AlarmService().cancelAlarm(savedId);
+        await NotificationHelper().cancelNotification(savedId);
+      }
+
       await AlarmService().scheduleMedicineAlarm(savedId, medicine);
-      await NotificationHelper().scheduleMedicineNotification(
-        savedId,
-        medicine.name,
-        timeString,
-      );
+      // Only schedule a notification for non-high priority medicines
+      // (high priority already gets a full-screen alarm)
+      if (medicine.priority != 2) {
+        await NotificationHelper().scheduleMedicineNotification(
+          savedId,
+          medicine.name,
+          timeString,
+        );
+      }
 
       // Trigger widget update
       await WidgetService.updateWidgetState();
