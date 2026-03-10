@@ -2,8 +2,6 @@
 
 ![Build Status](https://github.com/orbitronhd-org/dose/actions/workflows/dart.yml/badge.svg?branch=main)
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
 Simple and modern medicine intake tracking app built using Flutter for Android.
 
 The application allows tracking your daily medicines, keeping stock count, and reminding you through notifications and full-screen alarms.
