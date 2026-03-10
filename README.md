@@ -1,6 +1,6 @@
 # Dose
 
-![Build Status](https://github.com/orbitronhd-org/dose/.github/workflows/dart.yaml/badge.svg)
+![Build Status](https://github.com/orbitronhd-org/dose/actions/workflows/dart.yaml/badge.svg)
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
