@@ -3,13 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:app/db/cabinet_db.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
-<<<<<<< HEAD
 import 'package:app/profile/cabinet/cabinet_page.dart';
 import 'package:app/home/history_page.dart';
 import 'package:app/profile/about_page.dart';
 import 'package:app/services/widget_service.dart';
-=======
->>>>>>> 25ade3fcfaf73c61c14e1377fe5e43402af38372
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -72,7 +69,6 @@ class _HomePageState extends State<HomePage> {
     final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
-
         Expanded(
           child: FutureBuilder<List<Cabinet>>(
             future: _medicinesFuture,

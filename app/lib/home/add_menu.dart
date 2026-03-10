@@ -193,15 +193,11 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
               TextFormField(
                 controller: _dosageController,
                 keyboardType: TextInputType.number,
-<<<<<<< HEAD
                 decoration: const InputDecoration(
                   labelText: "Dosage",
                   suffixText: "pills/spoons",
                   border: OutlineInputBorder(),
                 ),
-=======
-                decoration: _buildInputDecoration("Dosage", suffixText: "mg"),
->>>>>>> 25ade3fcfaf73c61c14e1377fe5e43402af38372
                 validator: (value) => value!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
@@ -236,7 +232,10 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                     child: DropdownButtonFormField<int>(
                       initialValue: _cycle,
                       decoration: _buildInputDecoration("Cycle").copyWith(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
                       ),
                       items: List.generate(5, (index) => index + 1).map((
                         int value,
@@ -275,7 +274,10 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
               DropdownButtonFormField<int>(
                 initialValue: _priority,
                 decoration: _buildInputDecoration("Priority").copyWith(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                 ),
                 items: const [
                   DropdownMenuItem(value: 2, child: Text("High")),
