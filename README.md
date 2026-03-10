@@ -15,4 +15,10 @@ The application allows tracking your daily medicines, keeping stock count, and r
 - **Analytics:** Visualize adherence and stock timeline using charts.
 - **Data Portability:** Export and import your data easily.
 
+## Contributors
+<a href="https://github.com/orbitronhd-org/dose/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=orbitronhd-org/dose" />
+</a>
+
+###
 By orbitronhd-org
