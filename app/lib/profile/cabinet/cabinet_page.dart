@@ -154,14 +154,16 @@ class _CabinetPageState extends State<CabinetPage> {
             itemBuilder: (context, index) {
               final medicine = medicines[index];
               return Card(
+                elevation: 0,
+                margin: const EdgeInsets.only(bottom: 12.0),
+                color: Theme.of(context).colorScheme.surfaceContainer,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.outlineVariant,
-                    width: 1.0,
+                    width: 3.0,
                   ),
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                margin: const EdgeInsets.only(bottom: 12.0),
                 child: Theme(
                   data: Theme.of(
                     context,
@@ -171,27 +173,22 @@ class _CabinetPageState extends State<CabinetPage> {
                       horizontal: 16.0,
                       vertical: 8.0,
                     ),
-                    leading: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: _getPriorityColor(
-                              medicine.priority,
-                              context,
-                            ),
-                            shape: BoxShape.circle,
-                          ),
+                    leading: Container(
+                      width: 14,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: _getPriorityColor(
+                          medicine.priority,
+                          context,
                         ),
-                      ],
+                        shape: BoxShape.circle,
+                      ),
                     ),
                     title: Text(
                       medicine.name,
                       style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
                       ),
                     ),
                     children: [
@@ -206,19 +203,19 @@ class _CabinetPageState extends State<CabinetPage> {
                           children: [
                             Text(
                               'Dosage: ${medicine.dosage.replaceAll('mg', 'pills/spoons')}',
-                              style: Theme.of(context).textTheme.bodyLarge,
+                              style: const TextStyle(fontSize: 14),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Time: ${medicine.time}',
-                              style: Theme.of(context).textTheme.bodyLarge,
+                              style: const TextStyle(fontSize: 14),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Stock: ${medicine.currstock} / ${medicine.initstock}',
-                              style: Theme.of(context).textTheme.bodyLarge,
+                              style: const TextStyle(fontSize: 14),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 12),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -229,7 +226,7 @@ class _CabinetPageState extends State<CabinetPage> {
                                     });
                                     _scaffoldKey.currentState?.openEndDrawer();
                                   },
-                                  icon: const Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit, size: 20),
                                   tooltip: 'Edit',
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
@@ -237,7 +234,7 @@ class _CabinetPageState extends State<CabinetPage> {
                                 IconButton(
                                   onPressed: () =>
                                       _showDeleteConfirmation(medicine),
-                                  icon: const Icon(Icons.delete),
+                                  icon: const Icon(Icons.delete, size: 20),
                                   tooltip: 'Delete',
                                   color: Theme.of(context).colorScheme.error,
                                 ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:app/dose.dart';
 import 'package:app/models/profile_model.dart';
 import 'package:app/db/profile_db.dart';
+import 'package:app/services/backup_service.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -15,7 +17,7 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  static const int _totalPages = 4;
+  static const int _totalPages = 5;
 
   // Profile fields (Match Database Model)
   final TextEditingController _nameController = TextEditingController();
@@ -60,6 +62,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _requestPermissions() async {
     final status = await Permission.notification.request();
+    await Permission.scheduleExactAlarm.request();
+    await Permission.ignoreBatteryOptimizations.request();
 
     if (!mounted) return;
 
@@ -175,6 +179,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   _buildWelcomePage(cs),
                   _buildIntroPage(cs),
                   _buildPermissionsPage(cs),
+                  _buildImportPage(cs),
                   _buildProfilePage(cs),
                 ],
               ),
@@ -189,7 +194,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildWelcomePage(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           const Spacer(flex: 2),
@@ -236,7 +241,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildIntroPage(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           const Spacer(flex: 2),
@@ -287,7 +292,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildPermissionsPage(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           const Spacer(flex: 1),
@@ -435,11 +440,121 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // ── Screen 4: Profile Setup ────────────────────────────────────────
+  // ── Screen 4: Data Import ───────────────────────────────────────────
+
+  Widget _buildImportPage(ColorScheme cs) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          const Spacer(flex: 2),
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: cs.secondaryContainer,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.cloud_download_rounded,
+              size: 48,
+              color: cs.onSecondaryContainer,
+            ),
+          ),
+          const SizedBox(height: 32),
+          Text(
+            'Returning User?',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: cs.onSurface,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'If you have a previous backup, you can restore your medicines, history, and profile data.',
+            style: TextStyle(
+              fontSize: 14,
+              color: cs.onSurfaceVariant,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: OutlinedButton.icon(
+              onPressed: _handleImport,
+              icon: const Icon(Icons.file_upload_outlined),
+              label: const Text(
+                'Import Backup',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: cs.outlineVariant, width: 3.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+          ),
+          const Spacer(flex: 3),
+          _buildActionButton(cs, 'Start Fresh', _goToNextPage),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleImport() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+
+      if (result != null && result.files.single.path != null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Restoring data...')),
+          );
+        }
+
+        await BackupService.instance.importData(result.files.single.path!);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Data restored successfully!')),
+          );
+
+          // Skip profile setup — backup already contains profile data
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('has_completed_onboarding', true);
+
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const Dose()),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Import failed: $e')),
+        );
+      }
+    }
+  }
+
+  // ── Screen 5: Profile Setup ────────────────────────────────────────
 
   Widget _buildProfilePage(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -627,8 +742,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }) {
     return Card(
       elevation: 0,
+      margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(20),
         side: BorderSide(color: cs.outlineVariant, width: 3.0),
       ),
       color: cs.surfaceContainer,

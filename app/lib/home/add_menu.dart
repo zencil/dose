@@ -177,7 +177,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         automaticallyImplyLeading: false,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Form(
           key: _formKey,
           child: ListView(
@@ -193,11 +193,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
               TextFormField(
                 controller: _dosageController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: "Dosage",
-                  suffixText: "pills/spoons",
-                  border: OutlineInputBorder(),
-                ),
+                decoration: _buildInputDecoration("Dosage", suffixText: "pills/spoons"),
                 validator: (value) => value!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),

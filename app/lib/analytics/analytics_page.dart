@@ -44,7 +44,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
           setState(() => _loadData());
         },
         child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           children: [
             _buildAdherencePieCard(context),
             const SizedBox(height: 16),
@@ -120,7 +120,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: cs.outlineVariant),
+        side: BorderSide(color: cs.outlineVariant, width: 3.0),
       ),
       color: cs.surfaceContainer,
       child: Padding(
@@ -292,7 +292,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: cs.outlineVariant),
+        side: BorderSide(color: cs.outlineVariant, width: 3.0),
       ),
       color: cs.surfaceContainer,
       child: Padding(
@@ -494,7 +494,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: cs.outlineVariant),
+        side: BorderSide(color: cs.outlineVariant, width: 3.0),
       ),
       color: cs.surfaceContainer,
       child: Padding(

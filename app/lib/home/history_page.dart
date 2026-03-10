@@ -88,12 +88,15 @@ class _HistoryPageState extends State<HistoryPage> {
               final log = logs[index];
               return Card(
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: colorScheme.outlineVariant),
-                ),
-                color: colorScheme.surfaceContainer,
                 margin: const EdgeInsets.only(bottom: 12),
+                color: colorScheme.surfaceContainer,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: colorScheme.outlineVariant,
+                    width: 3.0,
+                  ),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(

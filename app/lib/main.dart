@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app/dose.dart';
-import 'package:app/onboarding_page.dart';
+import 'package:app/onboarding/onboarding_screen.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
 import 'package:app/services/theme_service.dart';
@@ -36,7 +36,7 @@ void main() async {
   await WidgetService.updateWidgetState();
 
   final prefs = await SharedPreferences.getInstance();
-  final onboardingComplete = prefs.getBool('onboarding_complete') ?? false;
+  final onboardingComplete = prefs.getBool('has_completed_onboarding') ?? false;
 
   runApp(MyApp(onboardingComplete: onboardingComplete));
 }
@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
                 splashFactory: NoSplash.splashFactory,
               ),
               themeMode: themeMode,
-              home: onboardingComplete ? const Dose() : const OnboardingPage(),
+              home: onboardingComplete ? const Dose() : const OnboardingScreen(),
             );
           },
         );

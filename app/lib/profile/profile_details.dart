@@ -92,7 +92,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
                           side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 3.0),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 20.0),
+                          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
                           child: Row(
                             children: [
                               CircleAvatar(

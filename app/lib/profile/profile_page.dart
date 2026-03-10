@@ -3,6 +3,7 @@ import 'package:app/profile/cabinet/cabinet_page.dart';
 import 'package:app/profile/about_page.dart';
 import 'package:app/profile/settings/settings_page.dart';
 import 'package:app/profile/profile_details.dart';
+import 'package:app/home/history_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -36,6 +37,18 @@ class ProfilePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const CabinetPage()),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            _buildOutlinedButton(
+              context: context,
+              label: 'History',
+              icon: Icons.history,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HistoryPage()),
                 );
               },
             ),
