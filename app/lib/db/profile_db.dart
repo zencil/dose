@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:app/models/profile_model.dart';
+import 'package:dose/models/profile_model.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -39,7 +39,6 @@ CREATE TABLE profile (
 
   Future<int> createprof(Profile profile) async {
     final db = await instance.database;
-    // Ensure table exists just in case another helper created the DB first
     await db.execute('''
       CREATE TABLE IF NOT EXISTS profile ( 
         id INTEGER PRIMARY KEY AUTOINCREMENT, 

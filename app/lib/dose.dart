@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:app/pages/home_page.dart';
-import 'package:app/pages/analytics_page.dart';
-import 'package:app/pages/profile_page.dart';
-import 'package:app/pages/add_menu_page.dart';
+import 'package:dose/pages/home_page.dart';
+import 'package:dose/pages/analytics_page.dart';
+import 'package:dose/pages/profile_page.dart';
+import 'package:dose/pages/add_menu_page.dart';
 
 class Dose extends StatefulWidget {
   const Dose({super.key});

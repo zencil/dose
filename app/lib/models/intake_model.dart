@@ -25,6 +25,7 @@ class Intake {
       'currstock': currstock,
     };
   }
+
   static Intake fromMap(Map<String, dynamic> map) {
     return Intake(
       id: map['id'],

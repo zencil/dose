@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:app/db/profile_db.dart';
-import 'package:app/models/profile_model.dart';
-import 'package:app/pages/edit_profile_page.dart'; // We'll create this next
+import 'package:dose/db/profile_db.dart';
+import 'package:dose/models/profile_model.dart';
+import 'package:dose/pages/edit_profile_page.dart';
 
 class ProfileDetailsPage extends StatefulWidget {
   const ProfileDetailsPage({super.key});
@@ -33,7 +33,6 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
       context,
       MaterialPageRoute(builder: (context) => EditProfilePage(profileData: p)),
     );
-    // Reload profiles if a change was made
     if (result == true) {
       _loadProfiles();
     }
@@ -81,7 +80,6 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 children: [
-                  // Top Card for Name
                   Card(
                     elevation: 0,
                     color: Theme.of(context).colorScheme.surfaceContainer,
@@ -147,7 +145,6 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Grid for remaining details
                   GridView.count(
                     crossAxisCount: 2,
                     shrinkWrap: true,

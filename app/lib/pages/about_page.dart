@@ -62,11 +62,12 @@ class AboutPage extends StatelessWidget {
                           : 'Version ...';
                       return Text(
                         versionStr,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       );
                     },
                   ),

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:app/dose.dart';
-import 'package:app/models/profile_model.dart';
-import 'package:app/db/profile_db.dart';
-import 'package:app/services/backup_service.dart';
+import 'package:dose/dose.dart';
+import 'package:dose/models/profile_model.dart';
+import 'package:dose/db/profile_db.dart';
+import 'package:dose/services/backup_service.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -18,15 +18,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   static const int _totalPages = 5;
-
-  // Profile fields (Match Database Model)
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _bloodTypeController = TextEditingController();
   final TextEditingController _sexController = TextEditingController();
-  final TextEditingController _donorController = TextEditingController(text: 'No');
-
-  // Permission states
+  final TextEditingController _donorController = TextEditingController(
+    text: 'No',
+  );
   bool _notificationGranted = false;
 
   @override
@@ -75,7 +73,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Please grant notification permission to continue. If the popup doesn\'t appear, check app settings.'),
+            content: Text(
+              'Please grant notification permission to continue. If the popup doesn\'t appear, check app settings.',
+            ),
             duration: Duration(seconds: 3),
           ),
         );
@@ -84,7 +84,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _completeOnboarding() async {
-    // Save Profile Data to Database
     final newProfile = Profile(
       name: _nameController.text.trim(),
       dob: _dobController.text.trim(),
@@ -95,21 +94,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     try {
       await DatabaseHelper.instance.createprof(newProfile);
-
-      // Set SharedPreferences flag
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('has_completed_onboarding', true);
 
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const Dose()),
-        );
+        Navigator.of(
+          context,
+        ).pushReplacement(MaterialPageRoute(builder: (_) => const Dose()));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving profile: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error saving profile: $e')));
       }
     }
   }
@@ -144,7 +141,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Progress indicator
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
               child: Row(
@@ -154,7 +150,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                       height: 4,
-                      margin: EdgeInsets.only(right: i < _totalPages - 1 ? 6 : 0),
+                      margin: EdgeInsets.only(
+                        right: i < _totalPages - 1 ? 6 : 0,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(2),
                         color: i <= _currentPage
@@ -166,8 +164,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 }),
               ),
             ),
-
-            // Pages
             Expanded(
               child: PageView(
                 controller: _pageController,
@@ -189,8 +185,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
     );
   }
-
-  // ── Screen 1: Welcome ──────────────────────────────────────────────
 
   Widget _buildWelcomePage(ColorScheme cs) {
     return Padding(
@@ -223,10 +217,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(height: 16),
           Text(
             'Your personal medicine companion',
-            style: TextStyle(
-              fontSize: 16,
-              color: cs.onSurfaceVariant,
-            ),
+            style: TextStyle(fontSize: 16, color: cs.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const Spacer(flex: 3),
@@ -236,8 +227,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
     );
   }
-
-  // ── Screen 2: Introduction ─────────────────────────────────────────
 
   Widget _buildIntroPage(ColorScheme cs) {
     return Padding(
@@ -288,8 +277,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // ── Screen 3: Permissions ──────────────────────────────────────────
-
   Widget _buildPermissionsPage(ColorScheme cs) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -321,10 +308,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(height: 12),
           Text(
             'Dose needs a few permissions to work properly.',
-            style: TextStyle(
-              fontSize: 14,
-              color: cs.onSurfaceVariant,
-            ),
+            style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -352,10 +336,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     : Icons.security_rounded,
               ),
               label: Text(
-                _notificationGranted
-                    ? 'Continue'
-                    : 'Grant',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                _notificationGranted ? 'Continue' : 'Grant',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               style: FilledButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -382,7 +367,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: granted ? cs.primary.withValues(alpha: 0.5) : cs.outlineVariant,
+          color: granted
+              ? cs.primary.withValues(alpha: 0.5)
+              : cs.outlineVariant,
           width: 3.0,
         ),
       ),
@@ -424,10 +411,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: cs.onSurfaceVariant,
-                    ),
+                    style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -439,8 +423,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
     );
   }
-
-  // ── Screen 4: Data Import ───────────────────────────────────────────
 
   Widget _buildImportPage(ColorScheme cs) {
     return Padding(
@@ -516,9 +498,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
       if (result != null && result.files.single.path != null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Restoring data...')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Restoring data...')));
         }
 
         await BackupService.instance.importData(result.files.single.path!);
@@ -528,29 +510,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Data restored successfully!')),
           );
-
-          // Skip profile setup — backup already contains profile data
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool('has_completed_onboarding', true);
 
           if (mounted) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const Dose()),
-            );
+            Navigator.of(
+              context,
+            ).pushReplacement(MaterialPageRoute(builder: (_) => const Dose()));
           }
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Import failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Import failed: $e')));
       }
     }
   }
-
-  // ── Screen 5: Profile Setup ────────────────────────────────────────
 
   Widget _buildProfilePage(ColorScheme cs) {
     return Padding(
@@ -628,7 +606,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               label: 'Organ Donor',
               icon: Icons.favorite_border_rounded,
             ),
-            
+
             const SizedBox(height: 32),
 
             SizedBox(
@@ -687,7 +665,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         filled: true,
         fillColor: cs.surfaceContainer,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
       ),
     );
   }
@@ -709,7 +690,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: cs.surfaceContainer,
-        contentPadding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: const BorderSide(width: 3.0),
@@ -751,7 +735,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       child: SwitchListTile(
         title: Text(label, style: const TextStyle(fontSize: 16)),
         subtitle: Text(
-          controller.text == 'Yes' ? 'Yes, I am a donor' : 'No, I am not a donor',
+          controller.text == 'Yes'
+              ? 'Yes, I am a donor'
+              : 'No, I am not a donor',
           style: const TextStyle(fontSize: 12),
         ),
         secondary: Icon(
@@ -768,7 +754,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildActionButton(ColorScheme cs, String label, VoidCallback onPressed) {
+  Widget _buildActionButton(
+    ColorScheme cs,
+    String label,
+    VoidCallback onPressed,
+  ) {
     return SizedBox(
       width: double.infinity,
       height: 56,

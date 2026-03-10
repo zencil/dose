@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:app/services/theme_service.dart';
-import 'package:app/services/backup_service.dart';
-import 'package:app/pages/about_page.dart';
-import 'package:app/pages/support_page.dart';
+import 'package:dose/services/theme_service.dart';
+import 'package:dose/services/backup_service.dart';
+import 'package:dose/pages/about_page.dart';
+import 'package:dose/pages/support_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -51,9 +51,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 icon: Icons.notifications_none_outlined,
                 title: 'Notifications',
                 subtitle: 'Manage your alerts',
-                onTap: () {
-                  // TODO: Implement notification settings
-                },
+                onTap: () {},
               ),
               const Divider(height: 32),
               _buildSectionTitle('Backup'),
@@ -256,7 +254,6 @@ class _SettingsPageState extends State<SettingsPage> {
       if (result == null || result.files.single.path == null) return;
 
       if (context.mounted) {
-        // Confirm before overwriting
         final confirmed = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(

@@ -1,11 +1,11 @@
-import 'package:app/models/cabinet_model.dart';
-import 'package:app/models/intake_model.dart' as log_model;
-import 'package:app/models/extensions.dart';
+import 'package:dose/models/cabinet_model.dart';
+import 'package:dose/models/intake_model.dart' as log_model;
+import 'package:dose/models/extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:app/db/cabinet_db.dart';
-import 'package:app/db/intake_log_db.dart' as log_db;
-import 'package:app/widgets/dose_card.dart';
-import 'package:app/services/intake_service.dart';
+import 'package:dose/db/cabinet_db.dart';
+import 'package:dose/db/intake_log_db.dart' as log_db;
+import 'package:dose/widgets/dose_card.dart';
+import 'package:dose/services/intake_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -66,19 +66,13 @@ class _HomePageState extends State<HomePage> {
 
         final medicines = (snapshot.data?[0] as List<Cabinet>?) ?? [];
         final logs = (snapshot.data?[1] as List<log_model.Intake>?) ?? [];
-
-        // Determine Upcoming list
         final upcomingMedicines = medicines
             .where((med) => _isUpcoming(med, logs))
             .toList();
         upcomingMedicines.sort((a, b) => a.time.compareTo(b.time));
-
-        // Determine Low Stock list
         final lowStockMedicines = medicines
             .where((med) => med.currstock < 3)
             .toList();
-
-        // Create deduplicated condesned list
         final Map<String, String> uniqueMedicines = {};
         for (final med in medicines) {
           uniqueMedicines[med.name] = med.dosage;
@@ -88,7 +82,6 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           children: [
             if (upcomingMedicines.isNotEmpty) ...[
-              // Upcoming Header
               Padding(
                 padding: const EdgeInsets.only(bottom: 12.0),
                 child: Text(
@@ -104,7 +97,6 @@ class _HomePageState extends State<HomePage> {
             ],
 
             if (lowStockMedicines.isNotEmpty) ...[
-              // Low Stock Header
               Padding(
                 padding: const EdgeInsets.only(top: 16.0, bottom: 12.0),
                 child: Text(
@@ -163,8 +155,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ],
-
-            // All Medicines Header
             Padding(
               padding: const EdgeInsets.only(top: 16.0, bottom: 12.0),
               child: Text(
@@ -199,60 +189,60 @@ class _HomePageState extends State<HomePage> {
     return DoseCard(
       child: Row(
         children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: cs.tertiaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.medication, color: cs.onTertiaryContainer),
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: cs.tertiaryContainer,
+              shape: BoxShape.circle,
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    med.name,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: cs.onSurface,
-                    ),
+            child: Icon(Icons.medication, color: cs.onTertiaryContainer),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  med.name,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: cs.onSurface,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    med.dosage.formattedDosage,
-                    style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              med.time,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: cs.onSurface,
-              ),
-            ),
-            const SizedBox(width: 16),
-            InkWell(
-              onTap: () => _handleDone(med),
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: cs.primary,
-                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.check, color: cs.onPrimary),
-              ),
+                const SizedBox(height: 4),
+                Text(
+                  med.dosage.formattedDosage,
+                  style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Text(
+            med.time,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: cs.onSurface,
+            ),
+          ),
+          const SizedBox(width: 16),
+          InkWell(
+            onTap: () => _handleDone(med),
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: cs.primary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(Icons.check, color: cs.onPrimary),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -25,7 +25,7 @@ class Profile {
       'sex': sex,
     };
   }
-//should dosage be on home screen?
+
   static Profile fromMap(Map<String, dynamic> map) {
     return Profile(
       id: map['id'],

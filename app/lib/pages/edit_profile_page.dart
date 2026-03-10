@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:app/models/profile_model.dart';
-import 'package:app/db/profile_db.dart';
+import 'package:dose/models/profile_model.dart';
+import 'package:dose/db/profile_db.dart';
 
 class EditProfilePage extends StatefulWidget {
   final Profile profileData;
@@ -25,7 +25,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.initState();
     _nameController = TextEditingController(text: widget.profileData.name);
     _dobController = TextEditingController(text: widget.profileData.dob);
-    _bloodTypeController = TextEditingController(text: widget.profileData.bloodtype);
+    _bloodTypeController = TextEditingController(
+      text: widget.profileData.bloodtype,
+    );
     _sexController = TextEditingController(text: widget.profileData.sex);
     _donorController = TextEditingController(text: widget.profileData.donor);
   }
@@ -43,7 +45,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       try {
         await DatabaseHelper.instance.updateProfile(updatedProfile);
-        
+
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile updated successfully!')),
@@ -51,9 +53,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
         Navigator.pop(context, true); // Return true indicating a save happened
       } catch (e) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error updating profile: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error updating profile: $e')));
       }
     }
   }
@@ -130,16 +132,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(width: 3.0, color: cs.outlineVariant),
+                      borderSide: BorderSide(
+                        width: 3.0,
+                        color: cs.outlineVariant,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide(width: 3.0, color: cs.primary),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 18,
+                    ),
                     prefixIcon: const Icon(Icons.person),
                   ),
-                  validator: (value) => value!.isEmpty ? 'Please enter your name' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please enter your name' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -156,80 +165,127 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(width: 3.0, color: cs.outlineVariant),
+                      borderSide: BorderSide(
+                        width: 3.0,
+                        color: cs.outlineVariant,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide(width: 3.0, color: cs.primary),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 18,
+                    ),
                     prefixIcon: const Icon(Icons.calendar_today),
                     suffixIcon: const Icon(Icons.edit_calendar_outlined),
                   ),
-                  validator: (value) => value!.isEmpty ? 'Please select your DOB' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please select your DOB' : null,
                 ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        initialValue: _bloodTypeController.text.isEmpty ? null : _bloodTypeController.text,
+                        initialValue: _bloodTypeController.text.isEmpty
+                            ? null
+                            : _bloodTypeController.text,
                         decoration: InputDecoration(
                           labelText: 'Blood',
                           labelStyle: const TextStyle(fontSize: 14),
                           prefixIcon: const Icon(Icons.water_drop, size: 20),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 16,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: const BorderSide(width: 3.0),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(width: 3.0, color: cs.outlineVariant),
+                            borderSide: BorderSide(
+                              width: 3.0,
+                              color: cs.outlineVariant,
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(width: 3.0, color: cs.primary),
+                            borderSide: BorderSide(
+                              width: 3.0,
+                              color: cs.primary,
+                            ),
                           ),
                         ),
                         isExpanded: true,
                         style: TextStyle(fontSize: 14, color: cs.onSurface),
-                        items: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
-                            .map((t) => DropdownMenuItem(value: t, child: Text(t, overflow: TextOverflow.ellipsis)))
-                            .toList(),
-                        onChanged: (val) => setState(() => _bloodTypeController.text = val!),
-                        validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                        items:
+                            ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+                                .map(
+                                  (t) => DropdownMenuItem(
+                                    value: t,
+                                    child: Text(
+                                      t,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (val) =>
+                            setState(() => _bloodTypeController.text = val!),
+                        validator: (value) =>
+                            value == null || value.isEmpty ? 'Required' : null,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        initialValue: _sexController.text.isEmpty ? null : _sexController.text,
+                        initialValue: _sexController.text.isEmpty
+                            ? null
+                            : _sexController.text,
                         decoration: InputDecoration(
                           labelText: 'Sex',
                           labelStyle: const TextStyle(fontSize: 14),
                           prefixIcon: const Icon(Icons.wc, size: 20),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 16,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: const BorderSide(width: 3.0),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(width: 3.0, color: cs.outlineVariant),
+                            borderSide: BorderSide(
+                              width: 3.0,
+                              color: cs.outlineVariant,
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(width: 3.0, color: cs.primary),
+                            borderSide: BorderSide(
+                              width: 3.0,
+                              color: cs.primary,
+                            ),
                           ),
                         ),
                         isExpanded: true,
                         style: TextStyle(fontSize: 14, color: cs.onSurface),
                         items: ['Male', 'Female', 'Other', 'N/A']
-                            .map((s) => DropdownMenuItem(value: s, child: Text(s, overflow: TextOverflow.ellipsis)))
+                            .map(
+                              (s) => DropdownMenuItem(
+                                value: s,
+                                child: Text(s, overflow: TextOverflow.ellipsis),
+                              ),
+                            )
                             .toList(),
-                        onChanged: (val) => setState(() => _sexController.text = val!),
-                        validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                        onChanged: (val) =>
+                            setState(() => _sexController.text = val!),
+                        validator: (value) =>
+                            value == null || value.isEmpty ? 'Required' : null,
                       ),
                     ),
                   ],
@@ -238,9 +294,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 const SizedBox(height: 16),
                 SwitchListTile(
                   title: const Text('Organ Donor'),
-                  subtitle: Text(_donorController.text == 'Yes' ? 'Yes, I am a donor' : 'No, I am not a donor'),
+                  subtitle: Text(
+                    _donorController.text == 'Yes'
+                        ? 'Yes, I am a donor'
+                        : 'No, I am not a donor',
+                  ),
                   secondary: Icon(
-                    _donorController.text == 'Yes' ? Icons.favorite : Icons.favorite_border,
+                    _donorController.text == 'Yes'
+                        ? Icons.favorite
+                        : Icons.favorite_border,
                     color: _donorController.text == 'Yes' ? Colors.red : null,
                   ),
                   value: _donorController.text == 'Yes',
@@ -260,7 +322,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   style: FilledButton.styleFrom(
                     minimumSize: const Size(double.infinity, 56),
                   ),
-                  child: const Text('Save Changes', style: TextStyle(fontSize: 18)),
+                  child: const Text(
+                    'Save Changes',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
                 const SizedBox(height: 24),
               ],

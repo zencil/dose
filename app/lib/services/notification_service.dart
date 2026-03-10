@@ -3,14 +3,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:app/db/cabinet_db.dart';
-import 'package:app/models/cabinet_model.dart';
-import 'package:app/models/intake_model.dart';
-import 'package:app/db/intake_log_db.dart' as log_db;
-import 'package:app/services/widget_service.dart';
-import 'package:app/services/snooze_service.dart';
-import 'package:app/main.dart';
-import 'package:app/pages/cabinet_page.dart';
+import 'package:dose/db/cabinet_db.dart';
+import 'package:dose/models/cabinet_model.dart';
+import 'package:dose/models/intake_model.dart';
+import 'package:dose/db/intake_log_db.dart' as log_db;
+import 'package:dose/services/widget_service.dart';
+import 'package:dose/services/snooze_service.dart';
+import 'package:dose/main.dart';
+import 'package:dose/pages/cabinet_page.dart';
 
 /// Handles the "Done" action from a notification by updating stock and logging intake.
 Future<void> _handleDoneAction(int id) async {
@@ -58,7 +58,6 @@ Future<void> _handleSnoozeAction(int id) async {
 
   final med = await DatabaseHelper.instance.readMedicine(id);
   if (med != null) {
-    // Schedule a new notification 5 minutes from now
     await NotificationHelper().scheduleSnoozeNotification(
       id,
       med.name,

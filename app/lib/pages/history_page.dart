@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:app/models/intake_model.dart';
-import 'package:app/db/intake_log_db.dart' as log_db;
-import 'package:app/widgets/dose_card.dart';
+import 'package:dose/models/intake_model.dart';
+import 'package:dose/db/intake_log_db.dart' as log_db;
+import 'package:dose/widgets/dose_card.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -89,66 +89,66 @@ class _HistoryPageState extends State<HistoryPage> {
               final log = logs[index];
               return DoseCard(
                 child: Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: colorScheme.secondaryContainer,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.history,
-                          color: colorScheme.onSecondaryContainer,
-                        ),
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: colorScheme.secondaryContainer,
+                        shape: BoxShape.circle,
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              log.name,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              "Target: ${log.ttime}",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
+                      child: Icon(
+                        Icons.history,
+                        color: colorScheme.onSecondaryContainer,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            log.time,
+                            log.name,
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            log.date,
+                            "Target: ${log.ttime}",
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 14,
                               color: colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          log.time,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          log.date,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               );
             },
           );

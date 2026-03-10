@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:app/db/cabinet_db.dart' as cabinet_db;
-import 'package:app/db/intake_log_db.dart' as log_db;
-import 'package:app/db/profile_db.dart' as profile_db;
+import 'package:dose/db/cabinet_db.dart' as cabinet_db;
+import 'package:dose/db/intake_log_db.dart' as log_db;
+import 'package:dose/db/profile_db.dart' as profile_db;
 
 class BackupService {
   static final BackupService instance = BackupService._init();
@@ -13,21 +13,14 @@ class BackupService {
   /// Export all app data to a JSON file in the Downloads directory.
   /// Returns the file path on success.
   Future<String> exportData() async {
-    // Query all databases
     final medicines = await cabinet_db.DatabaseHelper.instance
         .readAllMedicines();
     final intakeLogs = await log_db.DatabaseHelper.instance.readintakelog();
-
-    // Profile table may not exist yet if profile setup was never completed
     List<Map<String, dynamic>> profileMaps = [];
     try {
       final profiles = await profile_db.DatabaseHelper.instance.readprofile();
       profileMaps = profiles.map((p) => p.toMap()).toList();
-    } catch (_) {
-      // Table doesn't exist yet — export empty list
-    }
-
-    // Read SharedPreferences
+    } catch (_) {}
     final prefs = await SharedPreferences.getInstance();
 
     final backup = {
@@ -45,8 +38,6 @@ class BackupService {
     };
 
     final jsonString = const JsonEncoder.withIndent('  ').convert(backup);
-
-    // Write to Downloads directory
     final directory = await _getExportDirectory();
     final timestamp = DateTime.now()
         .toIso8601String()
@@ -73,13 +64,9 @@ class BackupService {
     } catch (e) {
       throw Exception('Invalid backup file format.');
     }
-
-    // Validate structure
     if (!backup.containsKey('cabinet') || !backup.containsKey('intake_log')) {
       throw Exception('Backup file is missing required data.');
     }
-
-    // Clear existing data and import
     await _importCabinet(backup['cabinet'] as List<dynamic>);
     await _importIntakeLog(backup['intake_log'] as List<dynamic>);
 
@@ -98,8 +85,6 @@ class BackupService {
 
     for (final item in data) {
       final map = Map<String, dynamic>.from(item as Map);
-      // Remove id to let autoincrement handle it if needed,
-      // or keep it for FK consistency — keep it for restore fidelity.
       await db.insert('cabinet', map);
     }
   }
@@ -123,9 +108,7 @@ class BackupService {
         final map = Map<String, dynamic>.from(item as Map);
         await db.insert('profile', map);
       }
-    } catch (_) {
-      // Profile table may not exist yet — skip import
-    }
+    } catch (_) {}
   }
 
   Future<void> _importPreferences(Map<String, dynamic> data) async {
@@ -149,7 +132,6 @@ class BackupService {
   }
 
   Future<Directory> _getExportDirectory() async {
-    // Try to use the Downloads directory on Android
     Directory? dir;
     if (Platform.isAndroid) {
       dir = Directory('/storage/emulated/0/Download');

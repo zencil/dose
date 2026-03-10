@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:app/models/cabinet_model.dart';
-import 'package:app/models/extensions.dart';
-import 'package:app/db/cabinet_db.dart';
-import 'package:app/pages/add_menu_page.dart';
-import 'package:app/services/widget_service.dart';
-import 'package:app/widgets/dose_card.dart';
+import 'package:dose/models/cabinet_model.dart';
+import 'package:dose/models/extensions.dart';
+import 'package:dose/db/cabinet_db.dart';
+import 'package:dose/pages/add_menu_page.dart';
+import 'package:dose/services/widget_service.dart';
+import 'package:dose/widgets/dose_card.dart';
 
 class CabinetPage extends StatefulWidget {
   const CabinetPage({super.key});

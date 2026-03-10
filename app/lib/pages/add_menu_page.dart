@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:app/models/cabinet_model.dart';
-import 'package:app/db/cabinet_db.dart';
-import 'package:app/services/notification_service.dart';
-import 'package:app/services/alarm_service.dart';
-import 'package:app/services/widget_service.dart';
+import 'package:dose/models/cabinet_model.dart';
+import 'package:dose/db/cabinet_db.dart';
+import 'package:dose/services/notification_service.dart';
+import 'package:dose/services/alarm_service.dart';
+import 'package:dose/services/widget_service.dart';
 
 class AddMedicineMenu extends StatefulWidget {
   final VoidCallback onSave;
@@ -94,16 +94,12 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         await DatabaseHelper.instance.updateMedicine(medicine);
         savedId = medicine.id!;
       }
-
-      // When editing, cancel old alarm/notification before rescheduling
       if (widget.medicineToEdit != null) {
         await AlarmService().cancelAlarm(savedId);
         await NotificationHelper().cancelNotification(savedId);
       }
 
       await AlarmService().scheduleMedicineAlarm(savedId, medicine);
-      // Only schedule a notification for non-high priority medicines
-      // (high priority already gets a full-screen alarm)
       if (medicine.priority != 2) {
         await NotificationHelper().scheduleMedicineNotification(
           savedId,
@@ -111,8 +107,6 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
           timeString,
         );
       }
-
-      // Trigger widget update
       await WidgetService.updateWidgetState();
 
       widget.onSave();
@@ -193,7 +187,10 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
               TextFormField(
                 controller: _dosageController,
                 keyboardType: TextInputType.number,
-                decoration: _buildInputDecoration("Dosage", suffixText: "pills/spoons"),
+                decoration: _buildInputDecoration(
+                  "Dosage",
+                  suffixText: "pills/spoons",
+                ),
                 validator: (value) => value!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),

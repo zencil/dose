@@ -1,6 +1,6 @@
-import 'package:app/db/intake_log_db.dart' as log_db;
-import 'package:app/db/cabinet_db.dart' as cabinet_db;
-import 'package:app/models/intake_model.dart';
+import 'package:dose/db/intake_log_db.dart' as log_db;
+import 'package:dose/db/cabinet_db.dart' as cabinet_db;
+import 'package:dose/models/intake_model.dart';
 
 /// Data class for adherence summary (pie chart).
 class AdherenceSummary {
@@ -128,8 +128,6 @@ class AnalyticsService {
       if (med.id == null) continue;
       final medLogs = lookup[med.id!] ?? {};
       final scheduledMinutes = _timeToMinutes(med.time);
-
-      // Walk from earliest log date to today
       DateTime day = earliest;
       while (!day.isAfter(today)) {
         final dateStr = _formatDate(day);
@@ -167,7 +165,6 @@ class AnalyticsService {
     final lookup = _buildIntakeLookup(logs);
 
     for (int i = months - 1; i >= 0; i--) {
-      // Calculate the target month
       int year = today.year;
       int month = today.month - i;
       while (month <= 0) {
@@ -214,8 +211,6 @@ class AnalyticsService {
         .readAllMedicines();
 
     if (medicines.isEmpty) return [];
-
-    // Group logs by medicine id, sorted by date
     final logsByMed = <int, List<Intake>>{};
     for (final log in logs) {
       if (log.id == null) continue;
@@ -228,8 +223,6 @@ class AnalyticsService {
     for (final med in medicines) {
       if (med.id == null) continue;
       final medLogs = logsByMed[med.id!] ?? [];
-
-      // Sort by date
       medLogs.sort((a, b) => a.date.compareTo(b.date));
 
       final points = <StockPoint>[];
@@ -239,8 +232,6 @@ class AnalyticsService {
           points.add(StockPoint(date: d, stock: log.currstock));
         }
       }
-
-      // Add current stock as the latest point
       points.add(StockPoint(date: DateTime.now(), stock: med.currstock));
 
       timelines.add(

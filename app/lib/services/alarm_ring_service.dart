@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:alarm/alarm.dart';
-import 'package:app/db/cabinet_db.dart';
-import 'package:app/models/cabinet_model.dart';
-import 'package:app/models/intake_model.dart';
-import 'package:app/db/intake_log_db.dart' as log_db;
-import 'package:app/services/widget_service.dart';
-import 'package:app/services/snooze_service.dart';
-import 'package:app/services/notification_service.dart';
+import 'package:dose/db/cabinet_db.dart';
+import 'package:dose/models/cabinet_model.dart';
+import 'package:dose/models/intake_model.dart';
+import 'package:dose/db/intake_log_db.dart' as log_db;
+import 'package:dose/services/widget_service.dart';
+import 'package:dose/services/snooze_service.dart';
+import 'package:dose/services/notification_service.dart';
 
 class AlarmRingScreen extends StatefulWidget {
   final AlarmSettings alarmSettings;
@@ -64,11 +64,8 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
 
   Future<void> _handleDone() async {
     _snoozeTimer?.cancel();
-    // Close screen and stop alarm immediately
     Navigator.pop(context);
     await Alarm.stop(widget.alarmSettings.id);
-
-    // Then log intake and update stock in the background
     final med = await DatabaseHelper.instance.readMedicine(
       widget.alarmSettings.id,
     );
@@ -112,11 +109,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
     _snoozeTimer?.cancel();
     final result = await SnoozeService.incrementSnooze(widget.alarmSettings.id);
     if (result == -1) return;
-
-    // Stop current alarm
     await Alarm.stop(widget.alarmSettings.id);
-
-    // Re-schedule the same alarm 5 minutes from now
     final snoozeTime = DateTime.now().add(
       const Duration(minutes: SnoozeService.snoozeDurationMinutes),
     );

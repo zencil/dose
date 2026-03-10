@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:app/pages/cabinet_page.dart';
-import 'package:app/pages/about_page.dart';
-import 'package:app/pages/settings_page.dart';
-import 'package:app/pages/profile_details_page.dart';
-import 'package:app/pages/history_page.dart';
+import 'package:dose/pages/cabinet_page.dart';
+import 'package:dose/pages/about_page.dart';
+import 'package:dose/pages/settings_page.dart';
+import 'package:dose/pages/profile_details_page.dart';
+import 'package:dose/pages/history_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -106,15 +106,12 @@ class ProfilePage extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // MD3 Icon on the left side
             Icon(
               icon,
               size: 28,
               color: Theme.of(context).colorScheme.onSurface,
             ),
             const SizedBox(width: 16),
-
-            // Label text following the icon
             Text(
               label,
               style: TextStyle(
@@ -123,11 +120,7 @@ class ProfilePage extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-
-            // Pushes the arrow to the right edge
             const Spacer(),
-
-            // Arrow symbol at the right end
             Icon(
               Icons.arrow_forward_ios,
               size: 18,

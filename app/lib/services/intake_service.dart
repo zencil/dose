@@ -1,11 +1,11 @@
-import 'package:app/models/cabinet_model.dart';
-import 'package:app/models/intake_model.dart' as log_model;
-import 'package:app/db/cabinet_db.dart';
-import 'package:app/db/intake_log_db.dart' as log_db;
-import 'package:app/services/notification_service.dart';
-import 'package:app/services/alarm_service.dart';
-import 'package:app/services/widget_service.dart';
-import 'package:app/services/snooze_service.dart';
+import 'package:dose/models/cabinet_model.dart';
+import 'package:dose/models/intake_model.dart' as log_model;
+import 'package:dose/db/cabinet_db.dart';
+import 'package:dose/db/intake_log_db.dart' as log_db;
+import 'package:dose/services/notification_service.dart';
+import 'package:dose/services/alarm_service.dart';
+import 'package:dose/services/widget_service.dart';
+import 'package:dose/services/snooze_service.dart';
 
 class IntakeService {
   static bool isUpcoming(Cabinet med, List<log_model.Intake> todayLogs) {

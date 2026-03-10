@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:app/services/analytics_service.dart';
-import 'package:app/widgets/dose_card.dart';
+import 'package:dose/services/analytics_service.dart';
+import 'package:dose/widgets/dose_card.dart';
 
 class AnalyticsPage extends StatefulWidget {
   const AnalyticsPage({super.key});
@@ -68,13 +68,14 @@ class _AnalyticsPageState extends State<AnalyticsPage>
     buf.writeln('📋 Dose — Medicine Adherence Report');
     buf.writeln('Generated: ${DateTime.now().toString().substring(0, 16)}');
     buf.writeln();
-
-    // Adherence overview
     buf.writeln('── Adherence Overview ──');
     if (adherence.total > 0) {
-      final takenPct = ((adherence.taken / adherence.total) * 100).toStringAsFixed(1);
-      final latePct = ((adherence.late / adherence.total) * 100).toStringAsFixed(1);
-      final skippedPct = ((adherence.skipped / adherence.total) * 100).toStringAsFixed(1);
+      final takenPct = ((adherence.taken / adherence.total) * 100)
+          .toStringAsFixed(1);
+      final latePct = ((adherence.late / adherence.total) * 100)
+          .toStringAsFixed(1);
+      final skippedPct = ((adherence.skipped / adherence.total) * 100)
+          .toStringAsFixed(1);
       buf.writeln('On Time: ${adherence.taken} ($takenPct%)');
       buf.writeln('Late:    ${adherence.late} ($latePct%)');
       buf.writeln('Skipped: ${adherence.skipped} ($skippedPct%)');
@@ -83,8 +84,6 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       buf.writeln('No data recorded yet.');
     }
     buf.writeln();
-
-    // Monthly trend
     buf.writeln('── Monthly Adherence Trend ──');
     if (monthly.isNotEmpty) {
       for (final m in monthly) {
@@ -94,13 +93,13 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       buf.writeln('No monthly data available.');
     }
     buf.writeln();
-
-    // Stock summary
     buf.writeln('── Current Stock ──');
     if (stock.isNotEmpty) {
       for (final s in stock) {
         final current = s.points.isNotEmpty ? s.points.last.stock : s.initStock;
-        buf.writeln('${s.name}: $current remaining (started with ${s.initStock})');
+        buf.writeln(
+          '${s.name}: $current remaining (started with ${s.initStock})',
+        );
       }
     } else {
       buf.writeln('No stock data available.');
@@ -108,53 +107,49 @@ class _AnalyticsPageState extends State<AnalyticsPage>
     buf.writeln();
     buf.writeln('— Sent from Dose app');
 
-    await SharePlus.instance.share(
-      ShareParams(text: buf.toString()),
-    );
+    await SharePlus.instance.share(ShareParams(text: buf.toString()));
   }
-
-  // ── Adherence Pie Chart ────────────────────────────────────────────
 
   Widget _buildAdherencePieCard(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return DoseCard(
       padding: const EdgeInsets.all(20),
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.pie_chart_rounded, color: cs.primary, size: 22),
-                const SizedBox(width: 8),
-                Text(
-                  'Adherence Overview',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: cs.onSurface,
-                  ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.pie_chart_rounded, color: cs.primary, size: 22),
+              const SizedBox(width: 8),
+              Text(
+                'Adherence Overview',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: cs.onSurface,
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            FutureBuilder<AdherenceSummary>(
-              future: _adherenceFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox(
-                    height: 200,
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-                final data = snapshot.data;
-                if (data == null || data.total == 0) {
-                  return _buildEmptyState('No intake data recorded yet.');
-                }
-                return _buildPieChart(data, cs);
-              },
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          FutureBuilder<AdherenceSummary>(
+            future: _adherenceFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(
+                  height: 200,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              final data = snapshot.data;
+              if (data == null || data.total == 0) {
+                return _buildEmptyState('No intake data recorded yet.');
+              }
+              return _buildPieChart(data, cs);
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -277,58 +272,55 @@ class _AnalyticsPageState extends State<AnalyticsPage>
     );
   }
 
-  // ── Adherence Trend Line Graph ─────────────────────────────────────
-
   Widget _buildAdherenceTrendCard(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return DoseCard(
       padding: const EdgeInsets.all(20),
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.show_chart_rounded, color: cs.primary, size: 22),
-                const SizedBox(width: 8),
-                Text(
-                  'Adherence Trend',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: cs.onSurface,
-                  ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.show_chart_rounded, color: cs.primary, size: 22),
+              const SizedBox(width: 8),
+              Text(
+                'Adherence Trend',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: cs.onSurface,
                 ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Last 6 months',
-              style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
-            ),
-            const SizedBox(height: 20),
-            FutureBuilder<List<MonthlyAdherence>>(
-              future: _monthlyFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox(
-                    height: 200,
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-                final data = snapshot.data;
-                if (data == null || data.isEmpty) {
-                  return _buildEmptyState('Not enough data to show trends.');
-                }
-                return _buildLineChart(data, cs);
-              },
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Last 6 months',
+            style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
+          ),
+          const SizedBox(height: 20),
+          FutureBuilder<List<MonthlyAdherence>>(
+            future: _monthlyFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(
+                  height: 200,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              final data = snapshot.data;
+              if (data == null || data.isEmpty) {
+                return _buildEmptyState('Not enough data to show trends.');
+              }
+              return _buildLineChart(data, cs);
+            },
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildLineChart(List<MonthlyAdherence> data, ColorScheme cs) {
-    // Month labels for bottom axis
     final monthNames = [
       'Jan',
       'Feb',
@@ -471,58 +463,55 @@ class _AnalyticsPageState extends State<AnalyticsPage>
     );
   }
 
-  // ── Stock Timeline ─────────────────────────────────────────────────
-
   Widget _buildStockTimelineCard(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return DoseCard(
       padding: const EdgeInsets.all(20),
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.inventory_2_rounded, color: cs.primary, size: 22),
-                const SizedBox(width: 8),
-                Text(
-                  'Stock Timeline',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: cs.onSurface,
-                  ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.inventory_2_rounded, color: cs.primary, size: 22),
+              const SizedBox(width: 8),
+              Text(
+                'Stock Timeline',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: cs.onSurface,
                 ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Remaining stock over time',
-              style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
-            ),
-            const SizedBox(height: 20),
-            FutureBuilder<List<MedicineStockTimeline>>(
-              future: _stockFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox(
-                    height: 200,
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-                final data = snapshot.data;
-                if (data == null || data.isEmpty) {
-                  return _buildEmptyState('No stock data available.');
-                }
-                return _buildStockChart(data, cs);
-              },
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Remaining stock over time',
+            style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
+          ),
+          const SizedBox(height: 20),
+          FutureBuilder<List<MedicineStockTimeline>>(
+            future: _stockFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(
+                  height: 200,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              final data = snapshot.data;
+              if (data == null || data.isEmpty) {
+                return _buildEmptyState('No stock data available.');
+              }
+              return _buildStockChart(data, cs);
+            },
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildStockChart(List<MedicineStockTimeline> data, ColorScheme cs) {
-    // Palette for multiple medicine lines
     final palette = [
       cs.primary,
       cs.tertiary,
@@ -531,8 +520,6 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       cs.primaryContainer,
       cs.tertiaryContainer,
     ];
-
-    // Find the global date range
     DateTime? minDate;
     DateTime? maxDate;
     double maxStock = 0;
@@ -554,8 +541,6 @@ class _AnalyticsPageState extends State<AnalyticsPage>
     if (totalDays <= 0) {
       return _buildEmptyState('Need more data points for timeline.');
     }
-
-    // Build line bar data per medicine
     final lineBars = <LineChartBarData>[];
     for (int i = 0; i < data.length; i++) {
       final med = data[i];
@@ -588,8 +573,6 @@ class _AnalyticsPageState extends State<AnalyticsPage>
         ),
       );
     }
-
-    // Date labels — show ~5 labels evenly spaced
     final interval = totalDays > 5 ? (totalDays / 5).ceilToDouble() : 1.0;
 
     return Column(
@@ -718,8 +701,6 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       ],
     );
   }
-
-  // ── Common ─────────────────────────────────────────────────────────
 
   Widget _buildEmptyState(String message) {
     final cs = Theme.of(context).colorScheme;

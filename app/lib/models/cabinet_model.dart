@@ -28,7 +28,7 @@ class Cabinet {
       'priority': priority,
     };
   }
-//should dosage be on home screen?
+
   static Cabinet fromMap(Map<String, dynamic> map) {
     return Cabinet(
       id: map['id'],

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:app/dose.dart';
-import 'package:app/pages/onboarding_page.dart';
-import 'package:app/services/theme_service.dart';
-import 'package:app/services/app_bootstrapper.dart';
+import 'package:dose/dose.dart';
+import 'package:dose/pages/onboarding_page.dart';
+import 'package:dose/services/theme_service.dart';
+import 'package:dose/services/app_bootstrapper.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
