@@ -6,7 +6,7 @@
 
 Simple and modern medicine intake tracking app built using Flutter for Android.
 
-The application allows tracking your daily medicines, keeping stock count, and reminding you through notifications and full-screen alarms.
+Allows tracking your daily medicines, keeping stock count, reminding you through notifications and full-screen alarms.
 
 ## Features
 - **Stock Tracking:** Track medicine stock and get "Low Stock" restock reminders.
