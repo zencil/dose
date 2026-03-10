@@ -205,7 +205,7 @@ class _CabinetPageState extends State<CabinetPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Dosage: ${medicine.dosage}',
+                              'Dosage: ${medicine.dosage.replaceAll('mg', 'pills/spoons')}',
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             const SizedBox(height: 4),

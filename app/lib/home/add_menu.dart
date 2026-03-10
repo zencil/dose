@@ -34,7 +34,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
     if (widget.medicineToEdit != null) {
       final med = widget.medicineToEdit!;
       _nameController.text = med.name;
-      _dosageController.text = med.dosage.replaceAll(' mg', '');
+      _dosageController.text = med.dosage.replaceAll(' pills/spoons', '');
       _stockController.text = med.currstock.toString();
       _priority = med.priority;
 
@@ -78,7 +78,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
       final medicine = Cabinet(
         id: widget.medicineToEdit?.id,
         name: _nameController.text,
-        dosage: "${_dosageController.text} mg",
+        dosage: "${_dosageController.text} pills/spoons",
         time: timeString,
         currstock: int.tryParse(_stockController.text) ?? 0,
         initstock: widget.medicineToEdit != null
@@ -165,7 +165,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: "Dosage",
-                  suffixText: "mg",
+                  suffixText: "pills/spoons",
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) => value!.isEmpty ? 'Required' : null,
