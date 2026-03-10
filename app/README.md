@@ -9,6 +9,7 @@ lib/
 │   └── README_DB.md
 ├── models/
 │   ├── cabinet_model.dart
+│   ├── extensions.dart
 │   ├── intake_model.dart
 │   └── profile_model.dart
 ├── pages/
@@ -28,11 +29,15 @@ lib/
 │   ├── alarm_ring_service.dart
 │   ├── alarm_service.dart
 │   ├── analytics_service.dart
+│   ├── app_bootstrapper.dart
 │   ├── backup_service.dart
+│   ├── intake_service.dart
 │   ├── notification_service.dart
 │   ├── snooze_service.dart
 │   ├── theme_service.dart
 │   └── widget_service.dart
+├── widgets/
+│   └── dose_card.dart
 ├── dose.dart
 └── main.dart
 ```
