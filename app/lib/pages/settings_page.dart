@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:app/services/theme_service.dart';
 import 'package:app/services/backup_service.dart';
-import 'package:app/profile/about_page.dart';
-import 'package:app/profile/help_support.dart';
+import 'package:app/pages/about_page.dart';
+import 'package:app/pages/support_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -221,9 +221,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _handleExport(BuildContext context) async {
     try {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Exporting data...')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Exporting data...')));
 
       final path = await BackupService.instance.exportData();
 
@@ -239,9 +239,9 @@ class _SettingsPageState extends State<SettingsPage> {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Export failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Export failed: $e')));
       }
     }
   }
@@ -281,9 +281,9 @@ class _SettingsPageState extends State<SettingsPage> {
         if (confirmed != true) return;
 
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Restoring data...')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Restoring data...')));
         }
 
         await BackupService.instance.importData(result.files.single.path!);
@@ -298,9 +298,9 @@ class _SettingsPageState extends State<SettingsPage> {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Import failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Import failed: $e')));
       }
     }
   }

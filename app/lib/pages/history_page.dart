@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/models/intake_model.dart';
-import 'package:app/db/intake_log.dart' as log_db;
+import 'package:app/db/intake_log_db.dart' as log_db;
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});

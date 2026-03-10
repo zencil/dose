@@ -4,7 +4,7 @@ import 'package:alarm/alarm.dart';
 import 'package:app/db/cabinet_db.dart';
 import 'package:app/models/cabinet_model.dart';
 import 'package:app/models/intake_model.dart';
-import 'package:app/db/intake_log.dart' as log_db;
+import 'package:app/db/intake_log_db.dart' as log_db;
 import 'package:app/services/widget_service.dart';
 import 'package:app/services/snooze_service.dart';
 import 'package:app/services/notification_service.dart';
@@ -167,8 +167,12 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
                 if (_canSnooze)
                   FilledButton.icon(
                     style: FilledButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
+                      foregroundColor: Theme.of(
+                        context,
+                      ).colorScheme.onPrimaryContainer,
                     ),
                     onPressed: _handleSnooze,
                     icon: const Icon(Icons.snooze),
@@ -177,8 +181,12 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
                 if (_canSnooze) const SizedBox(width: 20),
                 FilledButton.icon(
                   style: FilledButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer,
+                    foregroundColor: Theme.of(
+                      context,
+                    ).colorScheme.onPrimaryContainer,
                   ),
                   onPressed: _handleDone,
                   icon: const Icon(Icons.check),

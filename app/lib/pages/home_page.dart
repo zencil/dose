@@ -2,7 +2,7 @@ import 'package:app/models/cabinet_model.dart';
 import 'package:app/models/intake_model.dart' as log_model;
 import 'package:flutter/material.dart';
 import 'package:app/db/cabinet_db.dart';
-import 'package:app/db/intake_log.dart' as log_db;
+import 'package:app/db/intake_log_db.dart' as log_db;
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
 import 'package:app/services/widget_service.dart';
@@ -30,15 +30,15 @@ class _HomePageState extends State<HomePage> {
     _todayLogsFuture = log_db.DatabaseHelper.instance.readintakelog();
   }
 
-
-
   bool _isUpcoming(Cabinet med, List<log_model.Intake> todayLogs) {
     final now = DateTime.now();
     final todayStr =
         "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
 
-    bool isTaken = todayLogs.any((log) =>
-        log.name == med.name && log.ttime == med.time && log.date == todayStr);
+    bool isTaken = todayLogs.any(
+      (log) =>
+          log.name == med.name && log.ttime == med.time && log.date == todayStr,
+    );
     if (isTaken) return false;
 
     final timeParts = med.time.split(':');
@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
         await NotificationHelper().showLowStockNotification(updatedMed);
       }
     }
-    
+
     if (med.id != null) {
       await SnoozeService.resetSnooze(med.id!);
       await NotificationHelper().cancelNotification(med.id!);
@@ -134,11 +134,15 @@ class _HomePageState extends State<HomePage> {
         final logs = (snapshot.data?[1] as List<log_model.Intake>?) ?? [];
 
         // Determine Upcoming list
-        final upcomingMedicines = medicines.where((med) => _isUpcoming(med, logs)).toList();
+        final upcomingMedicines = medicines
+            .where((med) => _isUpcoming(med, logs))
+            .toList();
         upcomingMedicines.sort((a, b) => a.time.compareTo(b.time));
 
         // Determine Low Stock list
-        final lowStockMedicines = medicines.where((med) => med.currstock < 3).toList();
+        final lowStockMedicines = medicines
+            .where((med) => med.currstock < 3)
+            .toList();
 
         // Create deduplicated condesned list
         final Map<String, String> uniqueMedicines = {};
@@ -182,10 +186,7 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                   color: cs.surfaceContainer,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: cs.outlineVariant,
-                    width: 3.0,
-                  ),
+                  border: Border.all(color: cs.outlineVariant, width: 3.0),
                 ),
                 child: ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
@@ -302,10 +303,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 4),
                   Text(
                     med.dosage.replaceAll('mg', 'pills/spoons'),
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: cs.onSurfaceVariant,
-                    ),
+                    style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -338,7 +336,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCondensedList(Map<String, String> uniqueMedicines, ColorScheme cs) {
+  Widget _buildCondensedList(
+    Map<String, String> uniqueMedicines,
+    ColorScheme cs,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: cs.surfaceContainer,
@@ -354,7 +355,10 @@ class _HomePageState extends State<HomePage> {
           String dosage = uniqueMedicines[name]!;
 
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 16.0,
+            ),
             child: Row(
               children: [
                 Icon(Icons.circle, size: 10, color: cs.primary),
@@ -371,10 +375,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Text(
                   dosage.replaceAll('mg', 'pills/spoons'),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: cs.onSurfaceVariant,
-                  ),
+                  style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
                 ),
               ],
             ),

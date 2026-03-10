@@ -1,6 +1,6 @@
 import 'package:home_widget/home_widget.dart';
 import 'package:app/db/cabinet_db.dart' as cabinet_db;
-import 'package:app/db/intake_log.dart' as log_db;
+import 'package:app/db/intake_log_db.dart' as log_db;
 import 'package:app/models/cabinet_model.dart';
 
 class WidgetService {
@@ -15,14 +15,15 @@ class WidgetService {
       final now = DateTime.now();
 
       // Read all medicines and today's logs
-      final allMedicines =
-          await cabinet_db.DatabaseHelper.instance.readAllMedicines();
+      final allMedicines = await cabinet_db.DatabaseHelper.instance
+          .readAllMedicines();
       final todayLogs = await log_db.DatabaseHelper.instance.readintakelog();
 
       // Extract today's date in MM/dd/yyyy format (matching the app's log format)
       final todayString = '${now.month}/${now.day}/${now.year}';
-      final logsToday =
-          todayLogs.where((log) => log.date == todayString).toList();
+      final logsToday = todayLogs
+          .where((log) => log.date == todayString)
+          .toList();
 
       List<Cabinet> missed = [];
       List<Cabinet> upcoming = [];
@@ -38,8 +39,13 @@ class WidgetService {
             final hour = int.tryParse(timeParts[0]) ?? 0;
             final min = int.tryParse(timeParts[1]) ?? 0;
 
-            final scheduledTime =
-                DateTime(now.year, now.month, now.day, hour, min);
+            final scheduledTime = DateTime(
+              now.year,
+              now.month,
+              now.day,
+              hour,
+              min,
+            );
 
             if (scheduledTime.isBefore(now)) {
               missed.add(medicine);
@@ -55,15 +61,13 @@ class WidgetService {
       upcoming.sort((a, b) => a.time.compareTo(b.time));
 
       // Build friendly text
-      String missedText =
-          missed.isEmpty
-              ? 'No missed medicines'
-              : missed.map((m) => '${m.name} at ${m.time}').join('\n');
+      String missedText = missed.isEmpty
+          ? 'No missed medicines'
+          : missed.map((m) => '${m.name} at ${m.time}').join('\n');
 
-      String upcomingText =
-          upcoming.isEmpty
-              ? 'Nothing scheduled'
-              : upcoming.map((m) => '${m.name} at ${m.time}').join('\n');
+      String upcomingText = upcoming.isEmpty
+          ? 'Nothing scheduled'
+          : upcoming.map((m) => '${m.name} at ${m.time}').join('\n');
 
       // Save to SharedPreferences via home_widget
       await HomeWidget.saveWidgetData<String>('widget_missed_text', missedText);

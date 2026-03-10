@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app/models/cabinet_model.dart';
 import 'package:app/db/cabinet_db.dart';
-import 'package:app/home/add_menu.dart';
+import 'package:app/pages/add_menu_page.dart';
 import 'package:app/services/widget_service.dart';
 
 class CabinetPage extends StatefulWidget {
@@ -177,10 +177,7 @@ class _CabinetPageState extends State<CabinetPage> {
                       width: 14,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: _getPriorityColor(
-                          medicine.priority,
-                          context,
-                        ),
+                        color: _getPriorityColor(medicine.priority, context),
                         shape: BoxShape.circle,
                       ),
                     ),

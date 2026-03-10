@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app/dose.dart';
-import 'package:app/onboarding/onboarding_screen.dart';
+import 'package:app/pages/onboarding_page.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/alarm_service.dart';
 import 'package:app/services/theme_service.dart';
@@ -83,7 +83,9 @@ class MyApp extends StatelessWidget {
                 splashFactory: NoSplash.splashFactory,
               ),
               themeMode: themeMode,
-              home: onboardingComplete ? const Dose() : const OnboardingScreen(),
+              home: onboardingComplete
+                  ? const Dose()
+                  : const OnboardingScreen(),
             );
           },
         );

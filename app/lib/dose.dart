@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:app/home/home_page.dart';
-import 'package:app/analytics/analytics_page.dart';
-import 'package:app/profile/profile_page.dart';
-import 'package:app/home/add_menu.dart';
+import 'package:app/pages/home_page.dart';
+import 'package:app/pages/analytics_page.dart';
+import 'package:app/pages/profile_page.dart';
+import 'package:app/pages/add_menu_page.dart';
 import 'dart:async';
 import 'package:alarm/alarm.dart';
-import 'package:app/services/alarm_ring.dart';
+import 'package:app/services/alarm_ring_service.dart';
 
 class Dose extends StatefulWidget {
   const Dose({super.key});
@@ -54,14 +54,15 @@ class _DoseState extends State<Dose> {
     ringSubscription = Alarm.ringing
         .where((alarmSet) => alarmSet.alarms.isNotEmpty)
         .listen((alarmSet) {
-      final alarmSettings = alarmSet.alarms.first;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AlarmRingScreen(alarmSettings: alarmSettings),
-        ),
-      );
-    });
+          final alarmSettings = alarmSet.alarms.first;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  AlarmRingScreen(alarmSettings: alarmSettings),
+            ),
+          );
+        });
   }
 
   @override
@@ -114,7 +115,9 @@ class _DoseState extends State<Dose> {
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.outlineVariant.withOpacity(0.5),
               width: 1.0,
             ),
           ),
