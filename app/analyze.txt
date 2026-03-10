@@ -1,0 +1,7 @@
+Analyzing app...                                                
+
+   info - Don't use 'BuildContext's across async gaps - lib\dose.dart:59:13 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\dose.dart:120:44 - deprecated_member_use
+   info - The type name 'profile' isn't an UpperCamelCase identifier - lib\models\profile_model.dart:1:7 - camel_case_types
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\home_page.dart:199:46 - deprecated_member_use
+

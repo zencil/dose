@@ -6,11 +6,11 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:app/db/cabinet_db.dart';
 import 'package:app/models/cabinet_model.dart';
 import 'package:app/models/intake_model.dart';
-import 'package:app/db/intake_log.dart' as log_db;
+import 'package:app/db/intake_log_db.dart' as log_db;
 import 'package:app/services/widget_service.dart';
 import 'package:app/services/snooze_service.dart';
 import 'package:app/main.dart';
-import 'package:app/profile/cabinet/cabinet_page.dart';
+import 'package:app/pages/cabinet_page.dart';
 
 /// Handles the "Done" action from a notification by updating stock and logging intake.
 Future<void> _handleDoneAction(int id) async {
@@ -43,7 +43,7 @@ Future<void> _handleDoneAction(int id) async {
     );
     await log_db.DatabaseHelper.instance.createlog(intake);
     await WidgetService.updateWidgetState();
-    
+
     if (updatedMed.currstock < 3) {
       await NotificationHelper().showLowStockNotification(updatedMed);
     }
@@ -68,7 +68,9 @@ Future<void> _handleSnoozeAction(int id) async {
 }
 
 @pragma('vm:entry-point')
-Future<void> onBackgroundNotificationResponse(NotificationResponse response) async {
+Future<void> onBackgroundNotificationResponse(
+  NotificationResponse response,
+) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (response.payload != null && response.payload!.startsWith('med_')) {
@@ -110,15 +112,18 @@ class NotificationHelper {
           } else if (response.actionId == 'action_snooze') {
             await _handleSnoozeAction(id);
           }
-        } else if (response.payload != null && response.payload!.startsWith('restock_')) {
-          if (response.actionId == 'action_restock' || response.actionId == null) {
+        } else if (response.payload != null &&
+            response.payload!.startsWith('restock_')) {
+          if (response.actionId == 'action_restock' ||
+              response.actionId == null) {
             navigatorKey.currentState?.push(
               MaterialPageRoute(builder: (_) => const CabinetPage()),
             );
           }
         }
       },
-      onDidReceiveBackgroundNotificationResponse: onBackgroundNotificationResponse,
+      onDidReceiveBackgroundNotificationResponse:
+          onBackgroundNotificationResponse,
     );
   }
 
@@ -173,9 +178,9 @@ class NotificationHelper {
     String name, {
     required bool canSnoozeAgain,
   }) async {
-    final snoozeTime = tz.TZDateTime.now(tz.local).add(
-      const Duration(minutes: SnoozeService.snoozeDurationMinutes),
-    );
+    final snoozeTime = tz.TZDateTime.now(
+      tz.local,
+    ).add(const Duration(minutes: SnoozeService.snoozeDurationMinutes));
 
     final actions = <AndroidNotificationAction>[
       const AndroidNotificationAction(
@@ -185,11 +190,13 @@ class NotificationHelper {
       ),
     ];
     if (canSnoozeAgain) {
-      actions.add(const AndroidNotificationAction(
-        'action_snooze',
-        'Snooze',
-        showsUserInterface: true,
-      ));
+      actions.add(
+        const AndroidNotificationAction(
+          'action_snooze',
+          'Snooze',
+          showsUserInterface: true,
+        ),
+      );
     }
 
     final androidDetails = AndroidNotificationDetails(
@@ -214,7 +221,9 @@ class NotificationHelper {
   }
 
   /// Builds notification actions, conditionally including Snooze based on count.
-  Future<List<AndroidNotificationAction>> _buildNotificationActions(int id) async {
+  Future<List<AndroidNotificationAction>> _buildNotificationActions(
+    int id,
+  ) async {
     final canSnooze = await SnoozeService.canSnooze(id);
     final actions = <AndroidNotificationAction>[
       const AndroidNotificationAction(
@@ -224,11 +233,13 @@ class NotificationHelper {
       ),
     ];
     if (canSnooze) {
-      actions.add(const AndroidNotificationAction(
-        'action_snooze',
-        'Snooze',
-        showsUserInterface: true,
-      ));
+      actions.add(
+        const AndroidNotificationAction(
+          'action_snooze',
+          'Snooze',
+          showsUserInterface: true,
+        ),
+      );
     }
     return actions;
   }
@@ -240,7 +251,7 @@ class NotificationHelper {
   /// Displays a low stock notification prompting the user to restock.
   Future<void> showLowStockNotification(Cabinet med) async {
     if (med.id == null) return;
-    
+
     final actions = <AndroidNotificationAction>[
       const AndroidNotificationAction(
         'action_restock',
@@ -260,7 +271,9 @@ class NotificationHelper {
     final details = NotificationDetails(android: androidDetails);
 
     await plugin.show(
-      id: med.id! + 100000, // Offset ID to avoid colliding with medication alarm IDs
+      id:
+          med.id! +
+          100000, // Offset ID to avoid colliding with medication alarm IDs
       title: 'Low Stock Alert',
       body: 'You have less than 3 doses of ${med.name} left. Please restock.',
       notificationDetails: details,

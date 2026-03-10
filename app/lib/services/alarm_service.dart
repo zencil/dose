@@ -1,5 +1,8 @@
 import 'package:alarm/alarm.dart';
 import 'package:app/models/cabinet_model.dart';
+import 'package:flutter/material.dart';
+import 'package:app/main.dart';
+import 'package:app/services/alarm_ring_service.dart';
 
 class AlarmService {
   static final AlarmService _instance = AlarmService._internal();
@@ -28,6 +31,21 @@ class AlarmService {
 
   Future<void> init() async {
     await Alarm.init();
+
+    Alarm.ringing
+        .where((alarmSet) => alarmSet.alarms.isNotEmpty)
+        .listen((alarmSet) {
+      final alarmSettings = alarmSet.alarms.first;
+      final context = navigatorKey.currentContext;
+      if (context != null && context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AlarmRingScreen(alarmSettings: alarmSettings),
+          ),
+        );
+      }
+    });
   }
 
   Future<void> scheduleMedicineAlarm(int id, Cabinet medicine) async {

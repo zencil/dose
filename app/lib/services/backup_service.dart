@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app/db/cabinet_db.dart' as cabinet_db;
-import 'package:app/db/intake_log.dart' as log_db;
+import 'package:app/db/intake_log_db.dart' as log_db;
 import 'package:app/db/profile_db.dart' as profile_db;
 
 class BackupService {
@@ -14,7 +14,8 @@ class BackupService {
   /// Returns the file path on success.
   Future<String> exportData() async {
     // Query all databases
-    final medicines = await cabinet_db.DatabaseHelper.instance.readAllMedicines();
+    final medicines = await cabinet_db.DatabaseHelper.instance
+        .readAllMedicines();
     final intakeLogs = await log_db.DatabaseHelper.instance.readintakelog();
 
     // Profile table may not exist yet if profile setup was never completed
