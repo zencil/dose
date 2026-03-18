@@ -41,7 +41,6 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
   @override
   void initState() {
     super.initState();
-    _nameController.addListener(() => setState(() {}));
     if (widget.medicineToEdit != null) {
       final med = widget.medicineToEdit!;
       _nameController.text = med.name;
@@ -224,22 +223,23 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                           children: [
 
                             Expanded(
-                              child: Text(
-                                _nameController.text.isEmpty
-                                    ? 'Medicine Name'
-                                    : _nameController.text,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: colorScheme.onPrimaryContainer
-                                          .withValues(
-                                        alpha: _nameController.text.isEmpty
-                                            ? 0.5
-                                            : 1.0,
-                                      ),
-                                    ),
+                              child: ValueListenableBuilder<TextEditingValue>(
+                                valueListenable: _nameController,
+                                builder: (context, value, child) {
+                                  final nameText = value.text.isEmpty ? 'Medicine Name' : value.text;
+                                  final alphaValue = value.text.isEmpty ? 0.5 : 1.0;
+                                  return Text(
+                                    nameText,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: colorScheme.onPrimaryContainer
+                                              .withValues(alpha: alphaValue),
+                                        ),
+                                  );
+                                },
                               ),
                             ),
                           ],
