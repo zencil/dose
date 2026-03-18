@@ -212,6 +212,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
 
                     // Zone 2: Header Banner Card
                     Card(
+                      margin: EdgeInsets.zero,
                       color: colorScheme.primaryContainer,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(28),
@@ -221,22 +222,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                         padding: const EdgeInsets.all(24.0),
                         child: Row(
                           children: [
-                            Card(
-                              color: colorScheme.surface,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              elevation: 0,
-                              child: InkWell(
-                                onTap: () {},
-                                borderRadius: BorderRadius.circular(16),
-                                child: const SizedBox(
-                                  width: 72,
-                                  height: 72,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
+
                             Expanded(
                               child: Text(
                                 _nameController.text.isEmpty
@@ -265,12 +251,6 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                     // Medicine Type Chips
                     Row(
                       children: [
-                        Icon(
-                          Icons.info_outline,
-                          size: 20,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(width: 8),
                         Expanded(
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
@@ -435,7 +415,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                     // Zone 3: Form Fields
                     TextFormField(
                       controller: _nameController,
-                      decoration: _buildInputDecoration("Medicine Name"),
+                      decoration: _buildInputDecoration("Name"),
                       validator: (value) => value!.isEmpty ? 'Required' : null,
                     ),
                     const SizedBox(height: 16),
@@ -443,11 +423,54 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                     TextFormField(
                       controller: _dosageController,
                       keyboardType: TextInputType.number,
-                      decoration: _buildInputDecoration(
-                        "Dosage",
-                        suffixText: "mg",
-                      ),
+                      decoration: _buildInputDecoration("Dosage"),
                       validator: (value) => value!.isEmpty ? 'Required' : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            value: _cycle,
+                            decoration: _buildInputDecoration("Cycle").copyWith(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 16,
+                              ),
+                            ),
+                            items: const [
+                              DropdownMenuItem(value: '6h', child: Text('6 hours')),
+                              DropdownMenuItem(value: '12h', child: Text('12 hours')),
+                              DropdownMenuItem(value: '1/day', child: Text('1/day')),
+                              DropdownMenuItem(value: '2/day', child: Text('2/day')),
+                              DropdownMenuItem(value: '3/day', child: Text('3/day')),
+                              DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
+                              DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
+                            ],
+                            onChanged: (val) => setState(() => _cycle = val!),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: DropdownButtonFormField<int>(
+                            value: _priority,
+                            decoration: _buildInputDecoration("Priority").copyWith(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 16,
+                              ),
+                            ),
+                            items: const [
+                              DropdownMenuItem(value: 0, child: Text("Low")),
+                              DropdownMenuItem(value: 1, child: Text("Medium")),
+                              DropdownMenuItem(value: 2, child: Text("High")),
+                            ],
+                            onChanged: (val) => setState(() => _priority = val!),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
 
@@ -467,44 +490,6 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                       controller: _stockController,
                       keyboardType: TextInputType.number,
                       decoration: _buildInputDecoration("Current Stock"),
-                    ),
-                    const SizedBox(height: 16),
-
-                    DropdownButtonFormField<String>(
-                      value: _cycle,
-                      decoration: _buildInputDecoration("Cycle").copyWith(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 16,
-                        ),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: '6h', child: Text('6 hours')),
-                        DropdownMenuItem(value: '12h', child: Text('12 hours')),
-                        DropdownMenuItem(value: '1/day', child: Text('1/day')),
-                        DropdownMenuItem(value: '2/day', child: Text('2/day')),
-                        DropdownMenuItem(value: '3/day', child: Text('3/day')),
-                        DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
-                        DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
-                      ],
-                      onChanged: (val) => setState(() => _cycle = val!),
-                    ),
-                    const SizedBox(height: 16),
-
-                    DropdownButtonFormField<int>(
-                      value: _priority,
-                      decoration: _buildInputDecoration("Priority").copyWith(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 16,
-                        ),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 0, child: Text("Low")),
-                        DropdownMenuItem(value: 1, child: Text("Medium")),
-                        DropdownMenuItem(value: 2, child: Text("High")),
-                      ],
-                      onChanged: (val) => setState(() => _priority = val!),
                     ),
                     const SizedBox(height: 24),
                   ],
