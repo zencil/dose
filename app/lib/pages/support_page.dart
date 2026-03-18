@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HelpSupportPage extends StatelessWidget {
   const HelpSupportPage({super.key});
@@ -43,24 +44,9 @@ class HelpSupportPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _buildContactItem(
+            _buildSupportTile(
               context,
-              icon: Icons.person_outline,
-              name: 'Jonathan',
-              number: '+91 77365 81435',
-            ),
-            const SizedBox(height: 32),
-            Text(
-              'FAQ',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'For any urgent issues, please reach out to our support team.',
-              style: TextStyle(fontSize: 16, height: 1.5),
+              title: 'Help',
             ),
           ],
         ),
@@ -68,32 +54,37 @@ class HelpSupportPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContactItem(
+  Future<void> _launchGitHubIssues() async {
+    final Uri url = Uri.parse('https://github.com/orbitronhd-org/dose/issues');
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      debugPrint('Could not launch $url');
+    }
+  }
+
+  Widget _buildSupportTile(
     BuildContext context, {
-    required IconData icon,
-    required String name,
-    required String number,
+    required String title,
   }) {
-    return Row(
-      children: [
-        Icon(icon, color: Theme.of(context).colorScheme.secondary),
-        const SizedBox(width: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              name,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+    return ListTile(
+      leading: Icon(
+        Icons.help_outline,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w500,
             ),
-            Text(
-              number,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      ],
+      ),
+      trailing: Icon(
+        Icons.open_in_new,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+        size: 20,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      onTap: _launchGitHubIssues,
     );
   }
 }
