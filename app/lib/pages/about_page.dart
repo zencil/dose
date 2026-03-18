@@ -12,6 +12,49 @@ class AboutPage extends StatelessWidget {
     }
   }
 
+  Widget _buildTeamCard(
+    BuildContext context, {
+    required String role,
+    required String name,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            width: 1,
+          ),
+        ),
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+          child: Column(
+            children: [
+              Text(
+                role,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                name,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +81,7 @@ class AboutPage extends StatelessWidget {
         ),
         centerTitle: false,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,19 +119,36 @@ class AboutPage extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             Text(
-              'Contributors',
+              'Development Team',
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
-            Text(
-              'Aadi\nJason\nJonathan\nNithin',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge?.copyWith(height: 1.5),
+            _buildTeamCard(
+              context,
+              role: 'Core App Development',
+              name: 'Jonathan',
             ),
-            const Spacer(),
+            const SizedBox(height: 8),
+            _buildTeamCard(
+              context,
+              role: 'UI/UX Design & Analysis',
+              name: 'Nithin',
+            ),
+            const SizedBox(height: 8),
+            _buildTeamCard(
+              context,
+              role: 'Notification Services',
+              name: 'Jason',
+            ),
+            const SizedBox(height: 8),
+            _buildTeamCard(
+              context,
+              role: 'Database Architecture',
+              name: 'Aadi',
+            ),
+            const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
