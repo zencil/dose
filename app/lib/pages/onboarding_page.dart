@@ -686,7 +686,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       label: Text(label, style: const TextStyle(fontSize: 14)),
       leadingIcon: Icon(icon, size: 20),
       expandedInsets: EdgeInsets.zero,
+      menuHeight: 250,
       textStyle: const TextStyle(fontSize: 14),
+      menuStyle: MenuStyle(
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: cs.surfaceContainer,

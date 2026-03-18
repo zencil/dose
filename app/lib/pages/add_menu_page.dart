@@ -432,42 +432,89 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: DropdownButtonFormField<String>(
-                            value: _cycle,
-                            decoration: _buildInputDecoration("Cycle").copyWith(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 16,
+                          child: DropdownMenu<String>(
+                            initialSelection: _cycle,
+                            label: const Text("Cycle"),
+                            expandedInsets: EdgeInsets.zero,
+                            menuHeight: 200,
+                            menuStyle: MenuStyle(
+                              shape: WidgetStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
                               ),
                             ),
-                            items: const [
-                              DropdownMenuItem(value: '6h', child: Text('6 hours')),
-                              DropdownMenuItem(value: '12h', child: Text('12 hours')),
-                              DropdownMenuItem(value: '1/day', child: Text('1/day')),
-                              DropdownMenuItem(value: '2/day', child: Text('2/day')),
-                              DropdownMenuItem(value: '3/day', child: Text('3/day')),
-                              DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
-                              DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
+                            inputDecorationTheme: InputDecorationTheme(
+                              filled: true,
+                              fillColor: colorScheme.surfaceContainer,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: const BorderSide(width: 3.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(width: 3.0, color: colorScheme.outlineVariant),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(width: 3.0, color: colorScheme.primary),
+                              ),
+                            ),
+                            dropdownMenuEntries: const [
+                              DropdownMenuEntry(value: '6h', label: '6 hours'),
+                              DropdownMenuEntry(value: '12h', label: '12 hours'),
+                              DropdownMenuEntry(value: '1/day', label: '1/day'),
+                              DropdownMenuEntry(value: '2/day', label: '2/day'),
+                              DropdownMenuEntry(value: '3/day', label: '3/day'),
+                              DropdownMenuEntry(value: 'weekly', label: 'Weekly'),
+                              DropdownMenuEntry(value: 'monthly', label: 'Monthly'),
                             ],
-                            onChanged: (val) => setState(() => _cycle = val!),
+                            onSelected: (val) {
+                              if (val != null) setState(() => _cycle = val);
+                            },
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: DropdownButtonFormField<int>(
-                            value: _priority,
-                            decoration: _buildInputDecoration("Priority").copyWith(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 16,
+                          child: DropdownMenu<int>(
+                            initialSelection: _priority,
+                            label: const Text("Priority"),
+                            expandedInsets: EdgeInsets.zero,
+                            menuHeight: 200,
+                            menuStyle: MenuStyle(
+                              shape: WidgetStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
                               ),
                             ),
-                            items: const [
-                              DropdownMenuItem(value: 0, child: Text("Low")),
-                              DropdownMenuItem(value: 1, child: Text("Medium")),
-                              DropdownMenuItem(value: 2, child: Text("High")),
+                            inputDecorationTheme: InputDecorationTheme(
+                              filled: true,
+                              fillColor: colorScheme.surfaceContainer,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: const BorderSide(width: 3.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(width: 3.0, color: colorScheme.outlineVariant),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(width: 3.0, color: colorScheme.primary),
+                              ),
+                            ),
+                            dropdownMenuEntries: const [
+                              DropdownMenuEntry(value: 0, label: 'Low'),
+                              DropdownMenuEntry(value: 1, label: 'Medium'),
+                              DropdownMenuEntry(value: 2, label: 'High'),
+                              // No leading icons needed since this is a simple priority, but could add them if requested.
                             ],
-                            onChanged: (val) => setState(() => _priority = val!),
+                            onSelected: (val) {
+                              if (val != null) setState(() => _priority = val);
+                            },
                           ),
                         ),
                       ],
