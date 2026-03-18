@@ -25,12 +25,23 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
   final _stockController = TextEditingController();
 
   TimeOfDay _selectedTime = TimeOfDay.now();
-  int _cycle = 1;
+  String _cycle = '1/day';
   int _priority = 1;
+  int _selectedType = 0;
+  DateTime _selectedDate = DateTime.now();
+
+  final List<String> _medicineTypes = const [
+    'Tablet',
+    'Capsule',
+    'Liquid',
+    'Injection',
+    'Patch',
+  ];
 
   @override
   void initState() {
     super.initState();
+    _nameController.addListener(() => setState(() {}));
     if (widget.medicineToEdit != null) {
       final med = widget.medicineToEdit!;
       _nameController.text = med.name;
@@ -68,6 +79,30 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
         _selectedTime = picked;
       });
     }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
+
+  String _dateLabel() {
+    final now = DateTime.now();
+    if (_selectedDate.year == now.year &&
+        _selectedDate.month == now.month &&
+        _selectedDate.day == now.day) {
+      return 'Today';
+    }
+    return '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}';
   }
 
   void _saveMedicine() async {
@@ -147,155 +182,375 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        toolbarHeight: 130,
-        leading: Align(
-          alignment: Alignment.topCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: BackButton(onPressed: () => Navigator.pop(context)),
-          ),
-        ),
-        titleSpacing: -37,
-        title: Padding(
-          padding: const EdgeInsets.only(top: 70.0),
-          child: Text(
-            widget.medicineToEdit == null ? "Add Reminder" : "Edit Reminder",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 35,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ),
-        centerTitle: false,
+        leading: BackButton(onPressed: () => Navigator.pop(context)),
         automaticallyImplyLeading: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.only(top: 20),
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: _buildInputDecoration("Medicine Name"),
-                validator: (value) => value!.isEmpty ? 'Required' : null,
-              ),
-              const SizedBox(height: 16),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Zone 1: Page Title
+                    Text(
+                      widget.medicineToEdit == null
+                          ? 'Add Medicine'
+                          : 'Edit Medicine',
+                      style: Theme.of(context)
+                          .textTheme
+                          .displaySmall
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
+                          ),
+                    ),
+                    const SizedBox(height: 20),
 
-              TextFormField(
-                controller: _dosageController,
-                keyboardType: TextInputType.number,
-                decoration: _buildInputDecoration(
-                  "Dosage",
-                  suffixText: "pills/spoons",
-                ),
-                validator: (value) => value!.isEmpty ? 'Required' : null,
-              ),
-              const SizedBox(height: 16),
-
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () => _selectTime(context),
-                      child: InputDecorator(
-                        decoration: _buildInputDecoration("Time"),
+                    // Zone 2: Header Banner Card
+                    Card(
+                      color: colorScheme.primaryContainer,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                      elevation: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              _selectedTime.format(context),
-                              style: TextStyle(color: colorScheme.onSurface),
+                            Card(
+                              color: colorScheme.surface,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              elevation: 0,
+                              child: InkWell(
+                                onTap: () {},
+                                borderRadius: BorderRadius.circular(16),
+                                child: const SizedBox(
+                                  width: 72,
+                                  height: 72,
+                                ),
+                              ),
                             ),
-                            Icon(
-                              Icons.access_time,
-                              size: 20,
-                              color: colorScheme.onSurfaceVariant,
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                _nameController.text.isEmpty
+                                    ? 'Medicine Name'
+                                    : _nameController.text,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onPrimaryContainer
+                                          .withValues(
+                                        alpha: _nameController.text.isEmpty
+                                            ? 0.5
+                                            : 1.0,
+                                      ),
+                                    ),
+                              ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: DropdownButtonFormField<int>(
-                      initialValue: _cycle,
+                    const SizedBox(height: 24),
+
+                    // Medicine Type Chips
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 20,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: List.generate(
+                                _medicineTypes.length,
+                                (index) {
+                                  final isSelected = _selectedType == index;
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: ChoiceChip(
+                                      label: Text(_medicineTypes[index]),
+                                      selected: isSelected,
+                                      onSelected: (selected) {
+                                        if (selected) {
+                                          setState(() => _selectedType = index);
+                                        }
+                                      },
+                                      selectedColor: colorScheme.secondaryContainer,
+                                      labelStyle: TextStyle(
+                                        color: isSelected
+                                            ? colorScheme.onSecondaryContainer
+                                            : colorScheme.onSurfaceVariant,
+                                      ),
+                                      showCheckmark: false,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Date/Time Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Date side
+                        GestureDetector(
+                          onTap: () => _selectDate(context),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_month,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _dateLabel(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Time side
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => _selectTime(context),
+                              child: Card(
+                                color: colorScheme.secondaryContainer,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 0,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  child: Text(
+                                    _selectedTime.hourOfPeriod
+                                        .toString()
+                                        .padLeft(2, '0'),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: colorScheme
+                                              .onSecondaryContainer,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              ':',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            GestureDetector(
+                              onTap: () => _selectTime(context),
+                              child: Card(
+                                color: colorScheme.secondaryContainer,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 0,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  child: Text(
+                                    _selectedTime.minute
+                                        .toString()
+                                        .padLeft(2, '0'),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: colorScheme
+                                              .onSecondaryContainer,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Card(
+                              color: colorScheme.secondaryContainer,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                                child: Text(
+                                  _selectedTime.period == DayPeriod.am
+                                      ? 'AM'
+                                      : 'PM',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            colorScheme.onSecondaryContainer,
+                                      ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Zone 3: Form Fields
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: _buildInputDecoration("Medicine Name"),
+                      validator: (value) => value!.isEmpty ? 'Required' : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _dosageController,
+                      keyboardType: TextInputType.number,
+                      decoration: _buildInputDecoration(
+                        "Dosage",
+                        suffixText: "mg",
+                      ),
+                      validator: (value) => value!.isEmpty ? 'Required' : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _conditionController,
+                      decoration: _buildInputDecoration("Condition"),
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _doctorController,
+                      decoration: _buildInputDecoration("Prescribed By"),
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _stockController,
+                      keyboardType: TextInputType.number,
+                      decoration: _buildInputDecoration("Current Stock"),
+                    ),
+                    const SizedBox(height: 16),
+
+                    DropdownButtonFormField<String>(
+                      value: _cycle,
                       decoration: _buildInputDecoration("Cycle").copyWith(
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20,
                           vertical: 16,
                         ),
                       ),
-                      items: List.generate(5, (index) => index + 1).map((
-                        int value,
-                      ) {
-                        return DropdownMenuItem<int>(
-                          value: value,
-                          child: Text("$value /day"),
-                        );
-                      }).toList(),
+                      items: const [
+                        DropdownMenuItem(value: '6h', child: Text('6 hours')),
+                        DropdownMenuItem(value: '12h', child: Text('12 hours')),
+                        DropdownMenuItem(value: '1/day', child: Text('1/day')),
+                        DropdownMenuItem(value: '2/day', child: Text('2/day')),
+                        DropdownMenuItem(value: '3/day', child: Text('3/day')),
+                        DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
+                        DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
+                      ],
                       onChanged: (val) => setState(() => _cycle = val!),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-              TextFormField(
-                controller: _conditionController,
-                decoration: _buildInputDecoration("Condition"),
-              ),
-              const SizedBox(height: 16),
-
-              TextFormField(
-                controller: _doctorController,
-                decoration: _buildInputDecoration("Prescribed By"),
-              ),
-              const SizedBox(height: 16),
-
-              TextFormField(
-                controller: _stockController,
-                keyboardType: TextInputType.number,
-                decoration: _buildInputDecoration("Current Stock"),
-              ),
-              const SizedBox(height: 16),
-
-              DropdownButtonFormField<int>(
-                initialValue: _priority,
-                decoration: _buildInputDecoration("Priority").copyWith(
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 16,
-                  ),
+                    DropdownButtonFormField<int>(
+                      value: _priority,
+                      decoration: _buildInputDecoration("Priority").copyWith(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
+                      ),
+                      items: const [
+                        DropdownMenuItem(value: 0, child: Text("Low")),
+                        DropdownMenuItem(value: 1, child: Text("Medium")),
+                        DropdownMenuItem(value: 2, child: Text("High")),
+                      ],
+                      onChanged: (val) => setState(() => _priority = val!),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                 ),
-                items: const [
-                  DropdownMenuItem(value: 2, child: Text("High")),
-                  DropdownMenuItem(value: 1, child: Text("Medium")),
-                  DropdownMenuItem(value: 0, child: Text("Low")),
-                ],
-                onChanged: (val) => setState(() => _priority = val!),
               ),
-              const SizedBox(height: 30),
+            ),
+          ),
 
-              FilledButton(
-                onPressed: _saveMedicine,
+          // Zone 4: Sticky Footer
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+            child: SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {
+                  if (_nameController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Please enter a medicine name'),
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    );
+                    return;
+                  }
+                  _saveMedicine();
+                },
                 style: FilledButton.styleFrom(
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: Text(
                   widget.medicineToEdit == null
-                      ? "Save Reminder"
-                      : "Update Reminder",
+                      ? 'Save Reminder'
+                      : 'Update Reminder',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: colorScheme.onPrimary,
+                      ),
                 ),
               ),
-              const SizedBox(height: 40),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
