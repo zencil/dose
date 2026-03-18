@@ -34,8 +34,6 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
     'Tablet',
     'Capsule',
     'Liquid',
-    'Injection',
-    'Patch',
   ];
 
   @override
@@ -250,40 +248,46 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
 
                     // Medicine Type Chips
                     Row(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: List.generate(
-                                _medicineTypes.length,
-                                (index) {
-                                  final isSelected = _selectedType == index;
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: ChoiceChip(
-                                      label: Text(_medicineTypes[index]),
-                                      selected: isSelected,
-                                      onSelected: (selected) {
-                                        if (selected) {
-                                          setState(() => _selectedType = index);
-                                        }
-                                      },
-                                      selectedColor: colorScheme.secondaryContainer,
-                                      labelStyle: TextStyle(
-                                        color: isSelected
-                                            ? colorScheme.onSecondaryContainer
-                                            : colorScheme.onSurfaceVariant,
-                                      ),
-                                      showCheckmark: false,
-                                    ),
-                                  );
+                      children: List.generate(
+                        _medicineTypes.length,
+                        (index) {
+                          final isSelected = _selectedType == index;
+                          return Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                right: index < _medicineTypes.length - 1 ? 12.0 : 0.0,
+                              ),
+                              child: ChoiceChip(
+                                label: SizedBox(
+                                  width: double.infinity,
+                                  child: Center(
+                                    child: Text(_medicineTypes[index]),
+                                  ),
+                                ),
+                                selected: isSelected,
+                                onSelected: (selected) {
+                                  if (selected) {
+                                    setState(() => _selectedType = index);
+                                  }
                                 },
+                                selectedColor: colorScheme.secondaryContainer,
+                                labelStyle: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: isSelected
+                                      ? colorScheme.onSecondaryContainer
+                                      : colorScheme.onSurfaceVariant,
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                showCheckmark: false,
                               ),
                             ),
-                          ),
-                        ),
-                      ],
+                          );
+                        },
+                      ),
                     ),
                     const SizedBox(height: 24),
 

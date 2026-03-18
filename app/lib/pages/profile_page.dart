@@ -12,7 +12,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -91,7 +91,7 @@ class ProfilePage extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return SizedBox(
-      width: 350,
+      width: double.infinity,
       child: OutlinedButton(
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
