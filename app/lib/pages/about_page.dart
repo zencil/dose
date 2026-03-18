@@ -12,6 +12,91 @@ class AboutPage extends StatelessWidget {
     }
   }
 
+  Widget _buildTeamCard(
+    BuildContext context, {
+    required String role,
+    required String name,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            width: 1,
+          ),
+        ),
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+          child: Column(
+            children: [
+              Text(
+                role,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                name,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildToolCard(
+    BuildContext context, {
+    required String name,
+    required String description,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            width: 1,
+          ),
+        ),
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+          child: Column(
+            children: [
+              Text(
+                name,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +123,7 @@ class AboutPage extends StatelessWidget {
         ),
         centerTitle: false,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,19 +161,67 @@ class AboutPage extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             Text(
-              'Contributors',
+              'Development Team',
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
+            _buildTeamCard(
+              context,
+              role: 'Core App Development',
+              name: 'Jonathan',
+            ),
+            const SizedBox(height: 8),
+            _buildTeamCard(
+              context,
+              role: 'UI/UX Design & Analysis',
+              name: 'Nithin',
+            ),
+            const SizedBox(height: 8),
+            _buildTeamCard(
+              context,
+              role: 'Notification Services',
+              name: 'Jason',
+            ),
+            const SizedBox(height: 8),
+            _buildTeamCard(
+              context,
+              role: 'Database Architecture',
+              name: 'Aadi',
+            ),
+            const SizedBox(height: 32),
             Text(
-              'Aadi\nJason\nJonathan\nNithin',
+              'Major Tools',
               style: Theme.of(
                 context,
-              ).textTheme.bodyLarge?.copyWith(height: 1.5),
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
             ),
-            const Spacer(),
+            const SizedBox(height: 12),
+            _buildToolCard(
+              context,
+              name: 'Flutter',
+              description: 'flutter.dev',
+            ),
+            const SizedBox(height: 8),
+            _buildToolCard(
+              context,
+              name: 'SQFlite',
+              description: 'pub.dev/packages/sqflite',
+            ),
+            const SizedBox(height: 8),
+            _buildToolCard(
+              context,
+              name: 'FL Chart',
+              description: 'pub.dev/packages/fl_chart',
+            ),
+            const SizedBox(height: 8),
+            _buildToolCard(
+              context,
+              name: 'Permission Handler',
+              description: 'pub.dev/packages/permission_handler',
+            ),
+            const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
