@@ -55,6 +55,48 @@ class AboutPage extends StatelessWidget {
     );
   }
 
+  Widget _buildToolCard(
+    BuildContext context, {
+    required String name,
+    required String description,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            width: 1,
+          ),
+        ),
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+          child: Column(
+            children: [
+              Text(
+                name,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,6 +189,37 @@ class AboutPage extends StatelessWidget {
               context,
               role: 'Database Architecture',
               name: 'Aadi',
+            ),
+            const SizedBox(height: 32),
+            Text(
+              'Major Tools',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            _buildToolCard(
+              context,
+              name: 'Flutter',
+              description: 'flutter.dev',
+            ),
+            const SizedBox(height: 8),
+            _buildToolCard(
+              context,
+              name: 'SQFlite',
+              description: 'pub.dev/packages/sqflite',
+            ),
+            const SizedBox(height: 8),
+            _buildToolCard(
+              context,
+              name: 'FL Chart',
+              description: 'pub.dev/packages/fl_chart',
+            ),
+            const SizedBox(height: 8),
+            _buildToolCard(
+              context,
+              name: 'Permission Handler',
+              description: 'pub.dev/packages/permission_handler',
             ),
             const SizedBox(height: 32),
             SizedBox(
