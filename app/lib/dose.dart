@@ -123,9 +123,9 @@ class _DoseState extends State<Dose> {
               label: 'Analytics',
             ),
             NavigationDestination(
-              icon: Icon(Icons.person_outline),
-              selectedIcon: Icon(Icons.person),
-              label: 'Profile',
+              icon: Icon(Icons.more_horiz_outlined),
+              selectedIcon: Icon(Icons.more_horiz),
+              label: 'More',
             ),
           ],
         ),
