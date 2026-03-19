@@ -1,4 +1,4 @@
-package com.example.app
+package org.orbitronhd.dose
 
 import io.flutter.embedding.android.FlutterActivity
 
