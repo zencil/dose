@@ -4,7 +4,7 @@ import 'package:dose/db/intake_log_db.dart' as log_db;
 import 'package:dose/models/cabinet_model.dart';
 
 class WidgetService {
-  static const String appGroupId = 'com.example.app';
+  static const String appGroupId = 'org.orbitronhd.dose';
   static const String iOSWidgetName = 'DoseWidget';
   static const String androidWidgetName = 'DoseWidgetProvider';
 
