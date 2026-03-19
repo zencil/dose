@@ -81,6 +81,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
               child: Column(
                 children: [
                   Card(
+                    margin: EdgeInsets.zero,
                     elevation: 0,
                     color: Theme.of(context).colorScheme.surfaceContainer,
                     shape: RoundedRectangleBorder(
@@ -146,6 +147,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
                   ),
                   const SizedBox(height: 16),
                   GridView.count(
+                    padding: EdgeInsets.zero,
                     crossAxisCount: 2,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -204,6 +206,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
     required String value,
   }) {
     return Card(
+      margin: EdgeInsets.zero,
       elevation: 0,
       color: Theme.of(context).colorScheme.surfaceContainer,
       shape: RoundedRectangleBorder(

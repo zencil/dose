@@ -188,14 +188,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 Row(
                   children: [
                     Expanded(
-                      child: DropdownButtonFormField<String>(
-                        initialValue: _bloodTypeController.text.isEmpty
+                      child: DropdownMenu<String>(
+                        initialSelection: _bloodTypeController.text.isEmpty
                             ? null
                             : _bloodTypeController.text,
-                        decoration: InputDecoration(
-                          labelText: 'Blood',
+                        label: const Text('Blood'),
+                        leadingIcon: const Icon(Icons.water_drop, size: 20),
+                        expandedInsets: EdgeInsets.zero,
+                        menuHeight: 250,
+                        textStyle: const TextStyle(fontSize: 14),
+                        menuStyle: MenuStyle(
+                          shape: WidgetStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
+                        inputDecorationTheme: InputDecorationTheme(
                           labelStyle: const TextStyle(fontSize: 14),
-                          prefixIcon: const Icon(Icons.water_drop, size: 20),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 16,
@@ -219,36 +229,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),
                           ),
                         ),
-                        isExpanded: true,
-                        style: TextStyle(fontSize: 14, color: cs.onSurface),
-                        items:
-                            ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
-                                .map(
-                                  (t) => DropdownMenuItem(
-                                    value: t,
-                                    child: Text(
-                                      t,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (val) =>
-                            setState(() => _bloodTypeController.text = val!),
-                        validator: (value) =>
-                            value == null || value.isEmpty ? 'Required' : null,
+                        dropdownMenuEntries: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+                            .map((t) => DropdownMenuEntry(value: t, label: t))
+                            .toList(),
+                        onSelected: (val) {
+                          if (val != null) {
+                            setState(() => _bloodTypeController.text = val);
+                          }
+                        },
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: DropdownButtonFormField<String>(
-                        initialValue: _sexController.text.isEmpty
+                      child: DropdownMenu<String>(
+                        initialSelection: _sexController.text.isEmpty
                             ? null
                             : _sexController.text,
-                        decoration: InputDecoration(
-                          labelText: 'Sex',
+                        label: const Text('Sex'),
+                        leadingIcon: const Icon(Icons.wc, size: 20),
+                        expandedInsets: EdgeInsets.zero,
+                        menuHeight: 200,
+                        textStyle: const TextStyle(fontSize: 14),
+                        menuStyle: MenuStyle(
+                          shape: WidgetStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
+                        inputDecorationTheme: InputDecorationTheme(
                           labelStyle: const TextStyle(fontSize: 14),
-                          prefixIcon: const Icon(Icons.wc, size: 20),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 16,
@@ -272,20 +282,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),
                           ),
                         ),
-                        isExpanded: true,
-                        style: TextStyle(fontSize: 14, color: cs.onSurface),
-                        items: ['Male', 'Female', 'Other', 'N/A']
-                            .map(
-                              (s) => DropdownMenuItem(
-                                value: s,
-                                child: Text(s, overflow: TextOverflow.ellipsis),
-                              ),
-                            )
+                        dropdownMenuEntries: ['Male', 'Female', 'Other', 'N/A']
+                            .map((s) => DropdownMenuEntry(value: s, label: s))
                             .toList(),
-                        onChanged: (val) =>
-                            setState(() => _sexController.text = val!),
-                        validator: (value) =>
-                            value == null || value.isEmpty ? 'Required' : null,
+                        onSelected: (val) {
+                          if (val != null) {
+                            setState(() => _sexController.text = val);
+                          }
+                        },
                       ),
                     ),
                   ],
