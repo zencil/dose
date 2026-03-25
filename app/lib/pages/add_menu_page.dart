@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dose/models/cabinet_model.dart';
+import 'package:dose/models/medicine_category.dart';
 import 'package:dose/db/cabinet_db.dart';
 import 'package:dose/services/notification_service.dart';
 import 'package:dose/services/alarm_service.dart';
@@ -27,24 +28,25 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
   TimeOfDay _selectedTime = TimeOfDay.now();
   String _cycle = '1/day';
   int _priority = 1;
-  int _selectedType = 0;
+  MedicineCategory _selectedCategory = MedicineCategory.tablet;
+  late String _selectedUnit;
   DateTime _selectedDate = DateTime.now();
-
-  final List<String> _medicineTypes = const [
-    'Tablet',
-    'Capsule',
-    'Liquid',
-  ];
 
   @override
   void initState() {
     super.initState();
+    _selectedUnit = _selectedCategory.defaultUnit;
+
     if (widget.medicineToEdit != null) {
       final med = widget.medicineToEdit!;
       _nameController.text = med.name;
       _dosageController.text = med.dosage.replaceAll(' pills/spoons', '');
       _stockController.text = med.currstock.toString();
       _priority = med.priority;
+      _selectedCategory = MedicineCategory.fromString(med.category);
+      _selectedUnit = _selectedCategory.units.contains(med.unit)
+          ? med.unit
+          : _selectedCategory.defaultUnit;
 
       final parts = med.time.split(':');
       if (parts.length == 2) {
@@ -110,13 +112,15 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
       final medicine = Cabinet(
         id: widget.medicineToEdit?.id,
         name: _nameController.text,
-        dosage: "${_dosageController.text} pills/spoons",
+        dosage: _dosageController.text,
         time: timeString,
         currstock: int.tryParse(_stockController.text) ?? 0,
         initstock: widget.medicineToEdit != null
             ? widget.medicineToEdit!.initstock
             : (int.tryParse(_stockController.text) ?? 0),
         priority: _priority,
+        category: _selectedCategory.name,
+        unit: _selectedUnit,
       );
 
       int savedId;
@@ -154,6 +158,26 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
     return InputDecoration(
       labelText: label,
       suffixText: suffixText,
+      filled: true,
+      fillColor: cs.surfaceContainer,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(20),
+        borderSide: const BorderSide(width: 3.0),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(20),
+        borderSide: BorderSide(width: 3.0, color: cs.outlineVariant),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(20),
+        borderSide: BorderSide(width: 3.0, color: cs.primary),
+      ),
+    );
+  }
+
+  InputDecorationTheme _dropdownDecorationTheme(ColorScheme cs) {
+    return InputDecorationTheme(
       filled: true,
       fillColor: cs.surfaceContainer,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
@@ -246,48 +270,45 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Medicine Type Chips
-                    Row(
-                      children: List.generate(
-                        _medicineTypes.length,
-                        (index) {
-                          final isSelected = _selectedType == index;
-                          return Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                right: index < _medicineTypes.length - 1 ? 12.0 : 0.0,
-                              ),
-                              child: ChoiceChip(
-                                label: SizedBox(
-                                  width: double.infinity,
-                                  child: Center(
-                                    child: Text(_medicineTypes[index]),
-                                  ),
-                                ),
-                                selected: isSelected,
-                                onSelected: (selected) {
-                                  if (selected) {
-                                    setState(() => _selectedType = index);
-                                  }
-                                },
-                                selectedColor: colorScheme.secondaryContainer,
-                                labelStyle: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: isSelected
-                                      ? colorScheme.onSecondaryContainer
-                                      : colorScheme.onSurfaceVariant,
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                showCheckmark: false,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                    // Medicine Category Chips
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      children: MedicineCategory.values.map((cat) {
+                        final isSelected = _selectedCategory == cat;
+                        return ChoiceChip(
+                          avatar: Icon(
+                            cat.icon,
+                            size: 18,
+                            color: isSelected
+                                ? colorScheme.onSecondaryContainer
+                                : colorScheme.onSurfaceVariant,
+                          ),
+                          label: Text(cat.label),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            if (selected) {
+                              setState(() {
+                                _selectedCategory = cat;
+                                _selectedUnit = cat.defaultUnit;
+                              });
+                            }
+                          },
+                          selectedColor: colorScheme.secondaryContainer,
+                          labelStyle: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: isSelected
+                                ? colorScheme.onSecondaryContainer
+                                : colorScheme.onSurfaceVariant,
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          showCheckmark: false,
+                        );
+                      }).toList(),
                     ),
                     const SizedBox(height: 24),
 
@@ -424,11 +445,42 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                     ),
                     const SizedBox(height: 16),
 
-                    TextFormField(
-                      controller: _dosageController,
-                      keyboardType: TextInputType.number,
-                      decoration: _buildInputDecoration("Dosage"),
-                      validator: (value) => value!.isEmpty ? 'Required' : null,
+                    // Dosage + Unit row
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            controller: _dosageController,
+                            keyboardType: TextInputType.number,
+                            decoration: _buildInputDecoration("Dosage"),
+                            validator: (value) => value!.isEmpty ? 'Required' : null,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: DropdownMenu<String>(
+                            initialSelection: _selectedUnit,
+                            label: const Text("Unit"),
+                            expandedInsets: EdgeInsets.zero,
+                            menuStyle: MenuStyle(
+                              shape: WidgetStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
+                            inputDecorationTheme: _dropdownDecorationTheme(colorScheme),
+                            dropdownMenuEntries: _selectedCategory.units
+                                .map((u) => DropdownMenuEntry(value: u, label: u))
+                                .toList(),
+                            onSelected: (val) {
+                              if (val != null) setState(() => _selectedUnit = val);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
 
@@ -448,23 +500,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                                 ),
                               ),
                             ),
-                            inputDecorationTheme: InputDecorationTheme(
-                              filled: true,
-                              fillColor: colorScheme.surfaceContainer,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: const BorderSide(width: 3.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(width: 3.0, color: colorScheme.outlineVariant),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(width: 3.0, color: colorScheme.primary),
-                              ),
-                            ),
+                            inputDecorationTheme: _dropdownDecorationTheme(colorScheme),
                             dropdownMenuEntries: const [
                               DropdownMenuEntry(value: '6h', label: '6 hours'),
                               DropdownMenuEntry(value: '12h', label: '12 hours'),
@@ -493,28 +529,11 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                                 ),
                               ),
                             ),
-                            inputDecorationTheme: InputDecorationTheme(
-                              filled: true,
-                              fillColor: colorScheme.surfaceContainer,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: const BorderSide(width: 3.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(width: 3.0, color: colorScheme.outlineVariant),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(width: 3.0, color: colorScheme.primary),
-                              ),
-                            ),
+                            inputDecorationTheme: _dropdownDecorationTheme(colorScheme),
                             dropdownMenuEntries: const [
                               DropdownMenuEntry(value: 0, label: 'Low'),
                               DropdownMenuEntry(value: 1, label: 'Medium'),
                               DropdownMenuEntry(value: 2, label: 'High'),
-                              // No leading icons needed since this is a simple priority, but could add them if requested.
                             ],
                             onSelected: (val) {
                               if (val != null) setState(() => _priority = val);

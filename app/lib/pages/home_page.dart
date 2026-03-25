@@ -1,6 +1,7 @@
 import 'package:dose/models/cabinet_model.dart';
 import 'package:dose/models/intake_model.dart' as log_model;
 import 'package:dose/models/extensions.dart';
+import 'package:dose/models/medicine_category.dart';
 import 'package:flutter/material.dart';
 import 'package:dose/db/cabinet_db.dart';
 import 'package:dose/db/intake_log_db.dart' as log_db;
@@ -196,7 +197,10 @@ class _HomePageState extends State<HomePage> {
               color: cs.tertiaryContainer,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.medication, color: cs.onTertiaryContainer),
+            child: Icon(
+              MedicineCategory.fromString(med.category).icon,
+              color: cs.onTertiaryContainer,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -213,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  med.dosage.formattedDosage,
+                  '${med.dosage.formattedDosage} ${med.unit}',
                   style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
                 ),
               ],

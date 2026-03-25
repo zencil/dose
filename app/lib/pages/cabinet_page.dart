@@ -192,7 +192,7 @@ class _CabinetPageState extends State<CabinetPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Dosage: ${medicine.dosage.formattedDosage}',
+                              'Dosage: ${medicine.dosage.formattedDosage} ${medicine.unit}',
                               style: const TextStyle(fontSize: 14),
                             ),
                             const SizedBox(height: 4),
