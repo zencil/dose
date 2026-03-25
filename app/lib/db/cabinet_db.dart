@@ -18,7 +18,12 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(
+      path,
+      version: 2,
+      onCreate: _createDB,
+      onUpgrade: _upgradeDB,
+    );
   }
 
   Future _createDB(Database db, int version) async {
@@ -34,40 +39,47 @@ CREATE TABLE cabinet (
   time $textType,
   currstock $integerType,
   initstock $integerType,
-  priority $integerType
+  priority $integerType,
+  category $textType DEFAULT 'tablet',
+  unit $textType DEFAULT 'pills'
   )
 ''');
   }
 
+  Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute(
+        "ALTER TABLE cabinet ADD COLUMN category TEXT NOT NULL DEFAULT 'tablet'",
+      );
+      await db.execute(
+        "ALTER TABLE cabinet ADD COLUMN unit TEXT NOT NULL DEFAULT 'pills'",
+      );
+    }
+  }
+
+  static const String _ensureTable = '''
+    CREATE TABLE IF NOT EXISTS cabinet ( 
+      id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      name TEXT NOT NULL,
+      dosage TEXT NOT NULL,
+      time TEXT NOT NULL,
+      currstock INTEGER NOT NULL,
+      initstock INTEGER NOT NULL,
+      priority INTEGER NOT NULL,
+      category TEXT NOT NULL DEFAULT 'tablet',
+      unit TEXT NOT NULL DEFAULT 'pills'
+    )
+  ''';
+
   Future<int> createMedicine(Cabinet cabinet) async {
     final db = await instance.database;
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS cabinet ( 
-        id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        name TEXT NOT NULL,
-        dosage TEXT NOT NULL,
-        time TEXT NOT NULL,
-        currstock INTEGER NOT NULL,
-        initstock INTEGER NOT NULL,
-        priority INTEGER NOT NULL
-      )
-    ''');
+    await db.execute(_ensureTable);
     return await db.insert('cabinet', cabinet.toMap());
   }
 
   Future<Cabinet?> readMedicine(int id) async {
     final db = await instance.database;
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS cabinet ( 
-        id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        name TEXT NOT NULL,
-        dosage TEXT NOT NULL,
-        time TEXT NOT NULL,
-        currstock INTEGER NOT NULL,
-        initstock INTEGER NOT NULL,
-        priority INTEGER NOT NULL
-      )
-    ''');
+    await db.execute(_ensureTable);
     final maps = await db.query('cabinet', where: 'id = ?', whereArgs: [id]);
 
     if (maps.isNotEmpty) {
@@ -78,17 +90,7 @@ CREATE TABLE cabinet (
 
   Future<List<Cabinet>> readAllMedicines() async {
     final db = await instance.database;
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS cabinet ( 
-        id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        name TEXT NOT NULL,
-        dosage TEXT NOT NULL,
-        time TEXT NOT NULL,
-        currstock INTEGER NOT NULL,
-        initstock INTEGER NOT NULL,
-        priority INTEGER NOT NULL
-      )
-    ''');
+    await db.execute(_ensureTable);
     const orderBy = 'time ASC';
     final result = await db.query('cabinet', orderBy: orderBy);
     return result.map((json) => Cabinet.fromMap(json)).toList();
@@ -96,17 +98,7 @@ CREATE TABLE cabinet (
 
   Future<int> updateMedicine(Cabinet medicine) async {
     final db = await instance.database;
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS cabinet ( 
-        id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        name TEXT NOT NULL,
-        dosage TEXT NOT NULL,
-        time TEXT NOT NULL,
-        currstock INTEGER NOT NULL,
-        initstock INTEGER NOT NULL,
-        priority INTEGER NOT NULL
-      )
-    ''');
+    await db.execute(_ensureTable);
     return await db.update(
       'cabinet',
       medicine.toMap(),
@@ -117,17 +109,7 @@ CREATE TABLE cabinet (
 
   Future<int> deleteMedicine(int id) async {
     final db = await instance.database;
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS cabinet ( 
-        id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        name TEXT NOT NULL,
-        dosage TEXT NOT NULL,
-        time TEXT NOT NULL,
-        currstock INTEGER NOT NULL,
-        initstock INTEGER NOT NULL,
-        priority INTEGER NOT NULL
-      )
-    ''');
+    await db.execute(_ensureTable);
     return await db.delete('cabinet', where: 'id = ?', whereArgs: [id]);
   }
 }
