@@ -1,6 +1,7 @@
 import 'package:dose/models/cabinet_model.dart';
 import 'package:dose/models/intake_model.dart' as log_model;
 import 'package:dose/models/extensions.dart';
+import 'package:dose/models/medicine_category.dart';
 import 'package:flutter/material.dart';
 import 'package:dose/db/cabinet_db.dart';
 import 'package:dose/db/intake_log_db.dart' as log_db;
@@ -73,9 +74,11 @@ class _HomePageState extends State<HomePage> {
         final lowStockMedicines = medicines
             .where((med) => med.currstock < 3)
             .toList();
-        final Map<String, String> uniqueMedicines = {};
+        final Map<String, Cabinet> uniqueMedicines = {};
         for (final med in medicines) {
-          uniqueMedicines[med.name] = med.dosage;
+          if (!uniqueMedicines.containsKey(med.name)) {
+            uniqueMedicines[med.name] = med;
+          }
         }
 
         return ListView(
@@ -196,7 +199,10 @@ class _HomePageState extends State<HomePage> {
               color: cs.tertiaryContainer,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.medication, color: cs.onTertiaryContainer),
+            child: Icon(
+              MedicineCategory.fromString(med.category).icon,
+              color: cs.onTertiaryContainer,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -213,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  med.dosage.formattedDosage,
+                  '${med.dosage.formattedDosage} ${med.unit}',
                   style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
                 ),
               ],
@@ -247,7 +253,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCondensedList(
-    Map<String, String> uniqueMedicines,
+    Map<String, Cabinet> uniqueMedicines,
     ColorScheme cs,
   ) {
     return DoseCard(
@@ -258,7 +264,7 @@ class _HomePageState extends State<HomePage> {
         itemCount: uniqueMedicines.length,
         itemBuilder: (context, index) {
           String name = uniqueMedicines.keys.elementAt(index);
-          String dosage = uniqueMedicines[name]!;
+          Cabinet med = uniqueMedicines[name]!;
 
           return Padding(
             padding: const EdgeInsets.symmetric(
@@ -280,7 +286,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 Text(
-                  dosage.formattedDosage,
+                  '${med.dosage.formattedDosage} ${med.unit}',
                   style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
                 ),
               ],

@@ -3,6 +3,7 @@ import 'package:dose/pages/home_page.dart';
 import 'package:dose/pages/analytics_page.dart';
 import 'package:dose/pages/profile_page.dart';
 import 'package:dose/pages/add_menu_page.dart';
+import 'package:dose/models/medicine_category.dart';
 
 class Dose extends StatefulWidget {
   const Dose({super.key});
@@ -16,6 +17,7 @@ class _DoseState extends State<Dose> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Key _homeKey = UniqueKey();
+  MedicineCategory? _selectedCategoryForNewMed;
 
   List<Widget> _pages() => [
     HomePage(key: _homeKey),
@@ -53,6 +55,86 @@ class _DoseState extends State<Dose> {
     super.dispose();
   }
 
+  void _showCategoryBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        final cs = Theme.of(context).colorScheme;
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 24.0,
+            right: 24.0,
+            top: 24.0,
+            bottom: MediaQuery.of(context).padding.bottom + 24.0,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Add Medicine',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: cs.onSurface,
+                    ),
+              ),
+              const SizedBox(height: 20),
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: MedicineCategory.values.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final cat = MedicineCategory.values[index];
+                    return InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                        setState(() {
+                          _selectedCategoryForNewMed = cat;
+                        });
+                        _scaffoldKey.currentState?.openEndDrawer();
+                      },
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: cs.outlineVariant.withValues(alpha: 0.5),
+                              width: 1.5),
+                          borderRadius: BorderRadius.circular(16),
+                          color: cs.surfaceContainerLowest,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(cat.icon, size: 28, color: cs.onSurfaceVariant),
+                            const SizedBox(width: 16),
+                            Text(
+                              cat.label,
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: cs.onSurface,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,6 +160,7 @@ class _DoseState extends State<Dose> {
       endDrawer: Drawer(
         width: MediaQuery.of(context).size.width,
         child: AddMedicineMenu(
+          initialCategory: _selectedCategoryForNewMed,
           onSave: () {
             setState(() {
               _homeKey = UniqueKey();
@@ -87,9 +170,7 @@ class _DoseState extends State<Dose> {
       ),
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
-              onPressed: () {
-                _scaffoldKey.currentState?.openEndDrawer();
-              },
+              onPressed: () => _showCategoryBottomSheet(context),
               child: const Icon(Icons.add),
             )
           : null,

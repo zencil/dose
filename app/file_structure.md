@@ -11,6 +11,7 @@ lib/
 │   ├── cabinet_model.dart
 │   ├── extensions.dart
 │   ├── intake_model.dart
+│   ├── medicine_category.dart
 │   └── profile_model.dart
 ├── pages/
 │   ├── about_page.dart

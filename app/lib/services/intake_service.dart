@@ -43,6 +43,8 @@ class IntakeService {
         initstock: med.initstock,
         currstock: med.currstock - 1,
         priority: med.priority,
+        category: med.category,
+        unit: med.unit,
       );
       await DatabaseHelper.instance.updateMedicine(updatedMed);
 

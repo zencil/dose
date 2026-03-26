@@ -19,11 +19,13 @@ ____________________________________________
 cabinet structure:
     id --> integer AUTOINCREMENTED
     name --> text not null
-    dosage --> int not null
+    dosage --> text not null
     time --> time not null
     currstock --> int not null
     initstock --> int not null
     priority --> int not null
+    category --> text not null (default 'tablet')
+    unit --> text not null (default 'pills')
 ____________________________________________
 create new medicine:
     createmed(cabinet 'model')
@@ -44,4 +46,4 @@ create new log:
     createlog(intake 'model')
 
 read log:
-    readintakelog)
+    readintakelog()

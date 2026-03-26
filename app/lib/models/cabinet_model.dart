@@ -6,6 +6,8 @@ class Cabinet {
   final int initstock;
   final int currstock;
   final int priority;
+  final String category;
+  final String unit;
 
   Cabinet({
     this.id,
@@ -15,6 +17,8 @@ class Cabinet {
     required this.initstock,
     required this.currstock,
     required this.priority,
+    this.category = 'tablet',
+    this.unit = 'pills',
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +30,8 @@ class Cabinet {
       'initstock': initstock,
       'currstock': currstock,
       'priority': priority,
+      'category': category,
+      'unit': unit,
     };
   }
 
@@ -38,6 +44,8 @@ class Cabinet {
       initstock: map['initstock'],
       currstock: map['currstock'],
       priority: map['priority'],
+      category: map['category'] ?? 'tablet',
+      unit: map['unit'] ?? 'pills',
     );
   }
 }
