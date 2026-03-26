@@ -9,8 +9,14 @@ import 'package:dose/services/widget_service.dart';
 class AddMedicineMenu extends StatefulWidget {
   final VoidCallback onSave;
   final Cabinet? medicineToEdit;
+  final MedicineCategory? initialCategory;
 
-  const AddMedicineMenu({super.key, required this.onSave, this.medicineToEdit});
+  const AddMedicineMenu({
+    super.key,
+    required this.onSave,
+    this.medicineToEdit,
+    this.initialCategory,
+  });
 
   @override
   State<AddMedicineMenu> createState() => _AddMedicineMenuState();
@@ -28,13 +34,15 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
   TimeOfDay _selectedTime = TimeOfDay.now();
   String _cycle = '1/day';
   int _priority = 1;
-  MedicineCategory _selectedCategory = MedicineCategory.tablet;
+  late MedicineCategory _selectedCategory;
   late String _selectedUnit;
   DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
+
+    _selectedCategory = widget.initialCategory ?? MedicineCategory.tablet;
     _selectedUnit = _selectedCategory.defaultUnit;
 
     if (widget.medicineToEdit != null) {
@@ -229,87 +237,6 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                             color: colorScheme.onSurface,
                           ),
                     ),
-                    const SizedBox(height: 20),
-
-                    // Zone 2: Header Banner Card
-                    Card(
-                      margin: EdgeInsets.zero,
-                      color: colorScheme.primaryContainer,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      elevation: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Row(
-                          children: [
-
-                            Expanded(
-                              child: ValueListenableBuilder<TextEditingValue>(
-                                valueListenable: _nameController,
-                                builder: (context, value, child) {
-                                  final nameText = value.text.isEmpty ? 'Medicine Name' : value.text;
-                                  final alphaValue = value.text.isEmpty ? 0.5 : 1.0;
-                                  return Text(
-                                    nameText,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: colorScheme.onPrimaryContainer
-                                              .withValues(alpha: alphaValue),
-                                        ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Medicine Category Chips
-                    Wrap(
-                      spacing: 8.0,
-                      runSpacing: 8.0,
-                      children: MedicineCategory.values.map((cat) {
-                        final isSelected = _selectedCategory == cat;
-                        return ChoiceChip(
-                          avatar: Icon(
-                            cat.icon,
-                            size: 18,
-                            color: isSelected
-                                ? colorScheme.onSecondaryContainer
-                                : colorScheme.onSurfaceVariant,
-                          ),
-                          label: Text(cat.label),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            if (selected) {
-                              setState(() {
-                                _selectedCategory = cat;
-                                _selectedUnit = cat.defaultUnit;
-                              });
-                            }
-                          },
-                          selectedColor: colorScheme.secondaryContainer,
-                          labelStyle: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: isSelected
-                                ? colorScheme.onSecondaryContainer
-                                : colorScheme.onSurfaceVariant,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          showCheckmark: false,
-                        );
-                      }).toList(),
-                    ),
                     const SizedBox(height: 24),
 
                     // Date/Time Row
@@ -437,50 +364,71 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Zone 3: Form Fields
+                    // Form Fields
                     TextFormField(
                       controller: _nameController,
-                      decoration: _buildInputDecoration("Name"),
+                      decoration: _buildInputDecoration("Medicine Name"),
                       validator: (value) => value!.isEmpty ? 'Required' : null,
                     ),
                     const SizedBox(height: 16),
 
-                    // Dosage + Unit row
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: TextFormField(
-                            controller: _dosageController,
-                            keyboardType: TextInputType.number,
-                            decoration: _buildInputDecoration("Dosage"),
-                            validator: (value) => value!.isEmpty ? 'Required' : null,
+                    DropdownMenu<MedicineCategory>(
+                      initialSelection: _selectedCategory,
+                      label: const Text("Category"),
+                      expandedInsets: EdgeInsets.zero,
+                      menuStyle: MenuStyle(
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: DropdownMenu<String>(
-                            initialSelection: _selectedUnit,
-                            label: const Text("Unit"),
-                            expandedInsets: EdgeInsets.zero,
-                            menuStyle: MenuStyle(
-                              shape: WidgetStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
+                      ),
+                      inputDecorationTheme: _dropdownDecorationTheme(colorScheme),
+                      dropdownMenuEntries: MedicineCategory.values
+                          .map((cat) => DropdownMenuEntry(
+                                value: cat,
+                                label: cat.label,
+                                leadingIcon: Icon(cat.icon),
+                              ))
+                          .toList(),
+                      onSelected: (val) {
+                        if (val != null) {
+                          setState(() {
+                            _selectedCategory = val;
+                            _selectedUnit = val.defaultUnit;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Unit + Dosage Row Focus: Unit to the right of the box as suffix.
+                    TextFormField(
+                      controller: _dosageController,
+                      keyboardType: TextInputType.number,
+                      decoration: _buildInputDecoration("Dosage").copyWith(
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(right: 16.0),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: _selectedUnit,
+                              icon: Icon(Icons.keyboard_arrow_down, color: colorScheme.primary),
+                              style: TextStyle(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
+                              items: _selectedCategory.units
+                                  .map((u) => DropdownMenuItem(value: u, child: Text(u)))
+                                  .toList(),
+                              onChanged: (val) {
+                                if (val != null) setState(() => _selectedUnit = val);
+                              },
                             ),
-                            inputDecorationTheme: _dropdownDecorationTheme(colorScheme),
-                            dropdownMenuEntries: _selectedCategory.units
-                                .map((u) => DropdownMenuEntry(value: u, label: u))
-                                .toList(),
-                            onSelected: (val) {
-                              if (val != null) setState(() => _selectedUnit = val);
-                            },
                           ),
                         ),
-                      ],
+                      ),
+                      validator: (value) => value!.isEmpty ? 'Required' : null,
                     ),
                     const SizedBox(height: 16),
 

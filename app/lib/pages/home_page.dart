@@ -74,9 +74,11 @@ class _HomePageState extends State<HomePage> {
         final lowStockMedicines = medicines
             .where((med) => med.currstock < 3)
             .toList();
-        final Map<String, String> uniqueMedicines = {};
+        final Map<String, Cabinet> uniqueMedicines = {};
         for (final med in medicines) {
-          uniqueMedicines[med.name] = med.dosage;
+          if (!uniqueMedicines.containsKey(med.name)) {
+            uniqueMedicines[med.name] = med;
+          }
         }
 
         return ListView(
@@ -251,7 +253,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCondensedList(
-    Map<String, String> uniqueMedicines,
+    Map<String, Cabinet> uniqueMedicines,
     ColorScheme cs,
   ) {
     return DoseCard(
@@ -262,7 +264,7 @@ class _HomePageState extends State<HomePage> {
         itemCount: uniqueMedicines.length,
         itemBuilder: (context, index) {
           String name = uniqueMedicines.keys.elementAt(index);
-          String dosage = uniqueMedicines[name]!;
+          Cabinet med = uniqueMedicines[name]!;
 
           return Padding(
             padding: const EdgeInsets.symmetric(
@@ -284,7 +286,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 Text(
-                  dosage.formattedDosage,
+                  '${med.dosage.formattedDosage} ${med.unit}',
                   style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
                 ),
               ],
