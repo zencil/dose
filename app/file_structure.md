@@ -4,6 +4,7 @@
 lib/
 ├── db/
 │   ├── cabinet_db.dart
+│   ├── dose_database.dart
 │   ├── intake_log_db.dart
 │   ├── profile_db.dart
 │   └── README_DB.md
@@ -32,6 +33,7 @@ lib/
 │   ├── analytics_service.dart
 │   ├── app_bootstrapper.dart
 │   ├── backup_service.dart
+│   ├── google_drive_service.dart (Groundwork for Google Drive sync)
 │   ├── intake_service.dart
 │   ├── notification_service.dart
 │   ├── snooze_service.dart
