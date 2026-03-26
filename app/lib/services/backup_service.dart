@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dose/db/cabinet_db.dart' as cabinet_db;
 import 'package:dose/db/intake_log_db.dart' as log_db;
 import 'package:dose/db/profile_db.dart' as profile_db;
+import 'package:dose/db/dose_database.dart';
 
 class BackupService {
   static final BackupService instance = BackupService._init();
@@ -17,10 +18,12 @@ class BackupService {
         .readAllMedicines();
     final intakeLogs = await log_db.DatabaseHelper.instance.readintakelog();
     List<Map<String, dynamic>> profileMaps = [];
-    try {
-      final profiles = await profile_db.DatabaseHelper.instance.readprofile();
-      profileMaps = profiles.map((p) => p.toMap()).toList();
-    } catch (_) {}
+    
+    // We can safely read profiles now without swallowing errors, 
+    // as it's guaranteed database tables exist.
+    final profiles = await profile_db.DatabaseHelper.instance.readprofile();
+    profileMaps = profiles.map((p) => p.toMap()).toList();
+    
     final prefs = await SharedPreferences.getInstance();
 
     final backup = {
@@ -80,7 +83,7 @@ class BackupService {
   }
 
   Future<void> _importCabinet(List<dynamic> data) async {
-    final db = await cabinet_db.DatabaseHelper.instance.database;
+    final db = await DoseDatabase.instance.database;
     await db.delete('cabinet');
 
     for (final item in data) {
@@ -90,7 +93,7 @@ class BackupService {
   }
 
   Future<void> _importIntakeLog(List<dynamic> data) async {
-    final db = await log_db.DatabaseHelper.instance.database;
+    final db = await DoseDatabase.instance.database;
     await db.delete('intake_log');
 
     for (final item in data) {
@@ -100,15 +103,15 @@ class BackupService {
   }
 
   Future<void> _importProfile(List<dynamic> data) async {
-    try {
-      final db = await profile_db.DatabaseHelper.instance.database;
-      await db.delete('profile');
+    // We removed empty try-catch blocks to ensure that serious SQLite failures 
+    // propagate correctly instead of silently resulting in empty DB states.
+    final db = await DoseDatabase.instance.database;
+    await db.delete('profile');
 
-      for (final item in data) {
-        final map = Map<String, dynamic>.from(item as Map);
-        await db.insert('profile', map);
-      }
-    } catch (_) {}
+    for (final item in data) {
+      final map = Map<String, dynamic>.from(item as Map);
+      await db.insert('profile', map);
+    }
   }
 
   Future<void> _importPreferences(Map<String, dynamic> data) async {
