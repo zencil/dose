@@ -37,7 +37,17 @@ void main() {
 
     test('expected categories exist', () {
       final names = MedicineCategory.values.map((c) => c.name).toSet();
-      expect(names, containsAll(['tablet', 'capsule', 'liquid', 'injection', 'topical', 'inhaler']));
+      expect(
+        names,
+        containsAll([
+          'tablet',
+          'capsule',
+          'liquid',
+          'injection',
+          'topical',
+          'inhaler',
+        ]),
+      );
     });
   });
 }
