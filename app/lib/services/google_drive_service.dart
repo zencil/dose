@@ -40,7 +40,8 @@ class GoogleDriveService {
 
   /// Uploads the local backup to the visible Drive root.
   Future<void> uploadBackup() async {
-    final account = await _googleSignIn.signInSilently() ?? await _googleSignIn.signIn();
+    final account =
+        await _googleSignIn.signInSilently() ?? await _googleSignIn.signIn();
     if (account == null) throw Exception("User not signed in to Google.");
 
     final authHeaders = await account.authHeaders;
@@ -58,15 +59,18 @@ class GoogleDriveService {
     final fileList = await driveApi.files.list(q: query, spaces: 'drive');
     final existingFiles = fileList.files;
 
-    final media = drive.Media(fileToUpload.openRead(), fileToUpload.lengthSync());
-    
+    final media = drive.Media(
+      fileToUpload.openRead(),
+      fileToUpload.lengthSync(),
+    );
+
     if (existingFiles != null && existingFiles.isNotEmpty) {
       // Overwrite existing backup
       final existingFileId = existingFiles.first.id!;
       final driveFile = drive.File();
       await driveApi.files.update(
-        driveFile, 
-        existingFileId, 
+        driveFile,
+        existingFileId,
         uploadMedia: media,
       );
     } else {
@@ -74,16 +78,14 @@ class GoogleDriveService {
       final driveFile = drive.File()
         ..name = 'dose_backup.json'
         ..mimeType = 'application/json';
-      await driveApi.files.create(
-        driveFile,
-        uploadMedia: media,
-      );
+      await driveApi.files.create(driveFile, uploadMedia: media);
     }
   }
 
   /// Downloads the backup from drive and imports it locally
   Future<void> downloadBackup() async {
-    final account = await _googleSignIn.signInSilently() ?? await _googleSignIn.signIn();
+    final account =
+        await _googleSignIn.signInSilently() ?? await _googleSignIn.signIn();
     if (account == null) throw Exception("User not signed in to Google.");
 
     final authHeaders = await account.authHeaders;
@@ -91,7 +93,11 @@ class GoogleDriveService {
     final driveApi = drive.DriveApi(authenticateClient);
 
     final query = "name = 'dose_backup.json' and trashed = false";
-    final fileList = await driveApi.files.list(q: query, spaces: 'drive', orderBy: 'modifiedTime desc');
+    final fileList = await driveApi.files.list(
+      q: query,
+      spaces: 'drive',
+      orderBy: 'modifiedTime desc',
+    );
     final existingFiles = fileList.files;
 
     if (existingFiles == null || existingFiles.isEmpty) {
@@ -99,15 +105,17 @@ class GoogleDriveService {
     }
 
     final fileId = existingFiles.first.id!;
-    final response = await driveApi.files.get(
-      fileId, 
-      downloadOptions: drive.DownloadOptions.fullMedia,
-    ) as drive.Media;
-    
+    final response =
+        await driveApi.files.get(
+              fileId,
+              downloadOptions: drive.DownloadOptions.fullMedia,
+            )
+            as drive.Media;
+
     // Save to temp file
     final tempDir = await Directory.systemTemp.createTemp('dose_drive_restore');
     final tempFile = File('${tempDir.path}/dose_backup.json');
-    
+
     final sink = tempFile.openWrite();
     await response.stream.pipe(sink);
     await sink.flush();
@@ -115,7 +123,7 @@ class GoogleDriveService {
 
     // Import the downloaded backup locally
     await BackupService.instance.importData(tempFile.path);
-    
+
     // Cleanup temp
     try {
       if (await tempFile.exists()) {

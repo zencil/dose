@@ -690,9 +690,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       textStyle: const TextStyle(fontSize: 14),
       menuStyle: MenuStyle(
         shape: WidgetStateProperty.all(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

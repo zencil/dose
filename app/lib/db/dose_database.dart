@@ -24,14 +24,14 @@ class DoseDatabase {
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
-    
+
     // Check if legacy intake_log.db exists and needs migration
     final legacyPath = join(dbPath, 'intake_log.db');
     final legacyFile = File(legacyPath);
     if (await legacyFile.exists()) {
       await _migrateLegacyIntakeLog(db, legacyPath);
     }
-    
+
     return db;
   }
 
@@ -84,7 +84,7 @@ class DoseDatabase {
     if (oldVersion < 2) {
       // It's possible dose.db was created purely by profile_db or cabinet_db.
       // We safely ensure all tables exist with their latest schemas.
-      
+
       await db.execute('''
         CREATE TABLE IF NOT EXISTS cabinet ( 
           id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -98,15 +98,19 @@ class DoseDatabase {
           unit TEXT NOT NULL DEFAULT 'pills'
         )
       ''');
-      
+
       // If cabinet already existed from v1, we alter it for Category/Unit.
       // Catching the error gracefully handles if the table was newly created.
       try {
-        await db.execute("ALTER TABLE cabinet ADD COLUMN category TEXT NOT NULL DEFAULT 'tablet'");
+        await db.execute(
+          "ALTER TABLE cabinet ADD COLUMN category TEXT NOT NULL DEFAULT 'tablet'",
+        );
       } catch (_) {}
-      
+
       try {
-        await db.execute("ALTER TABLE cabinet ADD COLUMN unit TEXT NOT NULL DEFAULT 'pills'");
+        await db.execute(
+          "ALTER TABLE cabinet ADD COLUMN unit TEXT NOT NULL DEFAULT 'pills'",
+        );
       } catch (_) {}
 
       await db.execute('''
@@ -133,16 +137,23 @@ class DoseDatabase {
     }
   }
 
-  Future<void> _migrateLegacyIntakeLog(Database newDb, String legacyPath) async {
+  Future<void> _migrateLegacyIntakeLog(
+    Database newDb,
+    String legacyPath,
+  ) async {
     try {
       final oldDb = await openDatabase(legacyPath);
       final logs = await oldDb.query('intake_log');
-      
+
       for (final log in logs) {
         // Insert old logs into new combined dose.db
-        await newDb.insert('intake_log', log, conflictAlgorithm: ConflictAlgorithm.ignore);
+        await newDb.insert(
+          'intake_log',
+          log,
+          conflictAlgorithm: ConflictAlgorithm.ignore,
+        );
       }
-      
+
       await oldDb.close();
       final file = File(legacyPath);
       await file.delete();

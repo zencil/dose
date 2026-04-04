@@ -18,12 +18,12 @@ class BackupService {
         .readAllMedicines();
     final intakeLogs = await log_db.DatabaseHelper.instance.readintakelog();
     List<Map<String, dynamic>> profileMaps = [];
-    
-    // We can safely read profiles now without swallowing errors, 
+
+    // We can safely read profiles now without swallowing errors,
     // as it's guaranteed database tables exist.
     final profiles = await profile_db.DatabaseHelper.instance.readprofile();
     profileMaps = profiles.map((p) => p.toMap()).toList();
-    
+
     final prefs = await SharedPreferences.getInstance();
 
     final backup = {
@@ -103,7 +103,7 @@ class BackupService {
   }
 
   Future<void> _importProfile(List<dynamic> data) async {
-    // We removed empty try-catch blocks to ensure that serious SQLite failures 
+    // We removed empty try-catch blocks to ensure that serious SQLite failures
     // propagate correctly instead of silently resulting in empty DB states.
     final db = await DoseDatabase.instance.database;
     await db.delete('profile');

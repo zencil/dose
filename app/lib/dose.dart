@@ -79,9 +79,9 @@ class _DoseState extends State<Dose> {
               Text(
                 'Add Medicine',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: cs.onSurface,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: cs.onSurface,
+                ),
               ),
               const SizedBox(height: 20),
               Flexible(
@@ -89,7 +89,8 @@ class _DoseState extends State<Dose> {
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   itemCount: MedicineCategory.values.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 12),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final cat = MedicineCategory.values[index];
                     return InkWell(
@@ -102,21 +103,30 @@ class _DoseState extends State<Dose> {
                       },
                       borderRadius: BorderRadius.circular(16),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: cs.outlineVariant.withValues(alpha: 0.5),
-                              width: 1.5),
+                            color: cs.outlineVariant.withValues(alpha: 0.5),
+                            width: 1.5,
+                          ),
                           borderRadius: BorderRadius.circular(16),
                           color: cs.surfaceContainerLowest,
                         ),
                         child: Row(
                           children: [
-                            Icon(cat.icon, size: 28, color: cs.onSurfaceVariant),
+                            Icon(
+                              cat.icon,
+                              size: 28,
+                              color: cs.onSurfaceVariant,
+                            ),
                             const SizedBox(width: 16),
                             Text(
                               cat.label,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: cs.onSurface,
                                   ),

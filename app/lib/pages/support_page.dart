@@ -44,10 +44,7 @@ class HelpSupportPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _buildSupportTile(
-              context,
-              title: 'Help',
-            ),
+            _buildSupportTile(context, title: 'Help'),
           ],
         ),
       ),
@@ -61,10 +58,7 @@ class HelpSupportPage extends StatelessWidget {
     }
   }
 
-  Widget _buildSupportTile(
-    BuildContext context, {
-    required String title,
-  }) {
+  Widget _buildSupportTile(BuildContext context, {required String title}) {
     return ListTile(
       leading: Icon(
         Icons.help_outline,
@@ -72,18 +66,16 @@ class HelpSupportPage extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
       ),
       trailing: Icon(
         Icons.open_in_new,
         color: Theme.of(context).colorScheme.onSurfaceVariant,
         size: 20,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onTap: _launchGitHubIssues,
     );
   }

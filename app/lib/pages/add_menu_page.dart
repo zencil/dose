@@ -229,13 +229,10 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                       widget.medicineToEdit == null
                           ? 'Add Medicine'
                           : 'Edit Medicine',
-                      style: Theme.of(context)
-                          .textTheme
-                          .displaySmall
-                          ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.onSurface,
-                          ),
+                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                     const SizedBox(height: 24),
 
@@ -255,9 +252,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                               const SizedBox(width: 8),
                               Text(
                                 _dateLabel(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
+                                style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ],
@@ -288,8 +283,8 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                                         .titleMedium
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: colorScheme
-                                              .onSecondaryContainer,
+                                          color:
+                                              colorScheme.onSecondaryContainer,
                                         ),
                                   ),
                                 ),
@@ -297,9 +292,7 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                             ),
                             Text(
                               ':',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
+                              style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             GestureDetector(
@@ -316,16 +309,17 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                                     vertical: 8,
                                   ),
                                   child: Text(
-                                    _selectedTime.minute
-                                        .toString()
-                                        .padLeft(2, '0'),
+                                    _selectedTime.minute.toString().padLeft(
+                                      2,
+                                      '0',
+                                    ),
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: colorScheme
-                                              .onSecondaryContainer,
+                                          color:
+                                              colorScheme.onSecondaryContainer,
                                         ),
                                   ),
                                 ),
@@ -347,13 +341,10 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                                   _selectedTime.period == DayPeriod.am
                                       ? 'AM'
                                       : 'PM',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
+                                  style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color:
-                                            colorScheme.onSecondaryContainer,
+                                        color: colorScheme.onSecondaryContainer,
                                       ),
                                 ),
                               ),
@@ -383,13 +374,17 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                           ),
                         ),
                       ),
-                      inputDecorationTheme: _dropdownDecorationTheme(colorScheme),
+                      inputDecorationTheme: _dropdownDecorationTheme(
+                        colorScheme,
+                      ),
                       dropdownMenuEntries: MedicineCategory.values
-                          .map((cat) => DropdownMenuEntry(
-                                value: cat,
-                                label: cat.label,
-                                leadingIcon: Icon(cat.icon),
-                              ))
+                          .map(
+                            (cat) => DropdownMenuEntry(
+                              value: cat,
+                              label: cat.label,
+                              leadingIcon: Icon(cat.icon),
+                            ),
+                          )
                           .toList(),
                       onSelected: (val) {
                         if (val != null) {
@@ -412,17 +407,26 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                               value: _selectedUnit,
-                              icon: Icon(Icons.keyboard_arrow_down, color: colorScheme.primary),
+                              icon: Icon(
+                                Icons.keyboard_arrow_down,
+                                color: colorScheme.primary,
+                              ),
                               style: TextStyle(
                                 color: colorScheme.onSurface,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
                               items: _selectedCategory.units
-                                  .map((u) => DropdownMenuItem(value: u, child: Text(u)))
+                                  .map(
+                                    (u) => DropdownMenuItem(
+                                      value: u,
+                                      child: Text(u),
+                                    ),
+                                  )
                                   .toList(),
                               onChanged: (val) {
-                                if (val != null) setState(() => _selectedUnit = val);
+                                if (val != null)
+                                  setState(() => _selectedUnit = val);
                               },
                             ),
                           ),
@@ -448,15 +452,26 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                                 ),
                               ),
                             ),
-                            inputDecorationTheme: _dropdownDecorationTheme(colorScheme),
+                            inputDecorationTheme: _dropdownDecorationTheme(
+                              colorScheme,
+                            ),
                             dropdownMenuEntries: const [
                               DropdownMenuEntry(value: '6h', label: '6 hours'),
-                              DropdownMenuEntry(value: '12h', label: '12 hours'),
+                              DropdownMenuEntry(
+                                value: '12h',
+                                label: '12 hours',
+                              ),
                               DropdownMenuEntry(value: '1/day', label: '1/day'),
                               DropdownMenuEntry(value: '2/day', label: '2/day'),
                               DropdownMenuEntry(value: '3/day', label: '3/day'),
-                              DropdownMenuEntry(value: 'weekly', label: 'Weekly'),
-                              DropdownMenuEntry(value: 'monthly', label: 'Monthly'),
+                              DropdownMenuEntry(
+                                value: 'weekly',
+                                label: 'Weekly',
+                              ),
+                              DropdownMenuEntry(
+                                value: 'monthly',
+                                label: 'Monthly',
+                              ),
                             ],
                             onSelected: (val) {
                               if (val != null) setState(() => _cycle = val);
@@ -477,7 +492,9 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                                 ),
                               ),
                             ),
-                            inputDecorationTheme: _dropdownDecorationTheme(colorScheme),
+                            inputDecorationTheme: _dropdownDecorationTheme(
+                              colorScheme,
+                            ),
                             dropdownMenuEntries: const [
                               DropdownMenuEntry(value: 0, label: 'Low'),
                               DropdownMenuEntry(value: 1, label: 'Medium'),
@@ -547,8 +564,8 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                       ? 'Save Reminder'
                       : 'Update Reminder',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: colorScheme.onPrimary,
-                      ),
+                    color: colorScheme.onPrimary,
+                  ),
                 ),
               ),
             ),

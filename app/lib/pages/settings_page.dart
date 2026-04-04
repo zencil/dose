@@ -76,7 +76,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   showModalBottomSheet(
                     context: context,
                     shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
                     ),
                     builder: (BuildContext context) {
                       return const _GoogleDriveBottomSheet();
@@ -318,7 +320,8 @@ class _GoogleDriveBottomSheet extends StatefulWidget {
   const _GoogleDriveBottomSheet();
 
   @override
-  State<_GoogleDriveBottomSheet> createState() => _GoogleDriveBottomSheetState();
+  State<_GoogleDriveBottomSheet> createState() =>
+      _GoogleDriveBottomSheetState();
 }
 
 class _GoogleDriveBottomSheetState extends State<_GoogleDriveBottomSheet> {
@@ -348,7 +351,9 @@ class _GoogleDriveBottomSheetState extends State<_GoogleDriveBottomSheet> {
         setState(() => _userEmail = account.email);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sign in failed: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Sign in failed: $e')));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -368,12 +373,16 @@ class _GoogleDriveBottomSheetState extends State<_GoogleDriveBottomSheet> {
     try {
       await GoogleDriveService.instance.uploadBackup();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Backup uploaded to Google Drive!')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Backup uploaded to Google Drive!')),
+      );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
     }
-    
+
     if (!mounted) return;
     setState(() => _isLoading = false);
     Navigator.pop(context);
@@ -384,12 +393,16 @@ class _GoogleDriveBottomSheetState extends State<_GoogleDriveBottomSheet> {
     try {
       await GoogleDriveService.instance.downloadBackup();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Backup restored from Google Drive!')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Backup restored from Google Drive!')),
+      );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Restore failed: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Restore failed: $e')));
     }
-    
+
     if (!mounted) return;
     setState(() => _isLoading = false);
     Navigator.pop(context);
@@ -435,7 +448,7 @@ class _GoogleDriveBottomSheetState extends State<_GoogleDriveBottomSheet> {
               const SizedBox(height: 12),
               FilledButton.tonalIcon(
                 onPressed: () async {
-                   final confirmed = await showDialog<bool>(
+                  final confirmed = await showDialog<bool>(
                     context: context,
                     builder: (ctx) => AlertDialog(
                       title: const Text('Restore from Drive'),
@@ -470,4 +483,3 @@ class _GoogleDriveBottomSheetState extends State<_GoogleDriveBottomSheet> {
     );
   }
 }
-

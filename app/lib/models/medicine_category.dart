@@ -1,36 +1,20 @@
 import 'package:flutter/material.dart';
 
 enum MedicineCategory {
-  tablet(
-    label: 'Tablet',
-    icon: Icons.medication,
-    units: ['pills', 'mg'],
-  ),
+  tablet(label: 'Tablet', icon: Icons.medication, units: ['pills', 'mg']),
   capsule(
     label: 'Capsule',
     icon: Icons.medication_outlined,
     units: ['capsules', 'mg'],
   ),
-  liquid(
-    label: 'Liquid',
-    icon: Icons.water_drop,
-    units: ['mL', 'spoons'],
-  ),
-  injection(
-    label: 'Injection',
-    icon: Icons.vaccines,
-    units: ['mL', 'units'],
-  ),
+  liquid(label: 'Liquid', icon: Icons.water_drop, units: ['mL', 'spoons']),
+  injection(label: 'Injection', icon: Icons.vaccines, units: ['mL', 'units']),
   topical(
     label: 'Topical',
     icon: Icons.back_hand,
     units: ['applications', 'mg'],
   ),
-  inhaler(
-    label: 'Inhaler',
-    icon: Icons.air,
-    units: ['puffs', 'mg'],
-  );
+  inhaler(label: 'Inhaler', icon: Icons.air, units: ['puffs', 'mg']);
 
   final String label;
   final IconData icon;

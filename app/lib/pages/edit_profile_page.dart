@@ -229,9 +229,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),
                           ),
                         ),
-                        dropdownMenuEntries: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
-                            .map((t) => DropdownMenuEntry(value: t, label: t))
-                            .toList(),
+                        dropdownMenuEntries:
+                            ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+                                .map(
+                                  (t) => DropdownMenuEntry(value: t, label: t),
+                                )
+                                .toList(),
                         onSelected: (val) {
                           if (val != null) {
                             setState(() => _bloodTypeController.text = val);
