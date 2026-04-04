@@ -1,15 +1,18 @@
 ---
-name: Feature request
-about: Custom issue template for adding features
+name: Bug report
+about: Report any issues with the app
 title: ''
 labels: ''
 assignees: ''
-type: Feature
+type: Bug
 
 ---
 
 ### Details and Assumptions
     - [document what you know]      
+
+### Steps to Reproduce
+    - [enter steps]
 
 ### Acceptance Criteria     
     gherkin 
