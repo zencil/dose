@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'package:alarm/alarm.dart';
+import 'package:alarm/utils/alarm_set.dart';
 import 'package:dose/models/cabinet_model.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:dose/main.dart';
 import 'package:dose/services/alarm_ring_service.dart';
 
@@ -9,16 +12,31 @@ class AlarmService {
   factory AlarmService() => _instance;
   AlarmService._internal();
 
+  StreamSubscription<AlarmSet>? _ringingSubscription;
+
+  /// Checks if SCHEDULE_EXACT_ALARM is granted; opens settings if not.
+  /// Returns true if granted.
+  static Future<bool> checkAndRequestAlarmPermission() async {
+    final status = await Permission.scheduleExactAlarm.status;
+    if (status.isGranted) return true;
+
+    final result = await Permission.scheduleExactAlarm.request();
+    return result.isGranted;
+  }
+
   Future<void> triggerTestAlarm() async {
     final alarmSettings = AlarmSettings(
       id: 999,
-      dateTime: DateTime.now().add(const Duration(seconds: 20)),
+      dateTime: DateTime.now().add(const Duration(seconds: 3)),
       assetAudioPath: null,
       loopAudio: true,
       vibrate: true,
       warningNotificationOnKill: true,
       androidFullScreenIntent: true,
-      volumeSettings: const VolumeSettings.fixed(volume: 1.0),
+      volumeSettings: VolumeSettings.fade(
+        volume: 1.0,
+        fadeDuration: Duration(seconds: 3),
+      ),
       notificationSettings: NotificationSettings(
         title: 'Test Alarm',
         body: 'Testing the alarm system.',
@@ -32,16 +50,18 @@ class AlarmService {
   Future<void> init() async {
     await Alarm.init();
 
-    Alarm.ringing.where((alarmSet) => alarmSet.alarms.isNotEmpty).listen((
-      alarmSet,
-    ) {
+    _ringingSubscription?.cancel();
+    _ringingSubscription = Alarm.ringing
+        .where((alarmSet) => alarmSet.alarms.isNotEmpty)
+        .listen((alarmSet) {
       final alarmSettings = alarmSet.alarms.first;
       final context = navigatorKey.currentContext;
       if (context != null && context.mounted) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AlarmRingScreen(alarmSettings: alarmSettings),
+            builder: (context) =>
+                AlarmRingScreen(alarmSettings: alarmSettings),
           ),
         );
       }
@@ -76,7 +96,10 @@ class AlarmService {
       vibrate: true,
       warningNotificationOnKill: true,
       androidFullScreenIntent: true,
-      volumeSettings: const VolumeSettings.fixed(volume: 1.0),
+      volumeSettings: VolumeSettings.fade(
+        volume: 1.0,
+        fadeDuration: Duration(seconds: 3),
+      ),
       notificationSettings: NotificationSettings(
         title: 'Time to take ${medicine.name}',
         body: 'Please take your scheduled dose.',
