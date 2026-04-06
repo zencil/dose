@@ -425,8 +425,9 @@ class _AddMedicineMenuState extends State<AddMedicineMenu> {
                                   )
                                   .toList(),
                               onChanged: (val) {
-                                if (val != null)
+                                if (val != null) {
                                   setState(() => _selectedUnit = val);
+                                }
                               },
                             ),
                           ),
