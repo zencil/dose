@@ -32,7 +32,9 @@ class AlarmService {
   Future<void> triggerTestAlarm() async {
     await _channel.invokeMethod('scheduleAlarm', {
       'id': 999,
-      'triggerAtMs': DateTime.now().add(const Duration(seconds: 3)).millisecondsSinceEpoch,
+      'triggerAtMs': DateTime.now()
+          .add(const Duration(seconds: 3))
+          .millisecondsSinceEpoch,
       'title': 'Test Alarm',
       'body': 'Testing the alarm system.',
       'loopAudio': true,
@@ -42,42 +44,43 @@ class AlarmService {
 
   Future<void> init() async {
     _eventSubscription?.cancel();
-    _eventSubscription = _eventChannel
-        .receiveBroadcastStream()
-        .listen((event) async {
-          final map = Map<String, dynamic>.from(event);
-          if (map['type'] == 'alarmFired') {
-            final id = map['id'] as int;
-            final title = map['title'] as String;
-            
-            // Critical check: Make sure the alarm hasn't been dismissed in the background
-            // before we push the overlay onto the screen!
-            final currentlyRinging = await isRinging(id);
-            if (!currentlyRinging) return;
-            
-            final context = navigatorKey.currentContext;
-            if (context != null && context.mounted) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      AlarmRingScreen(alarmData: AlarmRingData(id: id, title: title)),
-                ),
-              );
-            }
-          } else if (map['type'] == 'alarmAction') {
-            final id = map['id'] as int;
-            final action = map['action'] as String;
-            _handleBackgroundAction(id, action);
-          }
-        });
+    _eventSubscription = _eventChannel.receiveBroadcastStream().listen((
+      event,
+    ) async {
+      final map = Map<String, dynamic>.from(event);
+      if (map['type'] == 'alarmFired') {
+        final id = map['id'] as int;
+        final title = map['title'] as String;
+
+        // Critical check: Make sure the alarm hasn't been dismissed in the background
+        // before we push the overlay onto the screen!
+        final currentlyRinging = await isRinging(id);
+        if (!currentlyRinging) return;
+
+        final context = navigatorKey.currentContext;
+        if (context != null && context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AlarmRingScreen(
+                alarmData: AlarmRingData(id: id, title: title),
+              ),
+            ),
+          );
+        }
+      } else if (map['type'] == 'alarmAction') {
+        final id = map['id'] as int;
+        final action = map['action'] as String;
+        _handleBackgroundAction(id, action);
+      }
+    });
   }
 
   Future<void> _handleBackgroundAction(int id, String action) async {
     try {
       final med = await DatabaseHelper.instance.readMedicine(id);
       if (med == null) return;
-      
+
       if (action == 'snooze') {
         final result = await SnoozeService.incrementSnooze(id);
         if (result != -1) {
@@ -86,7 +89,7 @@ class AlarmService {
       } else if (action == 'done') {
         await IntakeService.handleDone(med);
       }
-      
+
       await minimizeIfLocked();
     } catch (e) {
       debugPrint('Background action error: \$e');
@@ -131,7 +134,7 @@ class AlarmService {
 
   Future<void> scheduleSnoozeAlarm(int id, String title) async {
     final snoozeTime = DateTime.now().add(const Duration(minutes: 5));
-    
+
     await _channel.invokeMethod('scheduleAlarm', {
       'id': id,
       'triggerAtMs': snoozeTime.millisecondsSinceEpoch,
@@ -145,12 +148,12 @@ class AlarmService {
   Future<void> cancelAlarm(int id) async {
     await _channel.invokeMethod('cancelAlarm', {'id': id});
   }
-  
+
   Future<bool> isRinging(int id) async {
     final result = await _channel.invokeMethod<bool>('isRinging', {'id': id});
     return result ?? false;
   }
-  
+
   Future<void> stopRinging(int id) async {
     await _channel.invokeMethod('stopRinging', {'id': id});
   }

@@ -109,9 +109,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
     await AlarmService().stopRinging(widget.alarmData.id);
 
     // Update stock and log intake
-    final med = await DatabaseHelper.instance.readMedicine(
-      widget.alarmData.id,
-    );
+    final med = await DatabaseHelper.instance.readMedicine(widget.alarmData.id);
     if (med != null && med.currstock > 0) {
       final updatedMed = Cabinet(
         id: med.id,
@@ -160,9 +158,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
     setState(() => _isProcessing = true);
     _autoSnoozeTimer?.cancel();
 
-    final result = await SnoozeService.incrementSnooze(
-      widget.alarmData.id,
-    );
+    final result = await SnoozeService.incrementSnooze(widget.alarmData.id);
 
     // If snooze limit reached, treat as quiet dismiss
     if (result == -1) {
@@ -174,7 +170,10 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
 
     await AlarmService().stopRinging(widget.alarmData.id);
 
-    await AlarmService().scheduleSnoozeAlarm(widget.alarmData.id, widget.alarmData.title);
+    await AlarmService().scheduleSnoozeAlarm(
+      widget.alarmData.id,
+      widget.alarmData.title,
+    );
 
     await AlarmService().minimizeIfLocked();
     if (mounted) Navigator.pop(context);
@@ -195,10 +194,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                cs.primaryContainer,
-                cs.surface,
-              ],
+              colors: [cs.primaryContainer, cs.surface],
               stops: const [0.0, 0.6],
             ),
           ),
@@ -226,10 +222,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
                 const SizedBox(height: 12),
                 Text(
                   'Time for your dose',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: cs.onSurfaceVariant,
-                  ),
+                  style: TextStyle(fontSize: 16, color: cs.onSurfaceVariant),
                 ),
                 if (_snoozeCount > 0) ...[
                   const SizedBox(height: 8),
@@ -316,10 +309,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
                   icon: const Icon(Icons.snooze_rounded),
                   label: const Text(
                     'Snooze',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
