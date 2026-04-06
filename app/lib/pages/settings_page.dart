@@ -351,9 +351,11 @@ class _GoogleDriveBottomSheetState extends State<_GoogleDriveBottomSheet> {
         setState(() => _userEmail = account.email);
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Sign in failed: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Sign in failed: $e')));
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

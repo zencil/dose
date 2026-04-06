@@ -26,6 +26,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     text: 'No',
   );
   bool _notificationGranted = false;
+  bool _alarmGranted = false;
 
   @override
   void initState() {
@@ -35,8 +36,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _checkPermissions() async {
     final notifStatus = await Permission.notification.status;
+    final alarmStatus = await Permission.scheduleExactAlarm.status;
+    if (!mounted) return;
     setState(() {
       _notificationGranted = notifStatus.isGranted;
+      _alarmGranted = alarmStatus.isGranted;
     });
   }
 
@@ -58,28 +62,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
+  bool get _allPermissionsGranted => _notificationGranted && _alarmGranted;
+
   Future<void> _requestPermissions() async {
-    final status = await Permission.notification.request();
-    await Permission.scheduleExactAlarm.request();
+    final notifResult = await Permission.notification.request();
+    final alarmResult = await Permission.scheduleExactAlarm.request();
     await Permission.ignoreBatteryOptimizations.request();
 
     if (!mounted) return;
 
     setState(() {
-      _notificationGranted = status.isGranted;
+      _notificationGranted = notifResult.isGranted;
+      _alarmGranted = alarmResult.isGranted;
     });
 
-    if (!_notificationGranted) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Please grant notification permission to continue. If the popup doesn\'t appear, check app settings.',
-            ),
-            duration: Duration(seconds: 3),
+    if (!_allPermissionsGranted && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Please grant all permissions to continue. If the popup doesn\'t appear, check app settings.',
           ),
-        );
-      }
+          duration: Duration(seconds: 3),
+        ),
+      );
     }
   }
 
@@ -320,6 +325,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             subtitle: 'To remind you when it\'s time to take your medicine.',
             granted: _notificationGranted,
           ),
+          const SizedBox(height: 12),
+          _buildPermissionCard(
+            cs,
+            icon: Icons.alarm_rounded,
+            title: 'Alarms & Reminders',
+            subtitle: 'To trigger alarms for high-priority medicines.',
+            granted: _alarmGranted,
+          ),
 
           const Spacer(flex: 2),
 
@@ -327,16 +340,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             width: double.infinity,
             height: 56,
             child: FilledButton.icon(
-              onPressed: _notificationGranted
+              onPressed: _allPermissionsGranted
                   ? _goToNextPage
                   : _requestPermissions,
               icon: Icon(
-                _notificationGranted
+                _allPermissionsGranted
                     ? Icons.arrow_forward_rounded
                     : Icons.security_rounded,
               ),
               label: Text(
-                _notificationGranted ? 'Continue' : 'Grant',
+                _allPermissionsGranted ? 'Continue' : 'Grant',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
