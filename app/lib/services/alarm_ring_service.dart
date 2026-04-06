@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
-import 'package:alarm/alarm.dart';
 import 'package:dose/db/cabinet_db.dart';
 import 'package:dose/models/cabinet_model.dart';
 import 'package:dose/models/intake_model.dart';
@@ -9,11 +8,19 @@ import 'package:dose/db/intake_log_db.dart' as log_db;
 import 'package:dose/services/widget_service.dart';
 import 'package:dose/services/snooze_service.dart';
 import 'package:dose/services/notification_service.dart';
+import 'package:dose/services/alarm_service.dart';
+
+class AlarmRingData {
+  final int id;
+  final String title;
+
+  AlarmRingData({required this.id, required this.title});
+}
 
 class AlarmRingScreen extends StatefulWidget {
-  final AlarmSettings alarmSettings;
+  final AlarmRingData alarmData;
 
-  const AlarmRingScreen({super.key, required this.alarmSettings});
+  const AlarmRingScreen({super.key, required this.alarmData});
 
   @override
   State<AlarmRingScreen> createState() => _AlarmRingScreenState();
@@ -73,7 +80,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
   }
 
   Future<void> _loadSnoozeState() async {
-    final count = await SnoozeService.getSnoozeCount(widget.alarmSettings.id);
+    final count = await SnoozeService.getSnoozeCount(widget.alarmData.id);
     if (mounted) {
       setState(() {
         _snoozeCount = count;
@@ -87,7 +94,8 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
     if (_isProcessing) return;
     _isProcessing = true;
     _autoSnoozeTimer?.cancel();
-    await Alarm.stop(widget.alarmSettings.id);
+    await AlarmService().stopRinging(widget.alarmData.id);
+    await AlarmService().minimizeIfLocked();
     if (mounted) Navigator.pop(context);
   }
 
@@ -98,11 +106,11 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
     _autoSnoozeTimer?.cancel();
 
     // Stop the alarm sound first
-    await Alarm.stop(widget.alarmSettings.id);
+    await AlarmService().stopRinging(widget.alarmData.id);
 
     // Update stock and log intake
     final med = await DatabaseHelper.instance.readMedicine(
-      widget.alarmSettings.id,
+      widget.alarmData.id,
     );
     if (med != null && med.currstock > 0) {
       final updatedMed = Cabinet(
@@ -139,9 +147,10 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
         await NotificationHelper().showLowStockNotification(updatedMed);
       }
     }
-    await SnoozeService.resetSnooze(widget.alarmSettings.id);
+    await SnoozeService.resetSnooze(widget.alarmData.id);
 
     // Pop only after all operations are complete
+    await AlarmService().minimizeIfLocked();
     if (mounted) Navigator.pop(context);
   }
 
@@ -152,41 +161,29 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
     _autoSnoozeTimer?.cancel();
 
     final result = await SnoozeService.incrementSnooze(
-      widget.alarmSettings.id,
+      widget.alarmData.id,
     );
 
     // If snooze limit reached, treat as quiet dismiss
     if (result == -1) {
-      await Alarm.stop(widget.alarmSettings.id);
+      await AlarmService().stopRinging(widget.alarmData.id);
+      await AlarmService().minimizeIfLocked();
       if (mounted) Navigator.pop(context);
       return;
     }
 
-    await Alarm.stop(widget.alarmSettings.id);
+    await AlarmService().stopRinging(widget.alarmData.id);
 
-    final snoozeTime = DateTime.now().add(
-      const Duration(minutes: SnoozeService.snoozeDurationMinutes),
-    );
-    final snoozedAlarm = AlarmSettings(
-      id: widget.alarmSettings.id,
-      dateTime: snoozeTime,
-      assetAudioPath: widget.alarmSettings.assetAudioPath,
-      loopAudio: widget.alarmSettings.loopAudio,
-      vibrate: widget.alarmSettings.vibrate,
-      warningNotificationOnKill: widget.alarmSettings.warningNotificationOnKill,
-      androidFullScreenIntent: widget.alarmSettings.androidFullScreenIntent,
-      volumeSettings: widget.alarmSettings.volumeSettings,
-      notificationSettings: widget.alarmSettings.notificationSettings,
-    );
-    await Alarm.set(alarmSettings: snoozedAlarm);
+    await AlarmService().scheduleSnoozeAlarm(widget.alarmData.id, widget.alarmData.title);
 
+    await AlarmService().minimizeIfLocked();
     if (mounted) Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final title = widget.alarmSettings.notificationSettings.title;
+    final title = widget.alarmData.title;
 
     return PopScope(
       canPop: false,
