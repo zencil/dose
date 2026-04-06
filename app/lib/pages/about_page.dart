@@ -171,11 +171,7 @@ class AboutPage extends StatelessWidget {
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
-            _buildTeamCard(
-              context,
-              role: 'Core App Development',
-              name: 'Jonathan',
-            ),
+            _buildTeamCard(context, role: 'Lead Developer', name: 'Jonathan'),
             const SizedBox(height: 8),
             _buildTeamCard(
               context,
