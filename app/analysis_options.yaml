@@ -11,7 +11,8 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude:
-    - packages/alarm/**
+    - "**/*.g.dart"
+    - "lib/generated_plugin_registrant.dart"
 
 linter:
   # The lint rules applied to this project can be customized in the
