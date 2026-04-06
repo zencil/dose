@@ -1,4 +1,4 @@
-## Project Structure
+## Flutter Project Structure
 
 ```text
 lib/
@@ -43,4 +43,20 @@ lib/
 │   └── dose_card.dart
 ├── dose.dart
 └── main.dart
+```
+
+## Native Alarm System
+
+
+The architecture is located at `android/app/src/main/kotlin/org/orbitronhd/dose/alarm/`:
+
+```text
+alarm/
+├── AlarmData.kt               
+├── AlarmForegroundService.kt  
+├── AlarmReceiver.kt           
+├── AlarmScheduler.kt          
+├── AlarmStorage.kt            
+├── BootReceiver.kt            
+└── DoseAlarmPlugin.kt         
 ```
