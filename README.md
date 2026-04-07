@@ -20,5 +20,8 @@ Allows tracking your daily medicines, keeping stock count, reminding you through
   <img src="https://contrib.rocks/image?repo=orbitronhd-org/dose" />
 </a>
 
+## License
+Distributed under the Apache License 2.0
+
 ###
 By orbitronhd-org
