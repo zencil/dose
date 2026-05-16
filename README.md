@@ -25,4 +25,4 @@ Allows tracking your daily medicines, keeping stock count, reminding you through
 Distributed under the Apache License 2.0
 
 ###
-By orbitronhd-org
+Built with love - zencil
